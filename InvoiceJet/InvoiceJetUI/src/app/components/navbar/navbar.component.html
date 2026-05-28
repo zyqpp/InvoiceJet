@@ -1,0 +1,39 @@
+<mat-toolbar color="primary">
+  <div class="left-align">
+    <button mat-icon-button (click)="toggleSidebar()" *ngIf="isLoginOrRegister">
+      <mat-icon>menu</mat-icon>
+    </button>
+    <h1>InvoiceJet</h1>
+  </div>
+
+  <div class="right-align">
+    <ng-container *ngIf="!isLoginOrRegister">
+      <button mat-button [routerLink]="'/login'">Login</button>
+      <button mat-button [routerLink]="'/register'">Register</button>
+    </ng-container>
+
+    <ng-container *ngIf="isLoginOrRegister">
+      <button mat-button [matMenuTriggerFor]="userMenu" class="profileButton">
+        <span>
+          {{ userInfo.initials }}
+        </span>
+      </button>
+      <mat-menu #userMenu="matMenu">
+        <div mat-menu-item class="mat-menu-item" style="pointer-events: none">
+          <span class="fullName">{{ userInfo.fullName }}</span>
+          <p>{{ userInfo.email }}</p>
+        </div>
+        <mat-divider></mat-divider>
+        <button mat-menu-item (click)="toggleTheme()">
+          <mat-icon>brightness_6</mat-icon>
+          <span>Toggle Dark Mode</span>
+        </button>
+        <mat-divider></mat-divider>
+        <button mat-menu-item (click)="logout()">
+          <mat-icon>logout</mat-icon>
+          <span>Logout</span>
+        </button>
+      </mat-menu>
+    </ng-container>
+  </div>
+</mat-toolbar>

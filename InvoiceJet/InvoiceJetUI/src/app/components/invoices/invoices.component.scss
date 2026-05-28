@@ -1,0 +1,51 @@
+table {
+  border-radius: 5px;
+  padding: 1px;
+  z-index: 9999;
+}
+
+h1 {
+  font-weight: semi-bold;
+}
+
+.app-header {
+  display: flex;
+  justify-content: space-between;
+}
+
+.select-column {
+  width: 40px;
+  max-width: 40px;
+}
+
+/* Additional styling to ensure the checkbox aligns nicely in the center */
+.select-column mat-checkbox {
+  justify-content: center;
+  display: flex;
+}
+
+.right {
+  display: flex;
+  gap: 10px;
+}
+
+.right .mat-icon {
+  margin: 0;
+}
+
+.clickable {
+  cursor: pointer;
+}
+
+.more-button {
+  background-color: #e5e7eb;
+}
+
+mat-paginator {
+  margin-top: 20px;
+  border-radius: 5px;
+}
+
+.search-container {
+  max-width: 300px;
+}

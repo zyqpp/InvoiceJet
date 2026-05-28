@@ -1,0 +1,322 @@
+<mat-progress-bar mode="query" *ngIf="loading"></mat-progress-bar>
+<div class="inner-container" *ngIf="!loading">
+  <div class="title-container">
+    <button mat-icon-button (click)="goBack()" aria-label="Go back">
+      <mat-icon>arrow_back</mat-icon>
+    </button>
+    <div class="document-header-container">
+      <div>
+        <h1>
+          Invoice Details
+          <span *ngIf="isEditMode"> - {{ documentNumber }} </span>
+        </h1>
+      </div>
+      <div>
+        <mat-chip *ngIf="documentStatus"> {{ documentStatus }}</mat-chip>
+      </div>
+    </div>
+  </div>
+  <form [formGroup]="invoiceForm" (ngSubmit)="onSubmit()">
+    <div class="grid-container">
+      <!-- CUI Value Field -->
+      <mat-form-field appearance="outline" class="grid-item">
+        <mat-label>Client Name or CUI</mat-label>
+        <input
+          matInput
+          formControlName="client"
+          required
+          [matAutocomplete]="auto"
+        />
+        <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn">
+          <mat-option *ngFor="let firm of filteredFirms | async" [value]="firm">
+            {{ firm.name }} ({{ firm.cui }})
+          </mat-option>
+        </mat-autocomplete>
+        <mat-error *ngIf="invoiceForm.get('cuiValue')?.errors?.['required']">
+          CUI Value is required
+        </mat-error>
+      </mat-form-field>
+
+      <!-- Issue Date Field -->
+      <mat-form-field appearance="outline" class="grid-item">
+        <mat-label>Issue Date</mat-label>
+        <input
+          matInput
+          [matDatepicker]="picker1"
+          formControlName="issueDate"
+          required
+        />
+        <mat-datepicker-toggle
+          matSuffix
+          [for]="picker1"
+        ></mat-datepicker-toggle>
+        <mat-datepicker #picker1></mat-datepicker>
+        <mat-error *ngIf="invoiceForm.get('issueDate')?.errors?.['required']">
+          Issue Date is required
+        </mat-error>
+      </mat-form-field>
+
+      <!-- Due Date Field -->
+      <mat-form-field appearance="outline" class="grid-item">
+        <mat-label>Due Date</mat-label>
+        <input matInput [matDatepicker]="picker2" formControlName="dueDate" />
+        <mat-datepicker-toggle
+          matSuffix
+          [for]="picker2"
+        ></mat-datepicker-toggle>
+        <mat-datepicker #picker2></mat-datepicker>
+      </mat-form-field>
+
+      <!-- Serie si Numar Dropdown -->
+      <mat-form-field
+        appearance="outline"
+        class="grid-item"
+        *ngIf="!isEditMode"
+      >
+        <mat-label>Document Series</mat-label>
+        <mat-select formControlName="documentSeries" required>
+          <mat-option
+            *ngFor="let series of invoiceAutofillData.documentSeries"
+            [value]="series"
+          >
+            {{ series.seriesName }} - {{ series.currentNumber }}
+          </mat-option>
+        </mat-select>
+        <mat-error
+          *ngIf="invoiceForm.get('documentSeries')?.errors?.['required']"
+        >
+          This field is required
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="grid-item" *ngIf="isEditMode">
+        <mat-label>Status</mat-label>
+        <mat-select
+          formControlName="documentStatus"
+          required
+          [(value)]="currentStatus"
+        >
+          <mat-option
+            *ngFor="let status of invoiceAutofillData.documentStatuses"
+            [value]="status"
+          >
+            {{ status.status }}
+          </mat-option>
+        </mat-select>
+        <mat-error
+          *ngIf="invoiceForm.get('documentStatus')?.errors?.['required']"
+        >
+          This field is required
+        </mat-error>
+      </mat-form-field>
+    </div>
+    <div class="table-container">
+      <table
+        mat-table
+        [dataSource]="dataSource"
+        class="mat-elevation-z2"
+        formArrayName="products"
+      >
+        <!-- Product Name Column -->
+        <ng-container matColumnDef="name">
+          <th mat-header-cell *matHeaderCellDef>Product Name</th>
+          <td
+            mat-cell
+            *matCellDef="let product; let i = index"
+            [formGroupName]="i"
+          >
+            <mat-form-field class="full-width" subscriptSizing="dynamic">
+              <input
+                matInput
+                formControlName="name"
+                placeholder="Product Name"
+                [matAutocomplete]="auto2"
+              />
+              <mat-autocomplete
+                #auto2="matAutocomplete"
+                (optionSelected)="onProductSelected($event, i)"
+              >
+                <mat-option
+                  *ngFor="let product of filteredProducts | async"
+                  [value]="product.name"
+                >
+                  {{ product.name }} ({{ product.price }} RON)
+                </mat-option>
+              </mat-autocomplete>
+            </mat-form-field>
+          </td>
+        </ng-container>
+
+        <!-- Unit Price Column -->
+        <ng-container matColumnDef="unitPrice">
+          <th mat-header-cell *matHeaderCellDef>Unit Price</th>
+          <td
+            mat-cell
+            *matCellDef="let product; let i = index"
+            [formGroupName]="i"
+          >
+            <mat-form-field class="full-width" subscriptSizing="dynamic">
+              <input
+                matInput
+                type="number"
+                formControlName="unitPrice"
+                placeholder="Unit Price"
+                (change)="calculateTotalPrice(i)"
+              />
+            </mat-form-field>
+          </td>
+        </ng-container>
+
+        <!-- Quantity Column -->
+        <ng-container matColumnDef="quantity">
+          <th mat-header-cell *matHeaderCellDef>Quantity</th>
+          <td
+            mat-cell
+            *matCellDef="let product; let i = index"
+            [formGroupName]="i"
+            class="small-cell-container"
+          >
+            <mat-form-field class="small-cell" subscriptSizing="dynamic">
+              <input
+                matInput
+                type="number"
+                formControlName="quantity"
+                placeholder="Quantity"
+                (change)="calculateTotalPrice(i)"
+              />
+            </mat-form-field>
+          </td>
+        </ng-container>
+
+        <!-- Unit of Measurement Column -->
+        <ng-container matColumnDef="unitOfMeasurement">
+          <th mat-header-cell *matHeaderCellDef>U.M.</th>
+          <td
+            mat-cell
+            *matCellDef="let product; let i = index"
+            [formGroupName]="i"
+            [ngClass]="{ 'no-outline': isEditMode }"
+            class="small-cell-container"
+          >
+            <mat-form-field class="small-cell" subscriptSizing="dynamic">
+              <input
+                matInput
+                formControlName="unitOfMeasurement"
+                placeholder="Unit of Measurement"
+                [readonly]="isEditMode"
+              />
+            </mat-form-field>
+          </td>
+        </ng-container>
+
+        <!-- TVA Value Column -->
+        <ng-container matColumnDef="tvaValue">
+          <th mat-header-cell *matHeaderCellDef>TVA Value</th>
+          <td
+            mat-cell
+            *matCellDef="let product; let i = index"
+            [formGroupName]="i"
+          >
+            <mat-form-field
+              class="full-width"
+              [ngClass]="{ 'no-outline': isEditMode }"
+              subscriptSizing="dynamic"
+            >
+              <input
+                matInput
+                formControlName="tvaValue"
+                placeholder="TVA Value"
+                type="number"
+                [readonly]="isEditMode"
+                (change)="calculateTotalPrice(i)"
+              />
+            </mat-form-field>
+          </td>
+        </ng-container>
+
+        <!-- Contains TVA Checkbox Column -->
+        <ng-container matColumnDef="containsTva">
+          <th mat-header-cell *matHeaderCellDef>Contains TVA</th>
+          <td
+            mat-cell
+            *matCellDef="let product; let i = index"
+            [formGroupName]="i"
+          >
+            <mat-checkbox
+              formControlName="containsTva"
+              (change)="calculatePriceWithoutTVA(i, $event.checked)"
+              >Yes</mat-checkbox
+            >
+          </td>
+        </ng-container>
+
+        <!-- Total Price Column -->
+        <ng-container matColumnDef="totalPrice">
+          <th mat-header-cell *matHeaderCellDef>Total Price</th>
+          <td
+            mat-cell
+            *matCellDef="let product; let i = index"
+            [formGroupName]="i"
+          >
+            <mat-form-field
+              class="full-width"
+              subscriptSizing="dynamic"
+              class="no-outline"
+            >
+              <input
+                matInput
+                type="number"
+                formControlName="totalPrice"
+                placeholder="Total Price"
+                [readonly]="true"
+              />
+            </mat-form-field>
+          </td>
+        </ng-container>
+
+        <!-- Actions Column -->
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef>Actions</th>
+          <td mat-cell *matCellDef="let product; let i = index">
+            <button
+              type="button"
+              mat-icon-button
+              color="warn"
+              *ngIf="productsFormArray.controls.length > 1"
+              (click)="deleteProduct(i)"
+              matTooltip="Remove"
+            >
+              <mat-icon>delete</mat-icon>
+            </button>
+            <button
+              type="button"
+              mat-icon-button
+              color="primary"
+              (click)="addProduct()"
+              matTooltip="Add"
+            >
+              <mat-icon>add_circle_outline</mat-icon>
+            </button>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+      </table>
+    </div>
+    <div class="controls">
+      <button mat-raised-button color="primary" type="submit">
+        {{ isEditMode ? "Update" : "Issue" }}
+      </button>
+      <button
+        *ngIf="isEditMode"
+        mat-raised-button
+        color="primary"
+        type="button"
+        (click)="getInvoicePdfStream()"
+      >
+        Preview
+      </button>
+    </div>
+  </form>
+</div>

@@ -1,0 +1,80 @@
+<div class="dialog-container">
+  <mat-card class="dialog-card" mat-elevation-z8>
+    <h1>{{ isEditMode ? "Edit Bank Account" : "New Bank Account" }}</h1>
+    <form
+      [formGroup]="bankAccountForm"
+      (ngSubmit)="onSubmit()"
+      class="example-form"
+    >
+      <!-- Bank Name Field -->
+      <div class="row">
+        <mat-form-field>
+          <mat-label>Bank Name</mat-label>
+          <input matInput formControlName="bankName" required />
+          <mat-error
+            *ngIf="bankAccountForm.get('bankName')?.errors?.['required']"
+          >
+            Bank Name is required
+          </mat-error>
+        </mat-form-field>
+      </div>
+
+      <!-- IBAN Field -->
+      <div class="row">
+        <mat-form-field>
+          <mat-label>IBAN</mat-label>
+          <input matInput formControlName="iban" required />
+          <mat-error *ngIf="bankAccountForm.get('iban')?.errors?.['required']">
+            IBAN is required
+          </mat-error>
+        </mat-form-field>
+      </div>
+
+      <!-- Currency Field -->
+      <div class="row">
+        <mat-form-field>
+          <mat-label>Currency</mat-label>
+          <mat-select formControlName="currency" required>
+            <mat-option
+              *ngFor="let currency of currencies"
+              [value]="currency.value"
+            >
+              {{ currency.name }}
+            </mat-option>
+          </mat-select>
+          <mat-error
+            *ngIf="bankAccountForm.get('currency')?.errors?.['required']"
+          >
+            Currency is required
+          </mat-error>
+        </mat-form-field>
+      </div>
+
+      <!-- Active Field -->
+      <div class="row">
+        <mat-checkbox formControlName="isActive" color="primary"
+          >Active</mat-checkbox
+        >
+      </div>
+
+      <!-- Error Message Display -->
+      <div *ngIf="errorMessage" class="p-error">{{ errorMessage }}</div>
+
+      <!-- Submit Button -->
+      <div class="controls">
+        <button
+          mat-stroked-button
+          color="primary"
+          type="button"
+          (click)="closeDialog()"
+          *ngIf="isEditMode"
+        >
+          {{ "Cancel" }}
+        </button>
+        <button mat-raised-button color="primary" type="submit">
+          {{ isEditMode ? "Update" : "Submit" }}
+        </button>
+      </div>
+    </form>
+  </mat-card>
+</div>

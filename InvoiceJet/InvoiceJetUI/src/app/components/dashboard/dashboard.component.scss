@@ -1,0 +1,93 @@
+.stats-container {
+  padding: 24px;
+}
+
+.grid-container {
+  display: grid;
+  gap: 16px;
+}
+
+@media (min-width: 1200px) {
+  .grid-container {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+@media (min-width: 900px) and (max-width: 1199px) {
+  .grid-container {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (min-width: 600px) and (max-width: 899px) {
+  .grid-container {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 599px) {
+  .grid-container {
+    grid-template-columns: 1fr;
+  }
+}
+
+mat-card-content {
+  display: flex;
+  padding: 16px 24px;
+}
+
+mat-card-header {
+  display: flex;
+  color: #636363;
+  flex-direction: column-reverse; /* Ensure icon is above the title */
+  h1 {
+    padding-top: 10px;
+    font-size: 18px;
+    margin: 0;
+  }
+}
+
+mat-card-header mat-icon {
+  font-size: 24px;
+  margin-right: 8px;
+  color: #636363;
+  background-color: #e2e2e2;
+  border-radius: 50%;
+  padding: 10px;
+}
+
+mat-card-content {
+  height: 30px;
+  p {
+    font-size: 30px;
+  }
+}
+
+h1 {
+  font-weight: semi-bold;
+}
+
+mat-card {
+  padding: 0 10px;
+}
+
+.graph-container {
+  padding-top: 20px;
+}
+
+.chart-data {
+  height: fit-content;
+  max-width: 100%;
+}
+
+canvas {
+  min-height: 500px;
+  max-width: inherit;
+}
+
+.mat-header {
+  padding: 16px 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}

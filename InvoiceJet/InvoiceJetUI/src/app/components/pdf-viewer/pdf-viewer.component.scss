@@ -1,0 +1,17 @@
+.pdf-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+}
+
+.pdf-header {
+  background-color: white; /* White background for the header */
+  padding: 3px; /* Padding around the button for aesthetics */
+  text-align: right; /* Aligns the button to the left */
+}
+
+.pdf-iframe {
+  flex-grow: 1; /* Takes up all available space */
+  width: 100%; /* Full width */
+}

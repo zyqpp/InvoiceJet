@@ -1,0 +1,101 @@
+<div class="dialog-container">
+  <mat-card class="dialog-card" mat-elevation-z8>
+    <h1>{{ isEditMode ? "Edit Document Series" : "New Document Series" }}</h1>
+    <form
+      [formGroup]="documentSeriesForm"
+      (ngSubmit)="onSubmit()"
+      class="example-form"
+    >
+      <!-- Document Type Field -->
+      <div class="row">
+        <mat-form-field>
+          <mat-label>Document Type</mat-label>
+          <mat-select formControlName="documentType" required>
+            <mat-option *ngFor="let type of documentTypes" [value]="type.id">
+              {{ type.name }}
+            </mat-option>
+          </mat-select>
+          <mat-error
+            *ngIf="documentSeriesForm.get('documentType')?.errors?.['required']"
+          >
+            Document Type is required
+          </mat-error>
+        </mat-form-field>
+      </div>
+
+      <!-- Series Name Field -->
+      <div class="row">
+        <mat-form-field>
+          <mat-label>Series Name</mat-label>
+          <input matInput formControlName="seriesName" required />
+          <mat-error
+            *ngIf="documentSeriesForm.get('seriesName')?.errors?.['required']"
+          >
+            Series Name is required
+          </mat-error>
+        </mat-form-field>
+      </div>
+
+      <!-- First Number Field -->
+      <div class="row">
+        <mat-form-field>
+          <mat-label>First Number</mat-label>
+          <input
+            matInput
+            formControlName="firstNumber"
+            required
+            type="number"
+          />
+          <mat-error
+            *ngIf="documentSeriesForm.get('firstNumber')?.errors?.['required']"
+          >
+            First Number is required
+          </mat-error>
+        </mat-form-field>
+      </div>
+
+      <!-- Current Number Field -->
+      <div class="row">
+        <mat-form-field>
+          <mat-label>Current Number</mat-label>
+          <input
+            matInput
+            formControlName="currentNumber"
+            required
+            type="number"
+          />
+          <mat-error
+            *ngIf="documentSeriesForm.get('currentNumber')?.errors?.['required']"
+          >
+            Current Number is required
+          </mat-error>
+        </mat-form-field>
+      </div>
+
+      <!-- Is Default Field -->
+      <div class="row">
+        <mat-checkbox formControlName="isDefault" color="primary"
+          >Default</mat-checkbox
+        >
+      </div>
+
+      <!-- Error Message Display -->
+      <div *ngIf="errorMessage" class="p-error">{{ errorMessage }}</div>
+
+      <!-- Submit Button -->
+      <div class="controls">
+        <button
+          mat-stroked-button
+          color="primary"
+          type="button"
+          (click)="closeDialog()"
+        >
+          {{ "Cancel" }}
+        </button>
+        <button mat-raised-button color="primary" type="submit">
+          {{ isEditMode ? "Update" : "Submit" }}
+        </button>
+      </div>
+    </form>
+  </mat-card>
+</div>

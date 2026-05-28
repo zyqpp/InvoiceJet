@@ -1,0 +1,126 @@
+<mat-progress-bar mode="query" *ngIf="!products"></mat-progress-bar>
+<div class="inner-container">
+  <div class="app-header">
+    <div class="left">
+      <h1>Products</h1>
+    </div>
+    <div class="right">
+      <button
+        mat-raised-button
+        color="primary"
+        (click)="openNewProductDialog()"
+      >
+        <mat-icon class="icon-right-margin">add</mat-icon>
+        <span>New Product</span>
+      </button>
+      <mat-menu #menu="matMenu">
+        <button mat-menu-item (click)="deleteSelected()">
+          <mat-icon color="warn">delete</mat-icon>
+          <span>Delete selected</span>
+        </button>
+      </mat-menu>
+
+      <button mat-stroked-button [matMenuTriggerFor]="menu">
+        <mat-icon color="primary">more_vert</mat-icon>
+      </button>
+    </div>
+  </div>
+
+  <mat-form-field appearance="outline" class="search-container">
+    <mat-label>Search</mat-label>
+    <input
+      matInput
+      #searchInput
+      (keyup)="applyFilter($event)"
+      placeholder="Search"
+    />
+    <button
+      mat-icon-button
+      *ngIf="searchInput.value"
+      matSuffix
+      mat-icon-button
+      aria-label="Clear"
+      (click)="clearSearch(searchInput)"
+    >
+      <mat-icon>clear</mat-icon>
+    </button>
+  </mat-form-field>
+
+  <table
+    mat-table
+    [dataSource]="dataSource"
+    matSort
+    (matSortChange)="announceSortChange($event)"
+    class="mat-elevation-z2"
+  >
+    <!-- Checkbox Column -->
+    <ng-container matColumnDef="select">
+      <th mat-header-cell *matHeaderCellDef class="select-column">
+        <mat-checkbox
+          color="primary"
+          (change)="$event ? masterToggle() : null"
+          [checked]="selection.hasValue() && isAllSelected()"
+          [indeterminate]="selection.hasValue() && !isAllSelected()"
+        >
+        </mat-checkbox>
+      </th>
+      <td mat-cell *matCellDef="let row" class="select-column">
+        <mat-checkbox
+          color="primary"
+          (click)="$event.stopPropagation()"
+          (change)="$event ? selection.toggle(row) : null"
+          [checked]="selection.isSelected(row)"
+        >
+        </mat-checkbox>
+      </td>
+    </ng-container>
+    <!-- Product Name Column -->
+    <ng-container matColumnDef="name">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Name</th>
+      <td mat-cell *matCellDef="let product">{{ product.name }}</td>
+    </ng-container>
+
+    <!-- Price Column -->
+    <ng-container matColumnDef="price">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Price</th>
+      <td mat-cell *matCellDef="let product">{{ product.price }}</td>
+    </ng-container>
+
+    <!-- Unit Of Measurement Column -->
+    <ng-container matColumnDef="unitOfMeasurement">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>
+        Unit of Measurement
+      </th>
+      <td mat-cell *matCellDef="let product">
+        {{ product.unitOfMeasurement }}
+      </td>
+    </ng-container>
+
+    <!-- TVA Value Column -->
+    <ng-container matColumnDef="tvaValue">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>TVA Value</th>
+      <td mat-cell *matCellDef="let product">{{ product.tvaValue }}%</td>
+    </ng-container>
+
+    <!-- Contains TVA Column -->
+    <ng-container matColumnDef="containsTva">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>TVA Included</th>
+      <td mat-cell *matCellDef="let product">
+        <mat-checkbox [checked]="product.containsTva" disabled></mat-checkbox>
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr
+      mat-row
+      *matRowDef="let row; columns: displayedColumns"
+      (click)="openEditProductDialog(row)"
+    ></tr>
+  </table>
+
+  <mat-paginator
+    class="mat-elevation-z2"
+    [pageSizeOptions]="[10, 20, 30]"
+    showFirstLastButtons
+  ></mat-paginator>
+</div>

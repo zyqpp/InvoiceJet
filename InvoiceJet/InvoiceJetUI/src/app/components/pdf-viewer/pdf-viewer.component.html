@@ -1,0 +1,11 @@
+<div class="pdf-container">
+  <!-- Header with the close button -->
+  <div class="pdf-header">
+    <button mat-icon-button (click)="onClose()" aria-label="Close PDF viewer">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+
+  <!-- IFrame displaying the PDF -->
+  <iframe [src]="safeUrl" class="pdf-iframe" style="border: none"></iframe>
+</div>

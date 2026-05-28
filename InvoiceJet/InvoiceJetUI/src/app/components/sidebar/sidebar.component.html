@@ -1,0 +1,61 @@
+<mat-sidenav-container class="example-container" autosize>
+  <mat-sidenav #sidenav [mode]="sidebarMode" [opened]="sidebarVisible">
+    <!-- Search Box -->
+    <mat-form-field appearance="outline">
+      <mat-icon matPrefix>search</mat-icon>
+      <input
+        #searchInput
+        matInput
+        [(ngModel)]="searchQuery"
+        (keyup)="filterTree($event)"
+        placeholder="Search..."
+      />
+      <button
+        matSuffix
+        mat-icon-button
+        *ngIf="searchQuery"
+        (click)="clearSearch()"
+      >
+        <mat-icon>close</mat-icon>
+      </button>
+    </mat-form-field>
+
+    <!-- Tree View -->
+    <mat-tree [dataSource]="dataSource" [treeControl]="treeControl">
+      <!-- Tree node template for leaf nodes -->
+      <mat-tree-node
+        *matTreeNodeDef="let node"
+        matTreeNodePadding
+        [routerLink]="node.route"
+        (click)="closeSidebar()"
+        [class.active-link]="isActiveRoute(node.route)"
+      >
+        <button mat-icon-button *ngIf="node.icon">
+          <mat-icon class="mat-icon-rtl-mirror" color="primary">
+            {{ node.icon }}
+          </mat-icon>
+        </button>
+        {{ node.name }}
+      </mat-tree-node>
+      <!-- Tree node template for expandable nodes -->
+      <mat-tree-node
+        *matTreeNodeDef="let node; when: hasChild"
+        matTreeNodeToggle
+        matTreeNodePadding
+        [routerLink]="node.route"
+        [class.active-link]="isActiveRoute(node.route)"
+      >
+        <button
+          mat-icon-button
+          [disableRipple]="true"
+          (click)="toggleNode(node); $event.stopPropagation()"
+        >
+          <mat-icon class="mat-icon-rtl-mirror" color="primary">
+            {{ node.icon }}
+          </mat-icon>
+        </button>
+        {{ node.name }}
+      </mat-tree-node>
+    </mat-tree>
+  </mat-sidenav>
+</mat-sidenav-container>

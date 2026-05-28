@@ -1,0 +1,43 @@
+.dialog-container {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 550px; /* Adjust width as needed */
+  height: 100%; /* Adjust height as needed */
+  overflow: auto; /* Enable scrolling if content overflows */
+  opacity: 0;
+  animation: fadeIn 0.3s ease forwards,
+    magnify 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+.dialog-card {
+  height: 100%;
+  padding: 30px;
+  background-color: #f8fafc;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes magnify {
+  from {
+    transform: scale(0.5);
+  }
+  to {
+    transform: scale(1);
+  }
+}
+
+h1 {
+  margin-bottom: 30px;
+}
+
+::ng-deep .mat-mdc-row:hover {
+  cursor: pointer;
+}

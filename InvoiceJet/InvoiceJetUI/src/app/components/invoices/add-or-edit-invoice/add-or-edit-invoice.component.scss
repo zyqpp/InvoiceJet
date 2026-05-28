@@ -1,0 +1,87 @@
+.grid-container {
+  display: grid;
+  gap: 16px;
+}
+
+/* Large screens, 4 columns */
+@media (min-width: 1200px) {
+  .grid-container {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+/* Medium screens, 3 columns */
+@media (min-width: 900px) and (max-width: 1199px) {
+  .grid-container {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* Small screens, 2 columns */
+@media (min-width: 600px) and (max-width: 899px) {
+  .grid-container {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Extra small screens, 1 column */
+@media (max-width: 599px) {
+  .grid-container {
+    grid-template-columns: 1fr;
+  }
+}
+
+.grid-item {
+  width: 100%;
+}
+
+table {
+  border-radius: 5px;
+  padding: 1px;
+  z-index: 9999;
+}
+
+td {
+  padding: 10px;
+}
+
+.controls {
+  display: flex;
+  gap: 10px;
+  padding-top: 20px;
+}
+
+.small-cell-container {
+  width: 80px;
+}
+
+.small-cell {
+  max-width: 80px;
+}
+
+.title-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+h1 {
+  padding: 0;
+  margin: 0;
+}
+
+.document-header-container {
+  display: flex;
+  gap: 10px;
+}
+
+:host ::ng-deep .no-outline .mdc-notched-outline__leading {
+  display: none;
+}
+:host ::ng-deep .no-outline .mdc-notched-outline__notch {
+  display: none;
+}
+:host ::ng-deep .no-outline .mdc-notched-outline__trailing {
+  display: none;
+}

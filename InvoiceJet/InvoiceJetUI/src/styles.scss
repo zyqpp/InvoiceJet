@@ -1,0 +1,203 @@
+/* You can add global styles to this file, and also import other style files */
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap");
+@import "ngx-toastr/toastr";
+
+.container {
+  padding: 24px;
+  max-width: 1240px;
+  margin: 0 auto;
+}
+
+.inner-container {
+  padding: 24px;
+}
+
+.c h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+label,
+span {
+  font-family: "Inter", sans-serif;
+}
+
+html,
+body {
+  height: calc(100vh - 64px);
+  background-color: #f8fafc;
+}
+
+body {
+  margin: 0;
+}
+
+mat-form-field {
+  width: 100%;
+}
+
+.heading {
+  margin-bottom: 20px;
+}
+
+.p-error {
+  color: red;
+  margin-bottom: 10px;
+}
+
+// dark theme
+body.dark-mode .content {
+  background-color: #0f172a;
+  // td {
+  //   color: #94a3b8 !important;
+  // }
+  h1,
+  tr,
+  td,
+  label {
+    color: #ffffff !important;
+  }
+  table {
+    background: #1e293b;
+  }
+  .mdc-checkbox__background {
+    border-color: #94a3b8 !important;
+  }
+  .mat-mdc-input-element {
+    color: #ffffff !important;
+  }
+}
+
+body.dark-mode .pages {
+  .mat-icon {
+    color: #ffffff;
+  }
+  .mat-mdc-card {
+    background-color: #1e293b;
+  }
+}
+
+body.dark-mode
+  .mdc-text-field:not(.mdc-text-field--invalid):not(
+    .mdc-text-field--focused
+  ):not(.mdc-text-field--disabled) {
+  .mdc-notched-outline > * {
+    border-color: #94a3b8 !important;
+  }
+}
+
+body.dark-mode .mat-mdc-menu-panel {
+  background-color: #0f172a;
+  span {
+    color: #ffffff;
+  }
+  .mat-icon {
+    color: #ffffff;
+  }
+  input {
+    color: #ffffff;
+  }
+}
+
+body.dark-mode .mat-sidenav {
+  background-color: #1e293b;
+}
+
+body.dark-mode .mat-tree {
+  background-color: #1e293b;
+}
+
+body.dark-mode .mat-tree-node {
+  color: #ffffff;
+}
+
+body.dark-mode .mat-tree-node:hover {
+  background-color: #1e293b;
+}
+
+body.dark-mode .active-link {
+  background-color: #1e293b;
+}
+
+body.dark-mode .mat-menu-item {
+  color: #ffffff;
+  background-color: #0f172a;
+}
+
+body.dark-mode .mat-mdc-form-field {
+  color: #ffffff;
+  border-color: #ffffff;
+}
+
+body.dark-mode .mat-dialog-container {
+  background-color: #1e293b;
+}
+
+body.dark-mode .dialog-card {
+  background-color: #1e293b !important;
+  h1 {
+    color: #ffffff;
+  }
+  .mat-mdc-input-element {
+    color: #ffffff !important;
+  }
+}
+
+::ng-deep .mdc-text-field .mdc-text-field__input {
+  caret-color: white;
+}
+
+body.dark-mode mat-datepicker-toggle {
+  color: white !important;
+}
+
+body.dark-mode .pages {
+  background-color: #0f172a;
+}
+
+.app-header {
+  padding-bottom: 20px;
+  align-items: center;
+}
+
+tr:hover {
+  cursor: pointer;
+}
+
+.toast-error-bad-request {
+  background-color: #ffa726 !important; /* orange */
+  color: white;
+}
+
+.toast-error-not-found {
+  background-color: #42a5f5 !important;
+  color: white;
+}
+
+.toast-error-internal-server {
+  background-color: #ef5350 !important;
+  color: white;
+}
+
+.toast-error-unexpected {
+  background-color: #ab47bc !important;
+  color: white;
+}
+
+.toast-bottom-right {
+  position: absolute !important;
+  right: 10px;
+  bottom: 10px;
+}
+
+.icon-right-margin {
+  padding-right: 8px;
+}
+
+.controls {
+  margin-top: 10px;
+  display: flex;
+  gap: 10px;
+}
