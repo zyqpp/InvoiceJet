@@ -1,7 +1,7 @@
-# Indeks szablonow Mapy Nawigacji i Makiet
+# Indeks szablonów Mapy Nawigacji i Makiet
 
-Ten katalog jest zrodlem formatu dla dokumentow w `docs/aos/application/navigation/`.
-Kazda sekcja i pozycja menu musi korzystac z ponizszych szablonow.
+Ten katalog jest źródłem formatu dla dokumentów w `docs/aos/application/navigation/`.
+Każda sekcja i pozycja menu musi korzystać z poniższych szablonów.
 
 ## Folder sekcji menu
 
@@ -20,12 +20,12 @@ Kazda sekcja i pozycja menu musi korzystac z ponizszych szablonow.
 | `02_ELEMENTY_ELEMENTARNE.md` | [TEMPLATE_NAV_02_ELEMENTY_ELEMENTARNE.md](TEMPLATE_NAV_02_ELEMENTY_ELEMENTARNE.md) |
 | `HISTORIA_ZMIAN.md` | [TEMPLATE_HISTORIA_ZMIAN.md](TEMPLATE_HISTORIA_ZMIAN.md) |
 
-## Reguly obowiazkowe
+## Reguły obowiązkowe
 
-- Diagram Mermaid jest obowiazkowy w dokumencie sekcji i pozycji menu.
-- Tabela linkow Markdown jest obowiazkowa i jest stabilnym zrodlem nawigacji.
+- Diagram Mermaid jest obowiązkowy w dokumencie sekcji i pozycji menu.
+- Tabela linków Markdown jest obowiązkowa i jest stabilnym źródłem nawigacji.
 - Brak danych zapisuj jako `N/D`.
 - Informacje niepotwierdzone oznaczaj `[WYMAGA WERYFIKACJI]`.
 - Brak potwierdzenia w dokumentacji oznacz `[BRAK POTWIERDZENIA W DOKUMENTACJI]`.
-- Brak mapowania do bazy oznacz `[BRAK MAPOWANIA DO BAZY]`, jezeli element mapy wymaga sladu danych.
-- Szczegolowe markery i kontrola jakosci: [05_MARKERY_I_JAKOSC.md](../../../FullStackAgentAI/05_MARKERY_I_JAKOSC.md).
+- Brak mapowańia do bazy oznacz `[BRAK MAPOWANIA DO BAZY]`, jeżeli element mapy wymaga śladu danych.
+- Szczegółowe markery i kontrola jakości: [05_MARKERY_I_JAKOSC.md](../../../FullStackAgentAI/05_MARKERY_I_JAKOSC.md).

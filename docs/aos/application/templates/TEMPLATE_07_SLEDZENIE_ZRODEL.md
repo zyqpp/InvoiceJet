@@ -1,22 +1,22 @@
-# [A-XX_NAZWA] - Sledzenie zrodel
+# [A-XX_NAZWA] - Śledzenie źródeł
 
-## 1. Zrodla frontendu
+## 1. Źródła frontendu
 
 | Dokument | Zakres wykorzystania | Status |
 |---|---|---|
 | `[E-XX/plik.md]` | `[Ekran / pola / operacje / testy]` | Potwierdzone / [WYMAGA WERYFIKACJI] / N/D |
 
-## 2. Zrodla backendu
+## 2. Źródła backendu
 
 | Dokument | Zakres wykorzystania | Status |
 |---|---|---|
 | `[P-XX/plik.md]` | `[Endpoint / DTO / logika / dane]` | Potwierdzone / [WYMAGA WERYFIKACJI] / N/D |
 
-## 3. Zrodla aplikacyjne
+## 3. Źródła aplikacyjne
 
 | Dokument | Zakres wykorzystania | Status |
 |---|---|---|
-| `[A-XX/plik.md]` | `[Przeplyw / mapa / testy]` | Potwierdzone / [WYMAGA WERYFIKACJI] / N/D |
+| `[A-XX/plik.md]` | `[Przepływ / mapa / testy]` | Potwierdzone / [WYMAGA WERYFIKACJI] / N/D |
 
 ## 4. Luki i niespojnosci
 
@@ -24,9 +24,9 @@
 |---|---|---|---|
 | `[Opis]` | UI/API/Backend/DB | `[WYMAGA WERYFIKACJI]` / `[BRAK MAPOWANIA DO BAZY]` / `[BRAK POTWIERDZENIA W DOKUMENTACJI]` | `[Jak oznaczono w dokumencie]` |
 
-## 5. Reguly wypelniania
+## 5. Reguły wypełniania
 
-- Nie wpisuj zrodel, ktore nie zostaly uzyte.
+- Nie wpisuj źródeł, ktore nie zostaly użyte.
 - Brak danych zapisuj jako `N/D`.
 - Informacje niepotwierdzone oznaczaj `[WYMAGA WERYFIKACJI]`.
-- Szczegolowe markery: [05_MARKERY_I_JAKOSC.md](../../../FullStackAgentAI/05_MARKERY_I_JAKOSC.md).
+- Szczegółowe markery: [05_MARKERY_I_JAKOSC.md](../../../FullStackAgentAI/05_MARKERY_I_JAKOSC.md).

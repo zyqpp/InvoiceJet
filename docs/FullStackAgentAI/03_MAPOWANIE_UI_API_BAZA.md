@@ -1,8 +1,8 @@
-# Mapowanie UI, API i bazy danych
+# Mapowańie UI, API i bazy danych
 
-## 1. Regula mapowania pola
+## 1. Reguła mapowańia pola
 
-Kazde pole danych opisuje sie w jednym wierszu tabeli mapowania.
+Każde pole danych opisuje się w jednym wierszu tabeli mapowańia.
 
 | Element | Wymagana informacja |
 |---|---|
@@ -11,45 +11,45 @@ Kazde pole danych opisuje sie w jednym wierszu tabeli mapowania.
 | HTTP | Metoda serwisu Angular i endpoint. |
 | Backend | DTO, kontroler i metoda serwisu aplikacyjnego. |
 | Baza | Encja oraz `Tabela.Kolumna`. |
-| Uwagi | Marker, jezeli pelny slad nie istnieje. |
+| Uwagi | Marker, jeżeli pełny ślad nie istnieje. |
 
-## 2. Regula mapowania operacji
+## 2. Reguła mapowańia operacji
 
-Operacja UI musi pokazac pelny skutek. Opis zawiera:
+Operacja UI musi pokazac pełny skutek. Opis zawiera:
 
 - element wyzwalajacy,
 - handler w komponencie,
 - walidacje frontendu,
-- metode serwisu Angular,
+- metodę serwisu Angular,
 - endpoint,
-- metode kontrolera,
-- metode serwisu backendowego,
+- metodę kontrolera,
+- metodę serwisu backendowego,
 - odczyty i zapisy w bazie,
-- reakcje UI po sukcesie i bledzie.
+- reakcje UI po sukcesie i błędzie.
 
-## 3. Regula mapowania gridu
+## 3. Reguła mapowańia gridu
 
-Grid opisuje sie przez zrodlo kolekcji i przeksztalcenia:
+Grid opisuje się przez źródło kolekcji i przeksztalcenia:
 
 | Obszar | Opis |
 |---|---|
-| Zrodlo UI | `MatTableDataSource`, kolekcja modelu TS, filtr, sortowanie, paginacja. |
-| Wywolanie HTTP | Metoda serwisu Angular oraz endpoint. |
-| Odpowiedz API | DTO listy albo rekord tabeli. |
+| Źródło UI | `MatTableDataSource`, kolekcja modelu TS, filtr, sortowanie, paginacja. |
+| Wywołanie HTTP | Metoda serwisu Angular oraz endpoint. |
+| Odpowiedź API | DTO listy albo rekord tabeli. |
 | Backend | Repozytorium, `Query()`, `Include()` albo metoda dedykowana. |
-| Baza | Tabele i kolumny uzyte do zasilenia kolumn gridu. |
+| Baza | Tabele i kolumny użyte do zasilenia kolumn gridu. |
 
-## 4. Regula walidacji
+## 4. Reguła walidacji
 
 Walidacje opisywac warstwowo:
 
-| Warstwa | Co dokumentowac |
+| Warstwa | Co dokumentówac |
 |---|---|
 | Frontend | `Validators`, walidatory niestandardowe, stan `invalid`, komunikaty `mat-error`. |
-| API | Atrybuty walidacyjne DTO, wymagalnosc parametrow trasy i body. |
+| API | Atrybuty walidacyjne DTO, wymagalność parametrow trasy i body. |
 | Backend | Warunki w serwisach, wyjatki domenowe, skutki braku danych. |
-| Baza | Wymagalnosc kolumn, typy danych, relacje, indeksy. |
+| Baza | Wymagalność kolumn, typy danych, relacje, indeksy. |
 
-## 5. Regula braku pelnego sladu
+## 5. Reguła braku pełnego śladu
 
-Jezeli dana informacja konczy sie na jednej warstwie, dokument wskazuje ostatni potwierdzony punkt. Brak dalszego sladu oznacza sie markerem z `05_MARKERY_I_JAKOSC.md`.
+Jeżeli dana informacja kończy sie na jednej warstwie, dokument wskazuje ostatni potwierdzony punkt. Brak dalszego śladu oznacza sie markerem z `05_MARKERY_I_JAKOSC.md`.

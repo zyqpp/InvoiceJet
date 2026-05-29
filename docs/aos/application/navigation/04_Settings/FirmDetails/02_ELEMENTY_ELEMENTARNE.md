@@ -2,6 +2,6 @@
 
 | Element | Typ | Komponent | Opis |
 |---|---|---|---|
-| Formularz firmy | ekran | `FirmDetailsComponent` | Dane aktywnej firmy uzytkownika. |
+| Formularz firmy | ekran | `FirmDetailsComponent` | Dane aktywnej firmy użytkownika. |
 | Pobranie ANAF | operacja | `FirmService.getFirmFromAnaf()` | Uzupelnienie formularza po CUI. |
-| Zapis firmy | operacja | `addFirm()` albo `editFirm()` | Tworzy albo aktualizuje firme aktywna. |
+| Zapis firmy | operacja | `addFirm()` albo `editFirm()` | Twórzy albo aktualizuje firme aktywna. |

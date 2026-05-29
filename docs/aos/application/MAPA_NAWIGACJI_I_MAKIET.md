@@ -1,8 +1,8 @@
 # Mapa Nawigacji i Makiet
 
 **Aplikacja:** InvoiceJet
-**Zrodlo menu:** AOS frontendu `E-00_AppShell`
-**Zrodlo tras:** AOS frontendu i `docs/struktura-katalogow-frontend.md`
+**Źródło menu:** AOS frontendu `E-00_AppShell`
+**Źródło tras:** AOS frontendu i `docs/struktura-katalogow-frontend.md`
 
 ## 1. Diagram globalny
 
@@ -45,9 +45,9 @@ flowchart TD
 | Settings | N/D | [04_Settings](./navigation/04_Settings/01_DIAGRAM_SEKCJI.md) |
 | Public | `/login`, `/register` | [05_Public](./navigation/05_Public/01_DIAGRAM_SEKCJI.md) |
 
-## 3. Powiazanie z przeplywami
+## 3. Powiązanie z przepływami
 
-| Pozycja menu | Przeplyw aplikacyjny | Dokument |
+| Pozycja menu | Przepływ aplikacyjny | Dokument |
 |---|---|---|
 | Dashboard | `A-01_Dashboard` | [rejestr](./REJESTR_PRZEPLYWOW_APLIKACJI.md) |
 | Invoices | `A-02_Invoices`, `A-05_IssueNewInvoice` | [A-05](./flows/A-05_IssueNewInvoice/00_METADANE.md) |

@@ -1,9 +1,9 @@
 # Firm Details - Metadane pozycji
 
-| Atrybut | Wartosc |
+| Atrybut | Wartość |
 |---|---|
 | Sekcja menu | Settings |
 | Pozycja menu | Firm Details |
 | Route | `/dashboard/firm-details` |
 | Komponent | `FirmDetailsComponent` |
-| Przeplyw | `A-08_FirmDetails` |
+| Przepływ | `A-08_FirmDetails` |

@@ -4,49 +4,49 @@
 
 ## 1. Cel dokumentacji
 
-AOS aplikacyjny opisuje dzialanie InvoiceJet przez polaczenie trzech warstw:
+AOS aplikacyjny opisuje działanie InvoiceJet przez połączenie trzech warstw:
 
 - makieta i komponent Angular,
 - serwis HTTP i endpoint API,
 - serwis backendowy, encja, tabela i kolumna bazy danych.
 
-Dokument nie zastepuje AOS frontendu ani AOS backendu. Dokument wskazuje ich powiazania i pokazuje pelny slad danych oraz operacji.
+Dokument nie zastępuje AOS frontendu ani AOS backendu. Dokument wskazuje ich powiązania i pokazuje pełny ślad danych oraz operacji.
 
-## 2. Zrodla prawdy
+## 2. Źródła prawdy
 
-| Obszar | Zrodlo |
+| Obszar | Źródło |
 |---|---|
 | Menu, trasy i makiety | `InvoiceJet/InvoiceJetUI/docs` |
 | Modele, serwisy i operacje frontendu | `InvoiceJet/InvoiceJetUI/docs/aos/frontend` |
 | Endpointy i procesy backendu | `InvoiceJet/InvoiceJetAPI/docs/aos/backend` |
-| Reguly dla agentow front/back | `InvoiceJet/InvoiceJetUI/docs/FrontendAgentAI`, `InvoiceJet/InvoiceJetAPI/docs/BackendAgentAI` |
+| Reguły dla agentow front/back | `InvoiceJet/InvoiceJetUI/docs/FrontendAgentAI`, `InvoiceJet/InvoiceJetAPI/docs/BackendAgentAI` |
 | Technologia i baza | `docs/stos-technologiczny.md` |
 | Struktura frontendu | `docs/struktura-katalogow-frontend.md` |
 
-## 3. Reguly nadrzedne
+## 3. Reguły nadrzedne
 
-| Kod | Regula | Opis |
+| Kod | Reguła | Opis |
 |---|---|---|
-| ZA.1 | Dokumentacja zrodlowa jest podstawa | Opis musi wynikac z dokumentacji frontendu, backendu albo dokumentow glownych. |
-| ZA.2 | Pelny slad danych | Kazde pole danych laczy UI, API, DTO, encje i baze, jezeli taki slad istnieje. |
-| ZA.3 | Brak zgadywania SQL | Przy EF Core opisuje sie metode, encje, tabele i kolumny na podstawie dokumentacji backendu. |
-| ZA.4 | Dokument nie powiela calych AOS | Dokument aplikacyjny streszcza powiazanie i linkuje do dokumentow zrodlowych. |
-| ZA.5 | Tylko informacje uzyteczne | Nie dodawac opisow, ktore nie pomagaja analitykowi, developerowi albo testerowi. |
+| ZA.1 | Dokumentacja źródłowa jest podstawa | Opis musi wynikac z dokumentacji frontendu, backendu albo dokumentów głównych. |
+| ZA.2 | Pełny ślad danych | Każde pole danych łączy UI, API, DTO, encje i bazę, jeżeli taki ślad istnieje. |
+| ZA.3 | Brak zgadywania SQL | Przy EF Core opisuje się metodę, encje, tabele i kolumny na podstawie dokumentacji backendu. |
+| ZA.4 | Dokument nie powiela całych AOS | Dokument aplikacyjny streszcza powiązanie i linkuje do dokumentów źródłowych. |
+| ZA.5 | Tylko informacje użyteczne | Nie dodawac opisow, ktore nie pomagaja analitykowi, developerowi albo testerowi. |
 
 ## 4. Styl
 
-Opis biznesowy jest po polsku. Nazwy klas, metod, endpointow, pol DTO, kolumn i plikow zachowuja oryginalne brzmienie i sa zapisywane w backtickach.
+Opis biznesowy jest po polsku. Nazwy klas, metod, endpointów, pól DTO, kolumn i plików zachowują oryginalne brzmienie i są zapisywane w backtickach.
 
-Zdania sa krotkie. Jedno zdanie opisuje jedna decyzje, jedna zaleznosc albo jeden skutek.
+Zdania są krotkie. Jedno zdanie opisuje jedna decyzje, jedna zaleznosc albo jeden skutek.
 
-Agent nie czyta kodu aplikacji podczas tworzenia AOS aplikacyjnego. Jezeli dokumentacja frontendu albo backendu wskazuje nazwe pliku, klasy lub metody, agent moze ja przytoczyc jako slad z dokumentacji.
+Agent nie czyta kodu aplikacji podczas twórzenia AOS aplikacyjnego. Jeżeli dokumentacja frontendu albo backendu wskazuje nazwe pliku, klasy lub metody, agent moze ja przytoczyc jako ślad z dokumentacji.
 
-## 5. Zakres przeplywu
+## 5. Zakres przepływu
 
-Przeplyw aplikacyjny zaczyna sie w elemencie widocznym dla uzytkownika. Przeplyw konczy sie na skutku:
+Przepływ aplikacyjny zaczyna sie w elemencie widocznym dla użytkownika. Przepływ kończy sie na skutku:
 
 - zmianie danych w bazie,
 - odczycie danych z bazy,
 - wygenerowaniu pliku,
 - zmianie stanu widoku,
-- komunikacie sukcesu albo bledu.
+- komunikacie sukcesu albo błędu.

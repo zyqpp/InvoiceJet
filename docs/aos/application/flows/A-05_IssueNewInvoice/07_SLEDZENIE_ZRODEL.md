@@ -1,4 +1,4 @@
-# Wystawienie nowej faktury - Sledzenie zrodel
+# Wystawienie nowej faktury - Śledzenie źródeł
 
 ## 1. Dokumenty frontendu
 
@@ -19,7 +19,7 @@
 | PDF | `InvoiceJet/InvoiceJetAPI/docs/aos/backend/processes/P-17_GetInvoicePdfStream` |
 | Wytyczne backendu | `InvoiceJet/InvoiceJetAPI/docs/BackendAgentAI` |
 
-## 3. Dokumenty glowne
+## 3. Dokumenty główne
 
 | Obszar | Dokument |
 |---|---|
@@ -30,4 +30,4 @@
 
 | Marker | Opis |
 |---|---|
-| N/D | W dokumencie nie pozostawiono markerow wymagajacych uzupelnienia. |
+| N/D | W dokumencie nie pozostawiono markerow wymagających uzupelnienia. |

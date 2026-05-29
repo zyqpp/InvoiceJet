@@ -2,7 +2,7 @@
 
 ## 1. Cel
 
-Przeplyw opisuje utworzenie faktury z ekranu `Invoice Details`. Formularz pobiera dane pomocnicze z API, przyjmuje klienta, serie dokumentu, daty i pozycje dokumentu, a nastepnie zapisuje dokument w bazie.
+Przepływ opisuje utwórzenie faktury z ekranu `Invoice Details`. Formularz pobiera dane pomocnicze z API, przyjmuje klienta, serie dokumentu, daty i pozycje dokumentu, a nastepnie zapisuje dokument w bazie.
 
 ## 2. Diagram
 
@@ -24,7 +24,7 @@ sequenceDiagram
   BS-->>API: DocumentAutofillDto
   API-->>FS: 200 OK
   FS-->>UI: dane do formularza
-  Tester->>UI: wypelnienie formularza i klikniecie Issue
+  Tester->>UI: wypełnienie formularza i klikniecie Issue
   UI->>FS: addDocument(documentData)
   FS->>API: POST /api/Document/AddDocument
   API->>BS: AddDocument(DocumentRequestDto)
@@ -36,12 +36,12 @@ sequenceDiagram
   UI-->>Tester: toastr i powrot do /dashboard/invoices
 ```
 
-## 3. Warunki wejscia
+## 3. Warunki wejścia
 
-| Warunek | Zrodlo |
+| Warunek | Źródło |
 |---|---|
-| Uzytkownik jest zalogowany | `AuthGuard`, `[Authorize(Roles = "User")]` |
-| Uzytkownik ma aktywna firme | `Users.GetUserFirmIdAsync()` |
+| Użytkownik jest zalogowany | `AuthGuard`, `[Authorize(Roles = "User")]` |
+| Użytkownik ma aktywna firme | `Users.GetUserFirmIdAsync()` |
 | Aktywna firma ma aktywne konto bankowe | `BankAccounts.Query().Where(ba => ba.UserFirmId == userFirmId && ba.IsActive)` |
 | Istnieje seria dokumentu dla typu `1` | `DocumentSeries` filtrowane po `DocumentTypeId == 1` |
 
@@ -49,7 +49,7 @@ sequenceDiagram
 
 | Warstwa | Skutek |
 |---|---|
-| UI | Komunikat `Document added successfully` i przejscie do `/dashboard/invoices`. |
+| UI | Komunikat `Document added successfully` i przejście do `/dashboard/invoices`. |
 | API | `POST /api/Document/AddDocument` zwraca `200 OK`. |
-| Backend | `DocumentService.AddDocument()` tworzy dokument i pozycje. |
+| Backend | `DocumentService.AddDocument()` twórzy dokument i pozycje. |
 | Baza | Zapisy w `Document`, `DocumentProduct`, opcjonalnie `Product`; aktualizacja `DocumentSeries.CurrentNumber`. |

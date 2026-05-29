@@ -1,6 +1,6 @@
 # Invoice Proformas - Metadane pozycji
 
-| Atrybut | Wartosc |
+| Atrybut | Wartość |
 |---|---|
 | Sekcja menu | Documents |
 | Pozycja menu | Invoice Proformas |
@@ -8,4 +8,4 @@
 | Route dodawania | `/dashboard/add-invoice-proforma` |
 | Route edycji | `/dashboard/edit-invoice-proforma/:id` |
 | Komponent listy | `InvoiceProformasComponent` |
-| Przeplyw | `A-03_InvoiceProformas` |
+| Przepływ | `A-03_InvoiceProformas` |

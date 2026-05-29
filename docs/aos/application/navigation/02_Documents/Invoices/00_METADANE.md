@@ -1,6 +1,6 @@
 # Invoices - Metadane pozycji
 
-| Atrybut | Wartosc |
+| Atrybut | Wartość |
 |---|---|
 | Sekcja menu | Documents |
 | Pozycja menu | Invoices |
@@ -9,4 +9,4 @@
 | Route edycji | `/dashboard/edit-invoice/:id` |
 | Komponent listy | `InvoicesComponent` |
 | Komponent formularza | `AddOrEditInvoiceComponent` |
-| Przeplywy | `A-02_Invoices`, `A-05_IssueNewInvoice` |
+| Przepływy | `A-02_Invoices`, `A-05_IssueNewInvoice` |

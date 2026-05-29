@@ -1,15 +1,15 @@
 # Szablony AOS aplikacyjnego
 
-Ten dokument steruje agentem. Zrodlem formatu nie jest opis ponizej, tylko konkretne pliki szablonow w:
+Ten dokument steruje agentem. Źródłem formatu nie jest opis poniżej, tylko konkretne pliki szablonów w:
 
 `docs/aos/application/templates/`
 
-Agent nie tworzy dokumentu AOS aplikacyjnego z pustego pliku ani z wlasnego ukladu sekcji.
-Kazdy dokument w `docs/aos/application/flows/A-XX_Nazwa/` musi powstac przez wypelnienie odpowiedniego `TEMPLATE_*.md`.
+Agent nie twórzy dokumentu AOS aplikacyjnego z pustego pliku ani z własnego ukladu sekcji.
+Każdy dokument w `docs/aos/application/flows/A-XX_Nazwa/` musi powstac przez wypełnienie odpowiedniego `TEMPLATE_*.md`.
 
-## Komplet dokumentow przeplywu
+## Komplet dokumentów przepływu
 
-| Docelowy plik | Szablon obowiazkowy |
+| Docelowy plik | Szablon obowiązkowy |
 |---|---|
 | `00_METADANE.md` | [TEMPLATE_00_METADANE.md](../aos/application/templates/TEMPLATE_00_METADANE.md) |
 | `01_PRZEGLAD_END_TO_END.md` | [TEMPLATE_01_PRZEGLAD_END_TO_END.md](../aos/application/templates/TEMPLATE_01_PRZEGLAD_END_TO_END.md) |
@@ -21,35 +21,35 @@ Kazdy dokument w `docs/aos/application/flows/A-XX_Nazwa/` musi powstac przez wyp
 | `07_SLEDZENIE_ZRODEL.md` | [TEMPLATE_07_SLEDZENIE_ZRODEL.md](../aos/application/templates/TEMPLATE_07_SLEDZENIE_ZRODEL.md) |
 | `HISTORIA_ZMIAN.md` | [TEMPLATE_HISTORIA_ZMIAN.md](../aos/application/templates/TEMPLATE_HISTORIA_ZMIAN.md) |
 
-## Zasady wypelniania
+## Zasady wypełniania
 
 - Zachowaj nazwy sekcji i kolumn z szablonu.
-- Usuwaj tylko sekcje, ktore szablon jawnie pozwala oznaczyc jako niedotyczace.
+- Usuwaj tylko sekcję, ktore szablon jawnie pozwala oznaczyc jako niedotyczace.
 - Brak danych zapisuj jako `N/D`.
 - Informacje niepotwierdzone oznaczaj `[WYMAGA WERYFIKACJI]`.
-- Gdy nie ma potwierdzenia w dokumentacji front/back, uzyj `[BRAK POTWIERDZENIA W DOKUMENTACJI]`.
-- Gdy slad UI/API/DB urywa sie przed baza, uzyj `[BRAK MAPOWANIA DO BAZY]`.
-- Tabele mapowania musza miec kolumne `Dowod` albo osobna sekcje `Dowody / zrodla`.
+- Gdy nie ma potwierdzenia w dokumentacji front/back, użyj `[BRAK POTWIERDZENIA W DOKUMENTACJI]`.
+- Gdy ślad UI/API/DB urywa sie przed baza, użyj `[BRAK MAPOWANIA DO BAZY]`.
+- Tabele mapowańia muszą mieć kolumnę `Dowód` albo osobną sekcję `Dowódy / źródła`.
 
 ## Standard historii zmian
 
-Kazdy `HISTORIA_ZMIAN.md` ma uzywac tabeli:
+Każdy `HISTORIA_ZMIAN.md` ma używać tabeli:
 
 `Wersja | Data | Autor | Model | Poziom inteligencji | Tryb / kontekst wykonania | Opis zmian`
 
-Reguly:
+Reguły:
 
 - `Autor`: `Agent AI:Codex`,
 - model wpisuj tylko wtedy, gdy jest jawnie znany; w przeciwnym razie `N/D [WYMAGA WERYFIKACJI]`,
 - poziom inteligencji wpisuj tylko wtedy, gdy runtime go ujawnia; w przeciwnym razie `N/D [WYMAGA WERYFIKACJI]`,
 - nie zgaduj rozmiaru kontekstu ani poziomu reasoning.
 
-## Kontrola jakosci
+## Kontrola jakości
 
 Przed oddaniem agent sprawdza:
 
-- czy istnieje komplet wymaganych plikow,
-- czy dokumenty zachowuja kolumny z szablonow,
+- czy istnieje komplet wymaganych plików,
+- czy dokumenty zachowują kolumny z szablonów,
 - czy brak danych jest zapisany jako `N/D`,
-- czy markery sa zgodne z [05_MARKERY_I_JAKOSC.md](05_MARKERY_I_JAKOSC.md),
-- czy linki do dokumentow zrodlowych prowadza do istniejacych plikow.
+- czy markery są zgodne z [05_MARKERY_I_JAKOSC.md](05_MARKERY_I_JAKOSC.md),
+- czy linki do dokumentów źródłowych prowadza do istniejacych plików.

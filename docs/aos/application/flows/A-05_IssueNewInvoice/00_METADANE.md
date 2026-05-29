@@ -1,9 +1,9 @@
 # Wystawienie nowej faktury - Metadane
 
-| Atrybut | Wartosc |
+| Atrybut | Wartość |
 |---|---|
 | Aplikacja | InvoiceJet |
-| ID przeplywu | `A-05` |
+| ID przepływu | `A-05` |
 | Nazwa | Wystawienie nowej faktury |
 | Sekcja menu | Documents > Invoices |
 | Route | `/dashboard/add-invoice` |
@@ -14,6 +14,6 @@
 | Serwis Angular | `DocumentService` |
 | Kontroler API | `DocumentController` |
 | Serwis backendowy | `DocumentService` |
-| Glowne encje | `Document`, `DocumentProduct`, `Product`, `DocumentSeries`, `Firm`, `BankAccount` |
+| Główne encje | `Document`, `DocumentProduct`, `Product`, `DocumentSeries`, `Firm`, `BankAccount` |
 | Status | Roboczy |
-| Data utworzenia | 2026-05-29 |
+| Data utwórzenia | 2026-05-29 |

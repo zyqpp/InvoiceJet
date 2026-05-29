@@ -1,6 +1,6 @@
 # Documents - Metadane sekcji
 
-| Atrybut | Wartosc |
+| Atrybut | Wartość |
 |---|---|
 | Sekcja menu | Documents |
 | Pozycje | Invoices, Invoice Proformas, Invoice Stornos |

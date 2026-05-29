@@ -1,9 +1,9 @@
 # Login - Metadane pozycji
 
-| Atrybut | Wartosc |
+| Atrybut | Wartość |
 |---|---|
 | Sekcja | Public |
 | Route | `/login` |
 | Komponent | `LoginComponent` |
 | Endpoint | `POST /api/Auth/login` |
-| Przeplyw | `A-11_Login` |
+| Przepływ | `A-11_Login` |

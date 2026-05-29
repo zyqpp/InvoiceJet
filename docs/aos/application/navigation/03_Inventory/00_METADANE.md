@@ -1,6 +1,6 @@
 # Inventory - Metadane sekcji
 
-| Atrybut | Wartosc |
+| Atrybut | Wartość |
 |---|---|
 | Sekcja menu | Inventory |
 | Pozycje | Clients, Products |

@@ -1,6 +1,6 @@
 # Settings - Metadane sekcji
 
-| Atrybut | Wartosc |
+| Atrybut | Wartość |
 |---|---|
 | Sekcja menu | Settings |
 | Pozycje | Firm Details, Bank Accounts, Document Series |

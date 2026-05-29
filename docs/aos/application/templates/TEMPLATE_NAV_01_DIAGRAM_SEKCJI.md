@@ -10,23 +10,23 @@ flowchart TD
     ITEM2 --> SCREEN2["[Ekran / route]"]
 ```
 
-## 2. Tabela linkow
+## 2. Tabela linków
 
 | Element | Typ | Route | Dokument AOS aplikacyjny | Dokument AOS frontendu | Uwagi |
 |---|---|---|---|---|---|
-| `[Nazwa]` | Sekcja / pozycja / ekran / dialog / podglad | `[route]` / N/D | `[link]` / N/D | `[link]` / N/D | N/D |
+| `[Nazwa]` | Sekcja / pozycja / ekran / dialog / podgląd | `[route]` / N/D | `[link]` / N/D | `[link]` / N/D | N/D |
 
-## 3. Powiazane przeplywy
+## 3. Powiązane przepływy
 
-| Pozycja menu | Przeplyw aplikacyjny | Proces backend | Dowod |
+| Pozycja menu | Przepływ aplikacyjny | Proces backend | Dowód |
 |---|---|---|---|
 | `[Nazwa]` | `[A-XX]` / N/D | `[P-XX]` / N/D | `[link]` |
 
-## 4. Reguly wypelniania
+## 4. Reguły wypełniania
 
-- Diagram Mermaid jest obowiazkowy.
-- Tabela linkow Markdown jest obowiazkowa i jest zrodlem nawigacji.
+- Diagram Mermaid jest obowiązkowy.
+- Tabela linków Markdown jest obowiązkowa i jest źródłem nawigacji.
 - Brak danych zapisuj jako `N/D`.
 - Informacje niepotwierdzone oznaczaj `[WYMAGA WERYFIKACJI]`.
 - Brak potwierdzenia w dokumentacji oznacz `[BRAK POTWIERDZENIA W DOKUMENTACJI]`.
-- Szczegolowe markery: [05_MARKERY_I_JAKOSC.md](../../../FullStackAgentAI/05_MARKERY_I_JAKOSC.md).
+- Szczegółowe markery: [05_MARKERY_I_JAKOSC.md](../../../FullStackAgentAI/05_MARKERY_I_JAKOSC.md).

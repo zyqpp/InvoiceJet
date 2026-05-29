@@ -64,12 +64,12 @@ flowchart TB
 ### 3.1 Framework i hosting
 
 - **ASP.NET Core Web API** — projekt `InvoiceJet.Presentation` (`Microsoft.NET.Sdk.Web`)
-- **Minimal hosting model** — konfiguracja w `Program.cs` (rejestracja DI, middleware, mapowanie kontrolerów)
+- **Minimal hosting model** — konfiguracja w `Program.cs` (rejestracja DI, middleware, mapowańie kontrolerów)
 - **ASP.NET Core 8.0.6** — pakiety `Microsoft.AspNetCore.*` w warstwie Presentation
 
 ### 3.2 Clean Architecture — warstwy
 
-| Warstwa | Projekt | Odpowiedzialność |
+| Warstwa | Projekt | Odpowiedźialność |
 |---------|---------|------------------|
 | **Domain** | `InvoiceJet.Domain` | Encje biznesowe, enums, wyjątki domenowe, interfejsy repozytoriów i `IUnitOfWork` |
 | **Application** | `InvoiceJet.Application` | Serwisy biznesowe, DTO, profile AutoMapper, logika aplikacyjna |
@@ -88,8 +88,8 @@ flowchart TB
 | Microsoft.AspNetCore.Authentication.JwtBearer | 8.0.6 | Uwierzytelnianie JWT |
 | Microsoft.AspNetCore.OpenApi | 8.0.6 | OpenAPI |
 | Microsoft.Data.SqlClient | 5.2.1 | Klient SQL Server |
-| AutoMapper | 13.0.1 | Mapowanie obiektów |
-| AutoMapper.Collection | 10.0.0 | Mapowanie kolekcji |
+| AutoMapper | 13.0.1 | Mapowańie obiektów |
+| AutoMapper.Collection | 10.0.0 | Mapowańie kolekcji |
 | BCrypt.Net-Next | 4.0.3 | Hashowanie haseł |
 | QuestPDF | 2024.3.10 | Generowanie dokumentów PDF |
 | Swashbuckle.AspNetCore | 6.6.2 | Swagger / OpenAPI UI |
@@ -100,12 +100,12 @@ flowchart TB
 
 | Biblioteka | Wersja | Rola |
 |------------|--------|------|
-| AutoMapper | 13.0.1 | Mapowanie DTO |
+| AutoMapper | 13.0.1 | Mapowańie DTO |
 | BCrypt.Net-Next | 4.0.3 | Hashowanie haseł |
 | Microsoft.EntityFrameworkCore | 8.0.6 | Dostęp do kontekstu przez Unit of Work |
-| Microsoft.IdentityModel.Tokens | 7.1.2 | Tworzenie tokenów JWT |
+| Microsoft.IdentityModel.Tokens | 7.1.2 | Twórzenie tokenów JWT |
 | System.IdentityModel.Tokens.Jwt | 7.1.2 | Obsługa JWT |
-| Newtonsoft.Json | 13.0.3 | Parsowanie odpowiedzi API ANAF |
+| Newtonsoft.Json | 13.0.3 | Parsowanie odpowiedźi API ANAF |
 | Microsoft.Extensions.Configuration.Abstractions | 9.0.0-preview.4.24266.19 | Odczyt konfiguracji |
 
 #### Warstwa Infrastructure (`InvoiceJet.Infrastructure.csproj`)
@@ -120,8 +120,8 @@ flowchart TB
 - **Repository + Unit of Work** — `IGenericRepository<T>`, `IUnitOfWork`, implementacje w Infrastructure
 - **DTO (Data Transfer Objects)** — wymiana danych między warstwami i API
 - **Dependency Injection** — rejestracja serwisów, repozytoriów i `DbContext` w `Program.cs`
-- **AutoMapper** — mapowanie encji domenowych na DTO i odwrotnie
-- **Exception Middleware** — globalna obsługa wyjątków domenowych (`ExceptionMiddleware`), odpowiedzi w formacie JSON (`System.Text.Json`)
+- **AutoMapper** — mapowańie encji domenowych na DTO i odwrotnie
+- **Exception Middleware** — globalna obsługa wyjątków domenowych (`ExceptionMiddleware`), odpowiedźi w formacie JSON (`System.Text.Json`)
 - **DbSeeder** — seed typów dokumentów przy starcie aplikacji
 - **CORS** — polityka `NgOrigins` dla originów Angular (`http://localhost:4200`, `https://localhost:4200`)
 
@@ -284,7 +284,7 @@ Uruchomienie: `ng test` (standardowy stack Angular CLI).
 | Hashowanie haseł | BCrypt (`BCrypt.Net-Next` 4.0.3) |
 | Token sesji | JWT (symetryczny klucz z `AppSettings:Token`) |
 | Walidacja tokenu | `Microsoft.AspNetCore.Authentication.JwtBearer` |
-| Tworzenie tokenu | `System.IdentityModel.Tokens.Jwt` + `Microsoft.IdentityModel.Tokens` |
+| Twórzenie tokenu | `System.IdentityModel.Tokens.Jwt` + `Microsoft.IdentityModel.Tokens` |
 | Autoryzacja API | `[Authorize(Roles = "User")]` na kontrolerach |
 | Frontend | `AuthInterceptor`, `AuthGuard`, `@auth0/angular-jwt` |
 | HTTPS | `UseHttpsRedirection()` w pipeline ASP.NET Core |
@@ -340,7 +340,7 @@ npm install
 ng serve
 ```
 
-Frontend: `http://localhost:4200`  
+Frontend: `http://localhost:4200`
 API (dev): konfiguracja w `launchSettings.json` / `environment.ts`
 
 ---
@@ -363,7 +363,7 @@ API (dev): konfiguracja w `launchSettings.json` / `environment.ts`
 | Wykresy | Chart.js 4 + ng2-charts 5 |
 | Integracja zewnętrzna | API ANAF (Rumunia) |
 | Testy frontend | Jasmine + Karma |
-| Mapowanie obiektów | AutoMapper 13.0.1 |
+| Mapowańie obiektów | AutoMapper 13.0.1 |
 
 ---
 

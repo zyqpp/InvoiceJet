@@ -1,9 +1,9 @@
 # Register - Metadane pozycji
 
-| Atrybut | Wartosc |
+| Atrybut | Wartość |
 |---|---|
 | Sekcja | Public |
 | Route | `/register` |
 | Komponent | `RegisterComponent` |
 | Endpoint | `POST /api/Auth/register` |
-| Przeplyw | `A-12_Register` |
+| Przepływ | `A-12_Register` |

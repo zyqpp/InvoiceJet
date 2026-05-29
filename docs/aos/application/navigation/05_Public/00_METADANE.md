@@ -1,6 +1,6 @@
 # Public - Metadane sekcji
 
-| Atrybut | Wartosc |
+| Atrybut | Wartość |
 |---|---|
 | Sekcja | Public |
 | Pozycje | Login, Register |

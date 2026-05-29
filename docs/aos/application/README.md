@@ -1,11 +1,11 @@
 # Dokumentacja AOS aplikacji InvoiceJet
 
 **Status:** Roboczy
-**Zakres:** dokumentacja end-to-end laczaca frontend, backend i baze danych.
+**Zakres:** dokumentacja end-to-end łącząca frontend, backend i bazę danych.
 
 ## Jak czytac dokumentacje
 
-Dokumentacja aplikacyjna jest trzecim poziomem AOS. Warstwa frontendu opisuje ekrany. Warstwa backendu opisuje procesy API. Warstwa aplikacyjna laczy te informacje w przeplywy widoczne dla uzytkownika.
+Dokumentacja aplikacyjna jest trzecim poziomem AOS. Warstwa frontendu opisuje ekrany. Warstwa backendu opisuje procesy API. Warstwa aplikacyjna łączy te informacje w przepływy widoczne dla użytkownika.
 
 ## Struktura
 
@@ -21,20 +21,20 @@ docs/aos/application/
 
 ## Role
 
-| Rola | Sciezka czytania |
+| Rola | Ścieżka czytania |
 |---|---|
-| Analityk | `MAPA_NAWIGACJI_I_MAKIET.md`, rejestr przeplywow, przeglad `A-XX`. |
-| Developer | mapy pol, operacje, sledzenie zrodel. |
-| Tester | scenariusze E2E, walidacje, bledy i skutki w bazie. |
-| PM/PO | mapa nawigacji, status przeplywow, historia zmian. |
+| Analityk | `MAPA_NAWIGACJI_I_MAKIET.md`, rejestr przepływów, przeglad `A-XX`. |
+| Developer | mapy pól, operacje, śledzenie źródeł. |
+| Tester | scenariusze E2E, walidacje, błędy i skutki w bazie. |
+| PM/PO | mapa nawigacji, status przepływów, historia zmian. |
 
 ## Reprezentacyjny przyklad weryfikacyjny
 
-Dokument [PRZYKLAD_WERYFIKACYJNY_A-05_IssueNewInvoice.md](PRZYKLAD_WERYFIKACYJNY_A-05_IssueNewInvoice.md) pokazuje jeden kompletny slad od pola UI i akcji przycisku do endpointu API i skutku w bazie.
-To jest punkt kontrolny jak czytac i weryfikowac jakosc dokumentacji aplikacyjnej bez uruchamiania kodu.
-W przykladzie celowo uzyto tylko istniejacych dokumentow frontendu, backendu i warstwy aplikacyjnej.
+Dokument [PRZYKLAD_WERYFIKACYJNY_A-05_IssueNewInvoice.md](PRZYKLAD_WERYFIKACYJNY_A-05_IssueNewInvoice.md) pokazuje jeden kompletny ślad od pola UI i akcji przycisku do endpointu API i skutku w bazie.
+To jest punkt kontrolny jak czytac i weryfikowac jakość dokumentacji aplikacyjnej bez uruchamiania kodu.
+W przykladzie celowo użyto tylko istniejacych dokumentów frontendu, backendu i warstwy aplikacyjnej.
 
-## Zrodla
+## Źródła
 
 - AOS frontendu: `InvoiceJet/InvoiceJetUI/docs`
 - AOS backendu: `InvoiceJet/InvoiceJetAPI/docs`

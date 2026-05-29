@@ -2,7 +2,7 @@
 
 | Element | Typ | Komponent | Opis |
 |---|---|---|---|
-| Lista proform | ekran | `InvoiceProformasComponent` | Grid dokumentow typu `2`. |
+| Lista proform | ekran | `InvoiceProformasComponent` | Grid dokumentów typu `2`. |
 | Formularz proformy | ekran potomny | `AddOrEditInvoiceProformaComponent` | Dodanie albo edycja proformy. |
-| Podglad PDF | dialog | `PdfViewerComponent` | Podglad wygenerowanego PDF. |
-| Usuwanie | operacja masowa | `deleteSelected()` | Wywoluje `DeleteDocuments`. |
+| Podgląd PDF | dialog | `PdfViewerComponent` | Podgląd wygenerowanego PDF. |
+| Usuwanie | operacja masowa | `deleteSelected()` | Wywołuje `DeleteDocuments`. |

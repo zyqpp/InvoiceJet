@@ -2,24 +2,24 @@
 
 ## Cel i kryterium potwierdzenia
 
-Celem jest potwierdzenie, ze dokumentacja aplikacyjna pozwala przejsc caly slad:
+Celem jest potwierdzenie, że dokumentacja aplikacyjna pozwala przejść cały ślad:
 `UI -> Front Service -> API -> Backend -> DB`.
 
 Kryterium potwierdzenia:
 
-- dla jednego pola i jednej akcji mozna wskazac mapowanie do endpointu, DTO, encji i `Tabela.Kolumna`,
+- dla jednego pola i jednej akcji mozna wskazac mapowańie do endpointu, DTO, encji i `Tabela.Kolumna`,
 - dla tej samej akcji mozna wskazac skutek w danych oraz rezultat w UI,
-- kazdy krok ma dowod w istniejacej dokumentacji AOS.
+- każdy krok ma dowód w istniejacej dokumentacji AOS.
 
 ## Wybrany przypadek (1 pole + 1 akcja + 1 skutek)
 
-- Pole UI: `Document Series` na ekranie szczegolow faktury.
+- Pole UI: `Document Series` na ekranie szczegółów faktury.
 - Akcja UI: klik `Issue`.
 - Skutek danych: zapis nowego `Document` oraz zwiekszenie `DocumentSeries.CurrentNumber`.
 
-## Slad E2E
+## Ślad E2E
 
-| Warstwa | Element | Dowod |
+| Warstwa | Element | Dowód |
 |---|---|---|
 | UI | Pole `formControlName=\"documentSeries\"` | [A-05: 02_MAPA_POL_UI_DO_DANYCH.md](flows/A-05_IssueNewInvoice/02_MAPA_POL_UI_DO_DANYCH.md) |
 | Front Service | `onSubmit()` oraz `DocumentService.addDocument()` | [A-05: 03_OPERACJE_I_PRZYCISKI.md](flows/A-05_IssueNewInvoice/03_OPERACJE_I_PRZYCISKI.md) |
@@ -31,11 +31,11 @@ Kryterium potwierdzenia:
 
 | Krok | Akcja | Expected UI | Expected API | Expected DB |
 |---|---|---|---|---|
-| 1 | Wejscie na `/dashboard/add-invoice` | Formularz widoczny, dane pomocnicze zaladowane | `GET /api/Document/GetDocumentAutofillInfo/1` | Brak zapisu |
-| 2 | Wybor `Document Series` i uzupelnienie danych | Formularz przechodzi walidacje | Brak wywolania zapisu przed submit | Brak zapisu |
+| 1 | Wejście na `/dashboard/add-invoice` | Formularz widoczny, dane pomocnicze załadowane | `GET /api/Document/GetDocumentAutofillInfo/1` | Brak zapisu |
+| 2 | Wybor `Document Series` i uzupelnienie danych | Formularz przechodzi walidacje | Brak wywołania zapisu przed submit | Brak zapisu |
 | 3 | Klik `Issue` | Po sukcesie toastr i powrot do `/dashboard/invoices` | `POST /api/Document/AddDocument` zwraca `200 OK` | Nowy rekord `Document`; inkrementacja `DocumentSeries.CurrentNumber` |
 
-## Dowody i linki
+## Dowódy i linki
 
 - Dokument aplikacyjny:
   [A-05 00_METADANE](flows/A-05_IssueNewInvoice/00_METADANE.md),
@@ -55,5 +55,5 @@ Kryterium potwierdzenia:
 
 `POTWIERDZONO`
 
-Dokumentacja aplikacyjna zawiera komplet informacji pozwalajacy odtworzyc reprezentacyjny przypadek od makiety do skutku w bazie.
-Brakujace metadane runtime agenta (poziom inteligencji i pelny kontekst historyczny) sa oznaczane markerem `N/D [WYMAGA WERYFIKACJI]` w historiach zmian.
+Dokumentacja aplikacyjna zawiera komplet informacji pozwalajacy odtwórzyc reprezentacyjny przypadek od makiety do skutku w bazie.
+Brakujace metadane runtime agenta (poziom inteligencji i pełny kontekst historyczny) są oznaczane markerem `N/D [WYMAGA WERYFIKACJI]` w historiach zmian.

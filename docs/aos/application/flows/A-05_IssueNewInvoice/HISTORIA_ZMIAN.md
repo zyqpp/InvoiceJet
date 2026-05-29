@@ -1,5 +1,5 @@
-﻿# Wystawienie nowej faktury - Historia zmian
+# Wystawienie nowej faktury - Historia zmian
 
 | Wersja | Data | Autor | Model | Poziom inteligencji | Tryb / kontekst wykonania | Opis zmian |
 |---|---|---|---|---|---|---|
-| 1.0 | 2026-05-29 | Agent AI:Codex | GPT-5 Codex [WYMAGA WERYFIKACJI] | N/D [WYMAGA WERYFIKACJI] | N/D [WYMAGA WERYFIKACJI] | Utworzono pierwszy pelny przeplyw AOS aplikacyjnego end-to-end. |
+| 1.0 | 2026-05-29 | Agent AI:Codex | GPT-5 Codex [WYMAGA WERYFIKACJI] | N/D [WYMAGA WERYFIKACJI] | N/D [WYMAGA WERYFIKACJI] | Utwórzono pierwszy pełny przepływ AOS aplikacyjnego end-to-end. |

@@ -1,11 +1,11 @@
-# Indeks szablonow AOS aplikacyjnego
+# Indeks szablonów AOS aplikacyjnego
 
-Ten katalog jest zrodlem formatu dla dokumentow w `docs/aos/application/flows/A-XX_Nazwa/`.
-Kazdy nowy przeplyw aplikacyjny musi powstac z ponizszego kompletu plikow.
+Ten katalog jest źródłem formatu dla dokumentów w `docs/aos/application/flows/A-XX_Nazwa/`.
+Każdy nowy przepływ aplikacyjny musi powstac z poniższego kompletu plików.
 
-## Wymagany komplet plikow przeplywu
+## Wymagany komplet plików przepływu
 
-| Docelowy plik w przeplywie | Szablon |
+| Docelowy plik w przepływie | Szablon |
 |---|---|
 | `00_METADANE.md` | [TEMPLATE_00_METADANE.md](TEMPLATE_00_METADANE.md) |
 | `01_PRZEGLAD_END_TO_END.md` | [TEMPLATE_01_PRZEGLAD_END_TO_END.md](TEMPLATE_01_PRZEGLAD_END_TO_END.md) |
@@ -17,12 +17,12 @@ Kazdy nowy przeplyw aplikacyjny musi powstac z ponizszego kompletu plikow.
 | `07_SLEDZENIE_ZRODEL.md` | [TEMPLATE_07_SLEDZENIE_ZRODEL.md](TEMPLATE_07_SLEDZENIE_ZRODEL.md) |
 | `HISTORIA_ZMIAN.md` | [TEMPLATE_HISTORIA_ZMIAN.md](TEMPLATE_HISTORIA_ZMIAN.md) |
 
-## Reguly obowiazkowe
+## Reguły obowiązkowe
 
-- Nie tworz dokumentow przeplywu z pustego pliku.
-- Zachowaj nazwy sekcji i kolumn z szablonow.
+- Nie twórz dokumentów przepływu z pustego pliku.
+- Zachowaj nazwy sekcji i kolumn z szablonów.
 - Brak danych zapisuj jako `N/D`.
 - Informacje niepotwierdzone oznaczaj `[WYMAGA WERYFIKACJI]`.
-- Brak mapowania do bazy oznacz `[BRAK MAPOWANIA DO BAZY]`.
+- Brak mapowańia do bazy oznacz `[BRAK MAPOWANIA DO BAZY]`.
 - Brak potwierdzenia w dokumentacji oznacz `[BRAK POTWIERDZENIA W DOKUMENTACJI]`.
-- Szczegolowe markery i kontrola jakosci: [05_MARKERY_I_JAKOSC.md](../../../FullStackAgentAI/05_MARKERY_I_JAKOSC.md).
+- Szczegółowe markery i kontrola jakości: [05_MARKERY_I_JAKOSC.md](../../../FullStackAgentAI/05_MARKERY_I_JAKOSC.md).
