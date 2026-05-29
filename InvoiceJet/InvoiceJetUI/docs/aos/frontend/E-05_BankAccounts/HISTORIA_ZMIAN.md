@@ -1,0 +1,5 @@
+# Historia zmian dokumentu
+
+| Wersja | Data | Autor | Opis zmian |
+|---|---|---|---|
+| 1.0 | 2026-05-29 | Agent AI | Dokument inicjalny AOS frontendu dla ekranu Bank Accounts na podstawie kodu Angular, serwisu, modeli, routingu i screenshotu. |
