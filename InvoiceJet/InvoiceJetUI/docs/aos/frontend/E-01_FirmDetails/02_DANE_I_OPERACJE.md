@@ -2,6 +2,12 @@
 
 ---
 
+## Zrzut ekranu
+
+![Ekran Szczegóły firmy](screenshot.png)
+
+---
+
 ## 1. Formularz danych firmy
 
 ### 1.1 Struktura formularza
