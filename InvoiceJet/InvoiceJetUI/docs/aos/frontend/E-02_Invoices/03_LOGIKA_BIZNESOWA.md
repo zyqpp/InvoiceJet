@@ -123,6 +123,6 @@ Błędy HTTP są obsługiwane przez interceptory:
 
 ## 10. Ograniczenia opisu
 
-- Dokument nie opisuje formularza dodawania ani edycji faktury. Ten zakres jest opisany w dokumentacji `E-02_InvoiceDetails`.
+- Dokument nie opisuje formularza dodawania ani edycji faktury. Ten zakres jest opisany w dokumentacji `E-03_InvoiceDetails`.
 - Dokument nie opisuje sposobu transformacji do storna po stronie API.
 - Dokument nie opisuje sposobu usuwania dokumentów po stronie API.

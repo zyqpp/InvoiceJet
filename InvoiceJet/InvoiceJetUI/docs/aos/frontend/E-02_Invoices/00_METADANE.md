@@ -20,7 +20,7 @@
 | **Plik komponentu** | `src/app/components/invoices/invoices.component.ts` |
 | **Plik szablonu** | `src/app/components/invoices/invoices.component.html` |
 | **Plik stylów** | `src/app/components/invoices/invoices.component.scss` |
-| **Ekran powiązany** | `E-02_InvoiceDetails` dla `/dashboard/add-invoice` i `/dashboard/edit-invoice/:id` |
+| **Ekran powiązany** | `E-03_InvoiceDetails` dla `/dashboard/add-invoice` i `/dashboard/edit-invoice/:id` |
 | **Wersja dokumentu** | 1.0 |
 | **Autor dokumentu** | Agent AI |
 | **Ostatnia aktualizacja** | 2026-05-29 |

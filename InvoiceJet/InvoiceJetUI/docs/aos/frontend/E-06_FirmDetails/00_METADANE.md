@@ -59,8 +59,8 @@ Ekran edycji danych firmy użytkownika (wystawcy dokumentów). Ekran wyświetla 
 - Ekran nie wywołuje okien modalnych.
 
 ### Powiązane ekrany
-- Ekran Klienci (`E-02_Clients`) — wykorzystuje ten sam serwis `FirmService` i model `IFirm`
-- Ekran Konta bankowe (`E-03_BankAccounts`) — konta bankowe przypisane do firmy użytkownika
+- Ekran Klienci (`E-04_Clients`) — wykorzystuje ten sam serwis `FirmService` i model `IFirm`
+- Ekran Konta bankowe (`E-07_BankAccounts`) — konta bankowe przypisane do firmy użytkownika
 
 ---
 
