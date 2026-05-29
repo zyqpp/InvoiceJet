@@ -28,6 +28,12 @@ docs/aos/application/
 | Tester | scenariusze E2E, walidacje, bledy i skutki w bazie. |
 | PM/PO | mapa nawigacji, status przeplywow, historia zmian. |
 
+## Reprezentacyjny przyklad weryfikacyjny
+
+Dokument [PRZYKLAD_WERYFIKACYJNY_A-05_IssueNewInvoice.md](PRZYKLAD_WERYFIKACYJNY_A-05_IssueNewInvoice.md) pokazuje jeden kompletny slad od pola UI i akcji przycisku do endpointu API i skutku w bazie.
+To jest punkt kontrolny jak czytac i weryfikowac jakosc dokumentacji aplikacyjnej bez uruchamiania kodu.
+W przykladzie celowo uzyto tylko istniejacych dokumentow frontendu, backendu i warstwy aplikacyjnej.
+
 ## Zrodla
 
 - AOS frontendu: `InvoiceJet/InvoiceJetUI/docs`
