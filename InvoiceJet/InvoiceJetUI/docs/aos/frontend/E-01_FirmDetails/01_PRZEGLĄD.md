@@ -2,6 +2,12 @@
 
 ---
 
+## Zrzut ekranu
+
+![Ekran Szczegóły firmy](../../../../../../Screenshots/Picture4.png)
+
+---
+
 ## 1. Layout ekranu
 
 ### 1.1 Diagram struktury
