@@ -2,10 +2,10 @@
 
 **Dokument:** Metadane ekranu  
 **Aplikacja:** InvoiceJet  
-**Moduł:** Firm Management  
-**Klasyfikacja:** Prosty  
+**Moduł:** Inventory  
+**Klasyfikacja:** Standardowy  
 **Data utworzenia:** 2026-05-29  
-**Status:** Roboczy
+**Status:** Do weryfikacji technicznej
 
 ---
 
@@ -14,11 +14,15 @@
 | Atrybut | Wartość |
 |---|---|
 | **Nazwa biznesowa ekranu** | Clients |
-| **Ścieżka URL** | `/clients` |
+| **Ścieżka URL** | `/dashboard/clients` |
+| **Guard dostępu** | `AuthGuard` |
+| **Lazy loading** | Nie |
 | **Plik komponentu** | `src/app/components/firm/clients/clients.component.ts` |
 | **Plik szablonu** | `src/app/components/firm/clients/clients.component.html` |
 | **Plik stylów** | `src/app/components/firm/clients/clients.component.scss` |
-| **Wersja dokumentu** | 1.0 |
+| **Komponent dialogu** | `src/app/components/firm/add-edit-client-dialog/add-edit-client-dialog.component.ts` |
+| **Szablon dialogu** | `src/app/components/firm/add-edit-client-dialog/add-edit-client-dialog.component.html` |
+| **Wersja dokumentu** | 1.1 |
 | **Autor dokumentu** | Agent AI |
 | **Ostatnia aktualizacja** | 2026-05-29 |
 
@@ -26,7 +30,7 @@
 
 ## Krótki opis
 
-Ekran do zarządzania listą klientów (firm zarejestrowanych jako odbiorcy) — wyświetla grid z danymi, umożliwia dodawanie, edycję i usuwanie.
+Ekran Clients wyświetla grid klientów zalogowanego użytkownika. Ekran umożliwia filtrowanie tekstowe, sortowanie, paginację, zaznaczanie wierszy, dodawanie klienta, edycję klienta oraz usuwanie zaznaczonych klientów.
 
 ---
 
@@ -35,8 +39,8 @@ Ekran do zarządzania listą klientów (firm zarejestrowanych jako odbiorcy) —
 | Dokument | Link |
 |---|---|
 | Przegląd ekranu | [01_PRZEGLĄD.md](01_PRZEGLĄD.md) |
-| Pola i operacje | [02_DANE_I_OPERACJE.md](02_DANE_I_OPERACJE.md) |
-| Logika biznesowa | [03_LOGIKA_BIZNESOWA.md](03_LOGIKA_BIZNESOWA.md) |
+| Dane i operacje | [02_DANE_I_OPERACJE.md](02_DANE_I_OPERACJE.md) |
+| Logika frontendowa | [03_LOGIKA_BIZNESOWA.md](03_LOGIKA_BIZNESOWA.md) |
 | Scenariusze testowe | [04_SCENARIUSZE_TESTOWE.md](04_SCENARIUSZE_TESTOWE.md) |
 | Historia zmian | [HISTORIA_ZMIAN.md](HISTORIA_ZMIAN.md) |
 
@@ -45,19 +49,24 @@ Ekran do zarządzania listą klientów (firm zarejestrowanych jako odbiorcy) —
 ## Szybkie odniesienia
 
 ### Główne serwisy
-- `FirmService.service.ts` — pobieranie i zarządzanie danymi firm
+
+- `FirmService` — wywołania HTTP dla listy klientów, dodawania, edycji, usuwania i pobierania danych z ANAF.
+- `MatDialog` — otwieranie dialogu Dodawanie/Edycja klienta.
+- `ToastrService` — wyświetlanie komunikatów sukcesu i błędu.
+- `LiveAnnouncer` — komunikaty dostępności dla zmiany sortowania.
 
 ### Modele danych
-- `IFirm` — interfejs danych klienta
 
-### Dialogi (jeśli istnieją)
-- Dialog Dodawanie klienta: `clients-edit.dialog.component.ts`
-- Dialog Edycja klienta: `clients-edit.dialog.component.ts` (reuse)
+- `IFirm` — model danych klienta używany przez grid i formularz dialogu.
+
+### Dialogi
+
+- Dialog Dodawanie/Edycja klienta: `AddEditClientDialogComponent`.
 
 ---
 
 ## Notatki
 
-- Ekran zawiera CRUD operacje dla klientów
-- Wykorzystuje Angular Material do UI
-- Integruje się z backend API `/api/firms`
+- Dokument opisuje zachowanie warstwy frontendowej wynikające z komponentów Angular i serwisów UI.
+- Dokument nie opisuje implementacji backendu ani logiki bazy danych.
+- Endpoints są podane wyłącznie jako adresy wywoływane przez `FirmService`.
