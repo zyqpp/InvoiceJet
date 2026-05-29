@@ -8,7 +8,7 @@
 
 | ID | Nazwa | Sekcja menu | Ekran frontend | Proces backend | Status |
 |---|---|---|---|---|---|
-| `A-00` | AppShell | Global | `E-00_AppShell` | `P-04_LoginUser` | Do przygotowania |
+| `A-00` | AppShell | Global | `E-00_AppShell` | `[TYLKO FRONTEND]` | Stworzony |
 | `A-01` | Dashboard | Dashboard | `E-01_Dashboard` | `P-18_GetDashboardStats` | Do przygotowania |
 | `A-02` | Invoices | Documents | `E-02_Invoices` | `P-14`, `P-15`, `P-19` | Do przygotowania |
 | `A-03` | Invoice Proformas | Documents | `E-03_InvoiceProformas` | `P-14`, `P-15` | Do przygotowania |
@@ -27,5 +27,6 @@
 | Dokument | Link |
 |---|---|
 | Mapa Nawigacji i Makiet | [MAPA_NAWIGACJI_I_MAKIET.md](./MAPA_NAWIGACJI_I_MAKIET.md) |
-| Pierwszy pełny przepływ | [A-05_IssueNewInvoice](./flows/A-05_IssueNewInvoice/00_METADANE.md) |
+| Przepływ Powłoki | [A-00_AppShell](./flows/A-00_AppShell/00_METADANE.md) |
+| Przepływ Wystawienia Faktury | [A-05_IssueNewInvoice](./flows/A-05_IssueNewInvoice/00_METADANE.md) |
 | Wytyczne agenta | [FullStackAgentAI](../../FullStackAgentAI/01_ZASADY_AOS_APLIKACYJNEGO.md) |
