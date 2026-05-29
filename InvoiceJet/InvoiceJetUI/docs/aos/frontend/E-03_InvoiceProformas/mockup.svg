@@ -1,0 +1,52 @@
+<svg width="1280" height="760" viewBox="0 0 1280 760" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1280" height="760" fill="#f6f8fb"/>
+  <rect x="0" y="0" width="1280" height="64" fill="#3f51b5"/>
+  <text x="76" y="40" font-family="Arial, sans-serif" font-size="26" fill="#fff" font-weight="700">InvoiceJet</text>
+  <rect x="1204" y="16" width="34" height="34" rx="17" fill="#eef2ff"/>
+  <text x="1212" y="39" font-family="Arial, sans-serif" font-size="15" fill="#3f51b5" font-weight="700">JK</text>
+  <rect x="0" y="64" width="270" height="696" fill="#ffffff"/>
+  <rect x="22" y="90" width="226" height="48" rx="6" fill="#f8fafc" stroke="#d5dbea"/>
+  <text x="58" y="121" font-family="Arial, sans-serif" font-size="15" fill="#667085">Search...</text>
+  <text x="24" y="174" font-family="Arial, sans-serif" font-size="17" fill="#3f51b5" font-weight="700">Dashboard</text>
+  <text x="24" y="221" font-family="Arial, sans-serif" font-size="17" fill="#344054" font-weight="700">Documents</text>
+  <rect x="30" y="238" width="222" height="40" rx="6" fill="#fff"/>
+  <text x="58" y="263" font-family="Arial, sans-serif" font-size="15" fill="#344054">Invoices</text>
+  <rect x="30" y="282" width="222" height="42" rx="6" fill="#e8edff"/>
+  <text x="58" y="309" font-family="Arial, sans-serif" font-size="15" fill="#3f51b5" font-weight="700">Invoice Proformas</text>
+  <rect x="30" y="328" width="222" height="40" rx="6" fill="#fff"/>
+  <text x="58" y="353" font-family="Arial, sans-serif" font-size="15" fill="#344054">Invoice Stornos</text>
+  <text x="24" y="414" font-family="Arial, sans-serif" font-size="17" fill="#344054" font-weight="700">Inventory</text>
+  <text x="58" y="455" font-family="Arial, sans-serif" font-size="15" fill="#344054">Clients</text>
+  <text x="58" y="496" font-family="Arial, sans-serif" font-size="15" fill="#344054">Products</text>
+  <text x="24" y="562" font-family="Arial, sans-serif" font-size="17" fill="#344054" font-weight="700">Settings</text>
+  <rect x="302" y="95" width="918" height="54" rx="8" fill="#ffffff"/>
+  <text x="326" y="130" font-family="Arial, sans-serif" font-size="27" fill="#1d2939" font-weight="700">Invoice Proformas</text>
+  <rect x="1008" y="104" width="148" height="36" rx="6" fill="#3f51b5"/>
+  <text x="1035" y="128" font-family="Arial, sans-serif" font-size="14" fill="#fff" font-weight="700">+ New Proforma</text>
+  <rect x="1168" y="104" width="42" height="36" rx="6" fill="#fff" stroke="#3f51b5"/>
+  <text x="1184" y="128" font-family="Arial, sans-serif" font-size="20" fill="#3f51b5">⋮</text>
+  <rect x="302" y="174" width="918" height="54" rx="8" fill="#ffffff"/>
+  <text x="326" y="207" font-family="Arial, sans-serif" font-size="15" fill="#667085">Search</text>
+  <rect x="302" y="252" width="918" height="380" rx="8" fill="#ffffff"/>
+  <rect x="302" y="252" width="918" height="48" rx="8" fill="#eef2ff"/>
+  <text x="326" y="282" font-family="Arial, sans-serif" font-size="14" fill="#344054" font-weight="700">☐</text>
+  <text x="382" y="282" font-family="Arial, sans-serif" font-size="14" fill="#344054" font-weight="700">Document Number</text>
+  <text x="574" y="282" font-family="Arial, sans-serif" font-size="14" fill="#344054" font-weight="700">Client Name</text>
+  <text x="760" y="282" font-family="Arial, sans-serif" font-size="14" fill="#344054" font-weight="700">Issue Date</text>
+  <text x="900" y="282" font-family="Arial, sans-serif" font-size="14" fill="#344054" font-weight="700">Due Date</text>
+  <text x="1026" y="282" font-family="Arial, sans-serif" font-size="14" fill="#344054" font-weight="700">Total Value</text>
+  <text x="1140" y="282" font-family="Arial, sans-serif" font-size="14" fill="#344054" font-weight="700">Status</text>
+  <g font-family="Arial, sans-serif" font-size="14" fill="#475467">
+    <text x="326" y="333">☐</text><text x="382" y="333">PF-2026-001</text><text x="574" y="333">ACME TEST S.R.L.</text><text x="760" y="333">May 29, 2026</text><text x="900" y="333">Jun 12, 2026</text><text x="1026" y="333">1190 RON</text>
+    <text x="1140" y="333" fill="#027a48">Draft</text>
+    <text x="326" y="385">☐</text><text x="382" y="385">PF-2026-002</text><text x="574" y="385">Delta Services</text><text x="760" y="385">May 30, 2026</text><text x="900" y="385">Jun 14, 2026</text><text x="1026" y="385">2380 RON</text>
+    <text x="1140" y="385" fill="#175cd3">Issued</text>
+    <text x="326" y="437">☐</text><text x="382" y="437">PF-2026-003</text><text x="574" y="437">Beta Trade</text><text x="760" y="437">Jun 01, 2026</text><text x="900" y="437">Jun 20, 2026</text><text x="1026" y="437">730 RON</text>
+    <text x="1140" y="437" fill="#b42318">Expired</text>
+  </g>
+  <line x1="302" y1="352" x2="1220" y2="352" stroke="#eaecf0"/>
+  <line x1="302" y1="404" x2="1220" y2="404" stroke="#eaecf0"/>
+  <line x1="302" y1="456" x2="1220" y2="456" stroke="#eaecf0"/>
+  <rect x="302" y="648" width="918" height="48" rx="8" fill="#ffffff"/>
+  <text x="1055" y="678" font-family="Arial, sans-serif" font-size="13" fill="#667085">Rows per page: 10   1-3 of 3</text>
+</svg>
