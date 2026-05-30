@@ -1,6 +1,6 @@
 # Mapa plików projektu — InvoiceJetAPI
 
-**Data aktualizacji:** 2026-05-29
+**Data aktualizacji:** 2026-05-30
 **Cel:** Szybka nawigacja po plikach źródłowych — dla agentów i developerów.
 **Zasada:** Każdy nowy plik dodany do projektu musi być tu wpisany.
 **Ścieżki:** względem katalogu `InvoiceJet/InvoiceJetAPI/` (bez prefiksu projektu).
@@ -19,14 +19,16 @@
 
 ### 1.2 Kontrolery
 
-| Plik | Klasa | Route base | Endpointy (metoda + akcja) |
+| Plik | Klasa | Route base | Endpointy (metoda HTTP + akcja) |
 |---|---|---|---|
 | `InvoiceJet.Presentation/Controllers/AuthController.cs` | `AuthController` | `/api/Auth` | `POST register`, `POST login` |
-| `InvoiceJet.Presentation/Controllers/FirmController.cs` | `FirmController` | `/api/Firm` | [sprawdź plik] |
-| `InvoiceJet.Presentation/Controllers/BankAccountController.cs` | `BankAccountController` | `/api/BankAccount` | [sprawdź plik] |
-| `InvoiceJet.Presentation/Controllers/ProductController.cs` | `ProductController` | `/api/Product` | [sprawdź plik] |
-| `InvoiceJet.Presentation/Controllers/DocumentSeriesController.cs` | `DocumentSeriesController` | `/api/DocumentSeries` | [sprawdź plik] |
-| `InvoiceJet.Presentation/Controllers/DocumentController.cs` | `DocumentController` | `/api/Document` | [sprawdź plik — 9 endpointów, własny try/catch w `GenerateDocument`] |
+| `InvoiceJet.Presentation/Controllers/FirmController.cs` | `FirmController` | `/api/Firm` | `POST AddFirm/{isClient}`, `GET fromAnaf/{cui}`, `PUT EditFirm/{isClient}`, `GET GetUserActiveFirm`, `GET GetUserClientFirms`, `PUT DeleteFirms` |
+| `InvoiceJet.Presentation/Controllers/BankAccountController.cs` | `BankAccountController` | `/api/BankAccount` | `GET GetUserFirmBankAccounts`, `POST AddUserFirmBankAccount`, `PUT EditUserFirmBankAccount`, `PUT DeleteUserFirmBankAccounts` |
+| `InvoiceJet.Presentation/Controllers/ProductController.cs` | `ProductController` | `/api/Product` | `GET GetAllProductsForUserId`, `POST AddProduct`, `PUT EditProduct`, `PUT DeleteProducts` |
+| `InvoiceJet.Presentation/Controllers/DocumentSeriesController.cs` | `DocumentSeriesController` | `/api/DocumentSeries` | `GET GetAllDocumentSeriesForUserId`, `POST AddDocumentSeries`, `PUT UpdateDocumentSeries`, `PUT DeleteDocumentSeries` |
+| `InvoiceJet.Presentation/Controllers/DocumentController.cs` | `DocumentController` | `/api/Document` | `POST AddDocument`, `PUT EditDocument`, `GET GetDocumentTableRecords/{documentTypeId}`, `GET GetDocumentById/{documentId}`, `PUT DeleteDocuments`, `GET GetDocumentAutofillInfo/{documentTypeId}`, `POST GenerateDocumentPdf`\*, `POST GetInvoicePdfStream`, `GET GetDashboardStats/{year}/{documentType}`, `PUT TransformToStorno` |
+
+> \* `GenerateDocumentPdf` ma własny `try/catch` w kontrolerze (zwraca `BadRequest` zamiast przechodzić przez `ExceptionMiddleware`).
 
 ---
 
@@ -41,7 +43,7 @@
 | `InvoiceJet.Application/Services/IBankAccountService.cs` | `IBankAccountService` | CRUD kont bankowych |
 | `InvoiceJet.Application/Services/IProductService.cs` | `IProductService` | CRUD produktów |
 | `InvoiceJet.Application/Services/IDocumentSeriesService.cs` | `IDocumentSeriesService` | CRUD serii dokumentów |
-| `InvoiceJet.Application/Services/IDocumentService.cs` | `IDocumentService` | dokumenty: dodaj/edytuj/lista/szczegóły/usuń/stat |
+| `InvoiceJet.Application/Services/IDocumentService.cs` | `IDocumentService` | dokumenty: dodaj/edytuj/lista/szczegóły/usuń/stats/pdf/storno |
 | `InvoiceJet.Application/Services/IPdfGenerationService.cs` | `IPdfGenerationService` | generowanie PDF przez QuestPDF |
 | `InvoiceJet.Application/Services/IUserService.cs` | `IUserService` | `GetCurrentUserId()` — odczyt z JWT claim |
 
@@ -50,11 +52,11 @@
 | Plik | Klasa | Komentarz |
 |---|---|---|
 | `InvoiceJet.Application/Services/Impl/AuthService.cs` | `AuthService` | `RegisterUser`, `LoginUser`, `CreateToken` (private) |
-| `InvoiceJet.Application/Services/Impl/FirmService.cs` | `FirmService` | integracja ANAF |
-| `InvoiceJet.Application/Services/Impl/BankAccountService.cs` | `BankAccountService` | — |
+| `InvoiceJet.Application/Services/Impl/FirmService.cs` | `FirmService` | integracja ANAF (`HttpClient` bez IHttpClientFactory) |
+| `InvoiceJet.Application/Services/Impl/BankAccountService.cs` | `BankAccountService` | `DeactivateOtherBankAccounts` (private) |
 | `InvoiceJet.Application/Services/Impl/ProductService.cs` | `ProductService` | — |
-| `InvoiceJet.Application/Services/Impl/DocumentSeriesService.cs` | `DocumentSeriesService` | — |
-| `InvoiceJet.Application/Services/Impl/DocumentService.cs` | `DocumentService` | główna logika fakturowania |
+| `InvoiceJet.Application/Services/Impl/DocumentSeriesService.cs` | `DocumentSeriesService` | `AddInitialDocumentSeries` (wywoływana z P-03, P-05) |
+| `InvoiceJet.Application/Services/Impl/DocumentService.cs` | `DocumentService` | `UpdateDocumentProducts`, `IncreaseDocumentSeriesNumber`, `GetTotalDocumentsAsync`, `GetMonthlyTotalsAsync` (private) |
 | `InvoiceJet.Application/Services/Impl/UserService.cs` | `UserService` | `GetCurrentUserId()` z `IHttpContextAccessor` |
 
 ### 2.3 DTO
@@ -67,12 +69,12 @@
 | `InvoiceJet.Application/DTOs/BankAccountDto.cs` | `BankAccountDto` | wejście/wyjście | `BankAccountController` |
 | `InvoiceJet.Application/DTOs/ProductDto.cs` | `ProductDto` | wejście/wyjście | `ProductController` |
 | `InvoiceJet.Application/DTOs/DocumentSeriesDto.cs` | `DocumentSeriesDto` | wejście/wyjście | `DocumentSeriesController` |
-| `InvoiceJet.Application/DTOs/DocumentRequestDto.cs` | `DocumentRequestDto` | wejście/wyjście | `DocumentController.AddDocument`, `EditDocument` |
+| `InvoiceJet.Application/DTOs/DocumentRequestDto.cs` | `DocumentRequestDto` | wejście/wyjście | `DocumentController.AddDocument`, `EditDocument`, `GenerateDocumentPdf`, `GetInvoicePdfStream` |
 | `InvoiceJet.Application/DTOs/DocumentProductRequestDto.cs` | `DocumentProductRequestDto` | wejście | zagnieżdżone w `DocumentRequestDto` |
-| `InvoiceJet.Application/DTOs/DocumentTableRecordDto.cs` | `DocumentTableRecordDto` | wyjście | `DocumentController` (lista dokumentów) |
-| `InvoiceJet.Application/DTOs/DocumentAutofillDto.cs` | `DocumentAutofillDto` | wyjście | `DocumentController.GetDocumentAutofillData` |
-| `InvoiceJet.Application/DTOs/DocumentStatusDto.cs` | `DocumentStatusDto` | wyjście | `DocumentController` |
-| `InvoiceJet.Application/DTOs/DocumentStreamDto.cs` | `DocumentStreamDto` | wyjście | `DocumentController` (stream PDF) |
+| `InvoiceJet.Application/DTOs/DocumentTableRecordDto.cs` | `DocumentTableRecordDto` | wyjście | `DocumentController.GetDocumentTableRecords` |
+| `InvoiceJet.Application/DTOs/DocumentAutofillDto.cs` | `DocumentAutofillDto` | wyjście | `DocumentController.GetDocumentAutofillInfo` |
+| `InvoiceJet.Application/DTOs/DocumentStatusDto.cs` | `DocumentStatusDto` | wyjście | zagnieżdżony w `DocumentAutofillDto` |
+| `InvoiceJet.Application/DTOs/DocumentStreamDto.cs` | `DocumentStreamDto` | wejście | `DocumentController.GetInvoicePdfStream` |
 | `InvoiceJet.Application/DTOs/DashboardStatsDto.cs` | `DashboardStatsDto` | wyjście | `DocumentController.GetDashboardStats` |
 | `InvoiceJet.Application/DTOs/MonthlyTotalDto.cs` | `MonthlyTotalDto` | wyjście | zagnieżdżone w `DashboardStatsDto` |
 
@@ -112,45 +114,47 @@
 
 | Plik | Enum | Wartości |
 |---|---|---|
-| `InvoiceJet.Domain/Enums/Currency.cs` | `Currency` | [sprawdź plik] |
-| `InvoiceJet.Domain/Enums/DocumentStatus.cs` | `DocumentStatusEnum` | [sprawdź plik] |
-| `InvoiceJet.Domain/Enums/DocumentType.cs` | `DocumentTypeEnum` | [sprawdź plik] |
+| `InvoiceJet.Domain/Enums/Currency.cs` | `CurrencyEnum` | `Ron = 0`, `Euro = 1` |
+| `InvoiceJet.Domain/Enums/DocumentStatus.cs` | `DocumentStatusEnum` | `Unpaid = 1`, `Paid = 2` |
+| `InvoiceJet.Domain/Enums/DocumentType.cs` | `DocumentTypeEnum` | `Invoice = 1`, `ProformaInvoice = 2`, `StornoInvoice = 3` |
 
 ### 3.3 Wyjątki domenowe
 
-| Plik | Klasa | Komunikat | Zmapowany w middleware? | Status |
+| Plik | Klasa | Komunikat wyświetlany użytkownikowi | Zmapowany w middleware? | HTTP |
 |---|---|---|---|---|
-| `InvoiceJet.Domain/Exceptions/AnafFirmNotFoundException.cs` | `AnafFirmNotFoundException` | `[sprawdź plik]` | tak | `404` |
-| `InvoiceJet.Domain/Exceptions/BankAccountAssociatedWithDocuments.cs` | `BankAccountAssociatedWithDocumentsException` | `[sprawdź plik]` | tak | `400` |
-| `InvoiceJet.Domain/Exceptions/FirmAssociatedWithDocumentException.cs` | `FirmAssociatedWithDocumentException` | `[sprawdź plik]` | **nie** ⚠ | `500` (catch-all) |
-| `InvoiceJet.Domain/Exceptions/IncorrectPasswordException.cs` | `IncorrectPasswordException` | `"Password is incorrect."` | tak | `400` |
-| `InvoiceJet.Domain/Exceptions/InvalidPasswordException.cs` | `InvalidPasswordException` | `"Password must be at least 8 characters..."` | **nie** ⚠ | `500` (catch-all) |
-| `InvoiceJet.Domain/Exceptions/NoBankAccountAddedException.cs` | `NoBankAccountAddedException` | `[sprawdź plik]` | tak | `400` |
-| `InvoiceJet.Domain/Exceptions/PasswordMismatchException.cs` | `PasswordMismatchException` | `"Password confirmation doesn't match."` | tak | `400` |
-| `InvoiceJet.Domain/Exceptions/ProductAssociatedWithInvoiceException.cs` | `ProductAssociatedWithInvoiceException` | `[sprawdź plik]` | tak | `400` |
-| `InvoiceJet.Domain/Exceptions/ProductWithSameNameExistsException.cs` | `ProductWithSameNameExistsException` | `[sprawdź plik]` | **nie** ⚠ | `500` (catch-all) |
-| `InvoiceJet.Domain/Exceptions/UserAlreadyExistsException.cs` | `UserAlreadyExistsException` | `"User with email {email} already exists."` | tak | `400` |
-| `InvoiceJet.Domain/Exceptions/UserHasNoAssociatedFirmException.cs` | `UserHasNoAssociatedFirmException` | `[sprawdź plik]` | tak | `400` |
-| `InvoiceJet.Domain/Exceptions/UserNotFoundException.cs` | `UserNotFoundException` | `"User with email {email} not found."` | tak | `400` |
+| `InvoiceJet.Domain/Exceptions/AnafFirmNotFoundException.cs` | `AnafFirmNotFoundException` | `Firm with CUI {cui} not found in ANAF database.` | ✅ tak | `404` |
+| `InvoiceJet.Domain/Exceptions/BankAccountAssociatedWithDocuments.cs` | `BankAccountAssociatedWithDocumentsException` | `Can't delete. Bank account is associated with documents.` | ✅ tak | `400` |
+| `InvoiceJet.Domain/Exceptions/FirmAssociatedWithDocumentException.cs` | `FirmAssociatedWithDocumentException` | `Can't delete. Firm {firmName} is associated with a document.` | ❌ **nie** ⚠️ | `500` (catch-all) |
+| `InvoiceJet.Domain/Exceptions/IncorrectPasswordException.cs` | `IncorrectPasswordException` | `Password is incorrect.` | ✅ tak | `400` |
+| `InvoiceJet.Domain/Exceptions/InvalidPasswordException.cs` | `InvalidPasswordException` | `Password must be at least 8 characters long, contain at least one uppercase letter, one lowercase letter, one number, and one special character.` | ❌ **nie** ⚠️ | `500` (catch-all) |
+| `InvoiceJet.Domain/Exceptions/NoBankAccountAddedException.cs` | `NoBankAccountAddedException` | `Please add a bank account, before generating a document.` | ✅ tak | `400` |
+| `InvoiceJet.Domain/Exceptions/PasswordMismatchException.cs` | `PasswordMismatchException` | `Password confirmation doesn't match.` | ✅ tak | `400` |
+| `InvoiceJet.Domain/Exceptions/ProductAssociatedWithInvoiceException.cs` | `ProductAssociatedWithInvoiceException` | `Can't delete. Product {productName} is associated with an invoice.` | ✅ tak | `400` |
+| `InvoiceJet.Domain/Exceptions/ProductWithSameNameExistsException.cs` | `ProductWithSameNameExistsException` | `Product with name {productName} already exists.` | ❌ **nie** ⚠️ | `500` (catch-all) |
+| `InvoiceJet.Domain/Exceptions/UserAlreadyExistsException.cs` | `UserAlreadyExistsException` | `User with email {email} already exists.` | ✅ tak | `400` |
+| `InvoiceJet.Domain/Exceptions/UserHasNoAssociatedFirmException.cs` | `UserHasNoAssociatedFirmException` | `User has no associated firm. Add a firm in Firm Details page.` | ✅ tak | `400` |
+| `InvoiceJet.Domain/Exceptions/UserNotFoundException.cs` | `UserNotFoundException` | `User with email {email} not found.` | ✅ tak | `400` |
 
-> ⚠ Wyjątki **niezmapowane** w `ExceptionMiddleware`: `InvalidPasswordException`, `FirmAssociatedWithDocumentException`, `ProductWithSameNameExistsException` → wszystkie trafiają do catch-all → `500`.
+> ⚠️ Trzy wyjątki domenowe **niezmapowane** w `ExceptionMiddleware` → `500` catch-all:
+> `FirmAssociatedWithDocumentException`, `InvalidPasswordException`, `ProductWithSameNameExistsException`.
+> Szczegóły i lista napraw: `KATALOG_WYJATKOW.md § 5`.
 
 ### 3.4 Interfejsy repozytoriów i UoW
 
-| Plik | Interfejs | Dziedziczy |
+| Plik | Interfejs | Kluczowe metody |
 |---|---|---|
-| `InvoiceJet.Domain/Interfaces/IUnitOfWork.cs` | `IUnitOfWork` | agreguje wszystkie `IXxxRepository`, `CompleteAsync()` |
+| `InvoiceJet.Domain/Interfaces/IUnitOfWork.cs` | `IUnitOfWork` | agreguje wszystkie `IXxxRepository`, `CompleteAsync()` = `SaveChangesAsync()` |
 | `InvoiceJet.Domain/Interfaces/Repositories/IGenericRepository.cs` | `IGenericRepository<T>` | `GetByIdAsync`, `GetAllAsync`, `AddAsync`, `AddRangeAsync`, `UpdateAsync`, `RemoveAsync`, `RemoveRangeAsync`, `Query()` |
-| `InvoiceJet.Domain/Interfaces/Repositories/IUserRepository.cs` | `IUserRepository` | `GetUserFirmIdAsync`, `GetUserFirmAsync`, `GetUserByIdAsync` |
-| `InvoiceJet.Domain/Interfaces/Repositories/IFirmRepository.cs` | `IFirmRepository` | [sprawdź plik] |
-| `InvoiceJet.Domain/Interfaces/Repositories/IBankAccountRepository.cs` | `IBankAccountRepository` | [sprawdź plik] |
-| `InvoiceJet.Domain/Interfaces/Repositories/IProductRepository.cs` | `IProductRepository` | [sprawdź plik] |
-| `InvoiceJet.Domain/Interfaces/Repositories/IDocumentSeriesRepository.cs` | `IDocumentSeriesRepository` | [sprawdź plik] |
-| `InvoiceJet.Domain/Interfaces/Repositories/IDocumentRepository.cs` | `IDocumentRepository` | [sprawdź plik] |
-| `InvoiceJet.Domain/Interfaces/Repositories/IDocumentProductRepository.cs` | `IDocumentProductRepository` | [sprawdź plik] |
-| `InvoiceJet.Domain/Interfaces/Repositories/IDocumentStatusRepository.cs` | `IDocumentStatusRepository` | [sprawdź plik] |
-| `InvoiceJet.Domain/Interfaces/Repositories/IDocumentTypeRepository.cs` | `IDocumentTypeRepository` | [sprawdź plik] |
-| `InvoiceJet.Domain/Interfaces/Repositories/IUserFirmRepository.cs` | `IUserFirmRepository` | [sprawdź plik] |
+| `InvoiceJet.Domain/Interfaces/Repositories/IUserRepository.cs` | `IUserRepository` | `GetUserFirmIdAsync` (→ `int?`), `GetUserFirmAsync` (→ `UserFirm`), `GetUserByIdAsync` |
+| `InvoiceJet.Domain/Interfaces/Repositories/IFirmRepository.cs` | `IFirmRepository` | `GetTotalClientsAsync` + metody `IGenericRepository` |
+| `InvoiceJet.Domain/Interfaces/Repositories/IBankAccountRepository.cs` | `IBankAccountRepository` | `GetUserFirmBankAccountsAsync`, `GetTotalBankAccountsAsync` |
+| `InvoiceJet.Domain/Interfaces/Repositories/IProductRepository.cs` | `IProductRepository` | `GetUserFirmProductsAsync`, `FindUserFirmProductByName`, `GetTotalProductsAsync` |
+| `InvoiceJet.Domain/Interfaces/Repositories/IDocumentSeriesRepository.cs` | `IDocumentSeriesRepository` | `GetAllDocumentSeriesForActiveUserFirm` |
+| `InvoiceJet.Domain/Interfaces/Repositories/IDocumentRepository.cs` | `IDocumentRepository` | `GetAllDocumentsByType`, `GetDocumentWithAllInfo` |
+| `InvoiceJet.Domain/Interfaces/Repositories/IDocumentProductRepository.cs` | `IDocumentProductRepository` | `GetAllDocumentProductsForDocument`, `RemoveRangeAsync` |
+| `InvoiceJet.Domain/Interfaces/Repositories/IDocumentStatusRepository.cs` | `IDocumentStatusRepository` | metody `IGenericRepository` |
+| `InvoiceJet.Domain/Interfaces/Repositories/IDocumentTypeRepository.cs` | `IDocumentTypeRepository` | metody `IGenericRepository` |
+| `InvoiceJet.Domain/Interfaces/Repositories/IUserFirmRepository.cs` | `IUserFirmRepository` | `GetUserFirmById`, `GetUserFirmClients` |
 
 ---
 
@@ -164,15 +168,15 @@
 | `InvoiceJet.Infrastructure/Persistence/UnitOfWork.cs` | `UnitOfWork` | implementacja `IUnitOfWork`, `CompleteAsync()` = `SaveChangesAsync()` |
 | `InvoiceJet.Infrastructure/Persistence/Repositories/GenericRepository.cs` | `GenericRepository<T>` | bazowa implementacja `IGenericRepository<T>` |
 | `InvoiceJet.Infrastructure/Persistence/Repositories/UserRepository.cs` | `UserRepository` | `GetUserFirmIdAsync`, `GetUserFirmAsync`, `GetUserByIdAsync` |
-| `InvoiceJet.Infrastructure/Persistence/Repositories/FirmRepository.cs` | `FirmRepository` | [sprawdź plik] |
-| `InvoiceJet.Infrastructure/Persistence/Repositories/BankAccountRepository.cs` | `BankAccountRepository` | [sprawdź plik] |
-| `InvoiceJet.Infrastructure/Persistence/Repositories/ProductRepository.cs` | `ProductRepository` | [sprawdź plik] |
-| `InvoiceJet.Infrastructure/Persistence/Repositories/DocumentSeriesRepository.cs` | `DocumentSeriesRepository` | [sprawdź plik] |
-| `InvoiceJet.Infrastructure/Persistence/Repositories/DocumentRepository.cs` | `DocumentRepository` | [sprawdź plik] |
-| `InvoiceJet.Infrastructure/Persistence/Repositories/DocumentProductRepository.cs` | `DocumentProductRepository` | [sprawdź plik] |
-| `InvoiceJet.Infrastructure/Persistence/Repositories/DocumentStatusRepository.cs` | `DocumentStatusRepository` | [sprawdź plik] |
-| `InvoiceJet.Infrastructure/Persistence/Repositories/DocumentTypeRepository.cs` | `DocumentTypeRepository` | [sprawdź plik] |
-| `InvoiceJet.Infrastructure/Persistence/Repositories/UserFirmRepository.cs` | `UserFirmRepository` | [sprawdź plik] |
+| `InvoiceJet.Infrastructure/Persistence/Repositories/FirmRepository.cs` | `FirmRepository` | `GetTotalClientsAsync` (zlicza po `UserId`, nie `UserFirmId`) |
+| `InvoiceJet.Infrastructure/Persistence/Repositories/BankAccountRepository.cs` | `BankAccountRepository` | `GetUserFirmBankAccountsAsync`, `GetTotalBankAccountsAsync` |
+| `InvoiceJet.Infrastructure/Persistence/Repositories/ProductRepository.cs` | `ProductRepository` | `GetUserFirmProductsAsync`, `FindUserFirmProductByName`, `GetTotalProductsAsync` |
+| `InvoiceJet.Infrastructure/Persistence/Repositories/DocumentSeriesRepository.cs` | `DocumentSeriesRepository` | `GetAllDocumentSeriesForActiveUserFirm` |
+| `InvoiceJet.Infrastructure/Persistence/Repositories/DocumentRepository.cs` | `DocumentRepository` | `GetAllDocumentsByType`, `GetDocumentWithAllInfo` |
+| `InvoiceJet.Infrastructure/Persistence/Repositories/DocumentProductRepository.cs` | `DocumentProductRepository` | `GetAllDocumentProductsForDocument`, `RemoveRangeAsync` |
+| `InvoiceJet.Infrastructure/Persistence/Repositories/DocumentStatusRepository.cs` | `DocumentStatusRepository` | metody `IGenericRepository` |
+| `InvoiceJet.Infrastructure/Persistence/Repositories/DocumentTypeRepository.cs` | `DocumentTypeRepository` | metody `IGenericRepository` |
+| `InvoiceJet.Infrastructure/Persistence/Repositories/UserFirmRepository.cs` | `UserFirmRepository` | `GetUserFirmById`, `GetUserFirmClients` |
 
 ### 4.2 Migracje
 
@@ -188,10 +192,10 @@
 |---|---|---|
 | `InvoiceJet.Infrastructure/Factories/IDocumentFactory.cs` | `IDocumentFactory` | interfejs fabryki dokumentów PDF |
 | `InvoiceJet.Infrastructure/Factories/IDocumentFactoryProvicer.cs` | `IDocumentFactoryProvider` | interfejs providera fabryk |
-| `InvoiceJet.Infrastructure/Factories/Impl/InvoiceDocumentFactory.cs` | `InvoiceDocumentFactory` | fabryka dla `Factura` |
-| `InvoiceJet.Infrastructure/Factories/Impl/ProformaDocumentFactory.cs` | `ProformaDocumentFactory` | fabryka dla `Factura Proforma` |
-| `InvoiceJet.Infrastructure/Factories/Impl/StornoDocumentFactory.cs` | `StornoDocumentFactory` | fabryka dla `Factura Storno` |
-| `InvoiceJet.Infrastructure/Services/PdfGenerationService.cs` | `PdfGenerationService` | implementacja `IPdfGenerationService` |
+| `InvoiceJet.Infrastructure/Factories/Impl/InvoiceDocumentFactory.cs` | `InvoiceDocumentFactory` | fabryka dla `Factura` (`DocumentTypeId=1`) |
+| `InvoiceJet.Infrastructure/Factories/Impl/ProformaDocumentFactory.cs` | `ProformaDocumentFactory` | fabryka dla `Factura Proforma` (`DocumentTypeId=2`) |
+| `InvoiceJet.Infrastructure/Factories/Impl/StornoDocumentFactory.cs` | `StornoDocumentFactory` | fabryka dla `Factura Storno` (`DocumentTypeId=3`) |
+| `InvoiceJet.Infrastructure/Services/PdfGenerationService.cs` | `PdfGenerationService` | implementacja `IPdfGenerationService`; wewnętrzny `try/catch` połyka błędy QuestPDF ⚠️ |
 | `InvoiceJet.Infrastructure/Services/IQuestPDFDocument/Invoice.cs` | `Invoice` | dokument PDF faktury |
 | `InvoiceJet.Infrastructure/Services/IQuestPDFDocument/ProformaInvoice.cs` | `ProformaInvoice` | dokument PDF proformy |
 | `InvoiceJet.Infrastructure/Services/IQuestPDFDocument/StornoInvoice.cs` | `StornoInvoice` | dokument PDF storna |
@@ -237,24 +241,30 @@
 | `docs/aos/backend/templates/TEMPLATE_KATALOG_DANYCH_TESTOWYCH.md` | `KATALOG_DANYCH_TESTOWYCH.md` |
 | `docs/aos/backend/templates/TEMPLATE_MAPA_FULLSTACK.md` | `MAPA_FULLSTACK.md` |
 
-### 5.4 Katalogi przekrojowe (docelowe, wypełniane stopniowo)
+### 5.4 Katalogi przekrojowe (docelowe)
 
 | Plik | Status | Zawartość |
 |---|---|---|
 | `docs/aos/backend/ZAGADNIENIA_PRZEKROJOWE.md` | ✅ gotowy | JWT, middleware, UoW, AutoMapper, CORS, DB, seed, ANAF, QuestPDF, pipeline |
-| `docs/aos/backend/KATALOG_DANYCH_TESTOWYCH.md` | ✅ gotowy (DT-01, DT-02) | Globalne fixture'y danych testowych |
-| `docs/aos/backend/KATALOG_API.md` | ⬜ do wypełnienia | Wszystkie endpointy API-XX |
-| `docs/aos/backend/SLOWNIK_DANYCH.md` | ⬜ do wypełnienia | Schematy tabel, kolumny, enumy, seed |
-| `docs/aos/backend/KATALOG_WYJATKOW.md` | ⬜ do wypełnienia | Wyjątek → status HTTP → komunikat |
-| `docs/aos/backend/MODEL_DOMENY.md` | ⬜ do wypełnienia | Diagram ER, konfiguracje EF Core |
-| `docs/aos/backend/MAPA_FULLSTACK.md` | ⬜ odłożone | Most do AOS frontendu |
+| `docs/aos/backend/KATALOG_DANYCH_TESTOWYCH.md` | ✅ gotowy | Globalne fixture'y DT-01 – DT-08 |
+| `docs/aos/backend/KATALOG_API.md` | ✅ gotowy | 31 endpointów API-01 – API-31, zgrupowane per kontroler |
+| `docs/aos/backend/KATALOG_WYJATKOW.md` | ✅ gotowy | 9 zmapowanych + 6 niemapowanych (→500) z komunikatami |
+| `docs/aos/backend/SLOWNIK_DANYCH.md` | ⏳ planowany | Schematy tabel, kolumny, enumy, seed |
+| `docs/aos/backend/MODEL_DOMENY.md` | ⏳ planowany | Diagram ER, konfiguracje EF Core |
+| `docs/aos/backend/MAPA_FULLSTACK.md` | 🚫 poza zakresem | Most do AOS frontendu — etap fullstack |
 
 ### 5.5 Procesy (dokumentacja aktywna)
 
-| Katalog | Status | Proces |
-|---|---|---|
-| `docs/aos/backend/processes/P-01_RegisterUser/` | ✅ kompletny (8 plików) | Rejestracja nowego użytkownika |
-| `docs/aos/backend/processes/P-02_LoginUser/` | ✅ kompletny (8 plików) | Logowanie użytkownika |
+| Katalog | Procesy |
+|---|---|
+| `docs/aos/backend/processes/Authentication/` | P-01 RegisterUser ✅, P-02 LoginUser ✅ |
+| `docs/aos/backend/processes/FirmManagement/` | P-03 AddFirm ✅, P-04 GetFirmFromAnaf ✅, P-05 EditFirm ✅, P-06 GetUserActiveFirm ✅, P-07 GetUserClientFirms ✅, P-08 ManageClientFirms ✅ |
+| `docs/aos/backend/processes/ProductManagement/` | P-09 ManageProducts ✅ |
+| `docs/aos/backend/processes/BankAccountManagement/` | P-10 ManageBankAccounts ✅ |
+| `docs/aos/backend/processes/DocumentSeriesManagement/` | P-11 ManageDocumentSeries ✅ |
+| `docs/aos/backend/processes/DocumentManagement/` | P-12 AddDocument ✅, P-13 EditDocument ✅, P-14 GetDocuments ✅, P-15 DeleteDocuments ✅, P-16 GetDocumentAutofillInfo ✅, P-17 ManageDocumentPdf ✅, P-18 GetDashboardStats ✅, P-19 TransformToStorno ✅ |
+
+Każdy proces zawiera **8 plików**: `00_METADANE`, `01_PRZEGLAD_PROCESU`, `02_KONTRAKT_API`, `03_LOGIKA_APLIKACYJNA`, `04_DANE_MODELE_MAPOWANIA`, `05_BLEDY_BEZPIECZENSTWO`, `06_SCENARIUSZE_TESTOWE`, `HISTORIA_ZMIAN`.
 
 ---
 
@@ -269,7 +279,7 @@ Przy dokumentowaniu procesu dla danego kontrolera przeczytaj:
 | `BankAccountController` | `BankAccountService` | `BankAccountDto` | `BankAccount`, `UserFirm` |
 | `ProductController` | `ProductService` | `ProductDto` | `Product`, `UserFirm` |
 | `DocumentSeriesController` | `DocumentSeriesService` | `DocumentSeriesDto` | `DocumentSeries`, `DocumentType`, `UserFirm` |
-| `DocumentController` | `DocumentService`, `PdfGenerationService` | `DocumentRequestDto`, `DocumentProductRequestDto`, `DocumentTableRecordDto`, `DocumentAutofillDto`, `DashboardStatsDto` | `Document`, `DocumentProduct`, `DocumentSeries`, `BankAccount`, `Firm`, `DocumentType`, `DocumentStatus` |
+| `DocumentController` | `DocumentService`, `PdfGenerationService` | `DocumentRequestDto`, `DocumentProductRequestDto`, `DocumentTableRecordDto`, `DocumentAutofillDto`, `DocumentStreamDto`, `DashboardStatsDto`, `MonthlyTotalDto` | `Document`, `DocumentProduct`, `DocumentSeries`, `BankAccount`, `Firm`, `DocumentType`, `DocumentStatus` |
 
 **Zawsze** czytaj niezależnie od kontrolera:
 - `InvoiceJet.Presentation/Middleware/ExceptionMiddleware.cs`
