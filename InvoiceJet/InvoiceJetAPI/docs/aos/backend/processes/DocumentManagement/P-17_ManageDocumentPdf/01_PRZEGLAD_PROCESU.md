@@ -2,7 +2,9 @@
 
 ## Cel biznesowy
 
-Proces P-17 obsługuje dwa sposoby generowania PDF z dokumentu: zapis pliku PDF na dysku serwera (`GenerateDocumentPdf`) oraz zwrócenie PDF jako strumienia bajtów do przeglądarki (`GetInvoicePdfStream`). Oba endpointy przyjmują pełny obiekt `DocumentRequestDto`, uzupełniają dane sprzedawcy i konta bankowego, a następnie generują PDF przy użyciu biblioteki QuestPDF przez wzorzec fabryki.
+Proces P-17 obsługuje dwa sposoby generowania PDF z dokumentu: zapis pliku PDF na dysku serwera (`GenerateDocumentPdf`, API-28) oraz zwrócenie PDF jako strumienia bajtów do przeglądarki (`GetInvoicePdfStream`, API-29). Oba endpointy przyjmują pełny obiekt `DocumentRequestDto` i uzupełniają dane sprzedawcy z aktywnej firmy użytkownika.
+
+Podejście do generowania PDF różni się między endpointami: API-29 używa wzorca fabryki (`DocumentFactoryProvider`) i poprawnie wybiera szablon wg `DocumentType.Id`; API-28 zawsze tworzy `new InvoiceDocument(invoiceData)` niezależnie od typu dokumentu — błąd powodujący, że Proforma i Storno generują layout faktury zwykłej. ⚠️
 
 ## Aktorzy i wyzwalacz
 
@@ -72,7 +74,8 @@ flowchart TD
 |---|---|
 | `Seller` w DTO nadpisywany przez serwis z danych firmy użytkownika (nie z requestu) | `DocumentService.cs › DocumentService.GeneratePdfDocument / GetInvoicePdfStream` |
 | `BankAccount` w API-29 pobierany z pierwszego dokumentu firmy (nie z DTO) | `DocumentService.cs › DocumentService.GetInvoicePdfStream` |
-| Wybór szablonu PDF przez fabrykę wg `DocumentType.Id` | `PdfGenerationService.cs › PdfGenerationService.GetInvoicePdfStream` |
+| Wybór szablonu PDF przez fabrykę wg `DocumentType.Id` (tylko API-29) | `PdfGenerationService.cs › PdfGenerationService.GetInvoicePdfStream` |
+| API-28 zawsze używa szablonu faktury zwykłej (`InvoiceDocument`) niezależnie od `DocumentType` — BUG ⚠️ | `PdfGenerationService.cs › PdfGenerationService.GenerateInvoicePdf` |
 | Nazwa pliku: `Invoice_<DocumentNumber>.pdf` lub `Invoice_<CurrentNumber>.pdf` | `DocumentService.cs › DocumentService.GetInvoicePdfStream` |
 
 ---
@@ -98,3 +101,5 @@ flowchart TD
 - [UWAGA: API-29 pobiera konto bankowe z PIERWSZEGO dokumentu firmy (nie z dokumentu w DTO). Kotwica: `DocumentService.cs › DocumentService.GetInvoicePdfStream`. — WYMAGA WERYFIKACJI Z ZESPOŁEM]
 
 - [UWAGA: Null-forgiving `DocumentSeries!` w budowaniu `DocumentNumber` — `NullReferenceException → 500` gdy `DocumentNumber == null` i `DocumentSeries == null`. Kotwica: `DocumentService.cs › DocumentService.GetInvoicePdfStream`. — WYMAGA WERYFIKACJI Z ZESPOŁEM]
+
+- [UWAGA: `PdfGenerationService.GenerateInvoicePdf` (API-28) hardcoduje `new InvoiceDocument(invoiceData)` zamiast korzystać z fabryki. Każde wywołanie API-28 wygeneruje layout **faktury zwykłej** niezależnie od faktycznego `DocumentType` (Proforma, Storno). API-29 działa poprawnie przez `DocumentFactoryProvider`. Kotwica: `PdfGenerationService.cs › PdfGenerationService.GenerateInvoicePdf`. — WYMAGA WERYFIKACJI Z ZESPOŁEM]

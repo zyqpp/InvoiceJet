@@ -1,6 +1,6 @@
 # Zagadnienia przekrojowe — InvoiceJetAPI
 
-**Data aktualizacji:** 2026-05-29
+**Data aktualizacji:** 2026-05-31
 
 ---
 
@@ -52,6 +52,38 @@ Autoryzacja w kontrolerach: atrybut `[Authorize(Roles = "User")]` na poziomie kl
 
 Tożsamość bieżącego użytkownika w serwisach: `IUserService.GetCurrentUserId()` (odczyt claima `userId` z `HttpContext.User`). Rejestracja: `builder.Services.AddHttpContextAccessor()` (`Program.cs`).
 
+### Hashowanie haseł (BCrypt)
+
+Kotwica: `AuthService.cs › AuthService.RegisterUser`, `AuthService.LoginUser`
+
+| Element | Wartość |
+|---|---|
+| Biblioteka | `BCrypt.Net.BCrypt` (alias `BC`) |
+| Hashowanie | `BC.HashPassword(userDto.Password)` — sól generowana wewnętrznie |
+| Weryfikacja | `BC.Verify(userDto.Password, user.PasswordHash)` |
+| Przechowywanie | kolumna `User.PasswordHash` (SQL `nvarchar(max)`) |
+
+Hasło jawne **nigdzie nie jest zapisywane ani logowane** — wyłącznie hash BCrypt trafia do bazy.
+
+### Wymagania dotyczące siły hasła
+
+Kotwica: `AuthService.cs › AuthService.RegisterUser`
+
+```csharp
+var passwordRules = new Regex(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$");
+```
+
+| Wymaganie | Opis |
+|---|---|
+| Minimalna długość | ≥ 8 znaków |
+| Mała litera | co najmniej jedna (`a–z`) |
+| Duża litera | co najmniej jedna (`A–Z`) |
+| Cyfra | co najmniej jedna (`0–9`) |
+| Znak specjalny | co najmniej jeden — **wyłącznie** z zestawu `@ $ ! % * ? &` |
+| Dozwolone znaki | `A–Z`, `a–z`, `0–9`, `@$!%*?&` — inne znaki (np. `#`, `^`) są **niedozwolone** |
+
+> ⚠️ Komunikat błędu (`InvalidPasswordException`) mówi ogólnie „one special character", ale regex akceptuje tylko 7 konkretnych znaków. Użytkownik może być zdezorientowany próbując np. `#` lub `^`. Szczegóły: `KATALOG_WYJATKOW.md § 2`.
+
 ---
 
 ## 2. `ExceptionMiddleware`
@@ -89,7 +121,14 @@ Mapa wyjątek → status HTTP (kolejność catch):
 
 > [UWAGA: `InvalidPasswordException` (rzucany w `AuthService.RegisterUser` gdy hasło nie spełnia regex) **nie jest jawnie mapowany** w `ExceptionMiddleware`. Trafia do catch-all → `500 Internal Server Error` zamiast `400 Bad Request` — WYMAGA WERYFIKACJI Z ZESPOŁEM]
 
-Uwaga dodatkowa: `DocumentController.GenerateDocument` posiada własny blok `try/catch`, który zwraca `BadRequest(...)` lokalnie — **omijając middleware**. Szczegóły w procesie P-XX_GenerateDocumentPdf.
+Uwaga dodatkowa — kontrolery z własnym `try/catch` omijające middleware:
+
+| Kontroler.Metoda | Efekt | Proces |
+|---|---|---|
+| `DocumentController.GenerateDocument` | `catch (Exception ex) → BadRequest(ex.Message)` — każdy wyjątek zwraca `400` (zamiast właściwego kodu) | P-17 `02_KONTRAKT_API.md § API-28` |
+| `DocumentSeriesController.AddDocumentSeries` | `catch (Exception ex) → BadRequest(ex.Message)` — ciało odpowiedzi to **plain string** (nie JSON `{ "message": "..." }`) | P-11 `02_KONTRAKT_API.md § API-19` |
+
+> ⚠️ Oba kontrolery przechwytują **wszystkie** wyjątki (`Exception`) — w tym domenowe, które normalnie miałyby konkretny kod HTTP. Efekt: `UserHasNoAssociatedFirmException` zwraca `400` przez lokalny catch, lecz z innym formatem body niż reszta API.
 
 ---
 
@@ -235,7 +274,8 @@ Seedowane dane:
 | Wyjątek | `AnafFirmNotFoundException` → `404 Not Found` (mapowany w `ExceptionMiddleware`) |
 | Serwis | `FirmService.cs` |
 | Używany przez | proces pobrania firmy z ANAF (kontroler `FirmController`) |
-| URL zewnętrzny / klucz API | `[WYMAGA WERYFIKACJI]` — sprawdź `appsettings.json` i `FirmService.cs` |
+| URL zewnętrzny | `https://webservicesp.anaf.ro/PlatitorTvaRest/api/v8/ws/tva` (z `appsettings.json › AppSettings:AnafApiUrl`) |
+| Klucz API | brak — endpoint ANAF jest publiczny, autoryzacja po stronie klienta nie jest wymagana |
 
 ---
 
@@ -255,7 +295,14 @@ Kotwica: `Program.cs`, `Infrastructure/Services/PdfGenerationService.cs`, `Infra
 > // builder.Services.AddSingleton<IDocumentFactory, ProformaDocumentFactory>();
 > // builder.Services.AddSingleton<DocumentFactoryProvider>();
 > ```
-> `PdfGenerationService` jest zarejestrowany, ale fabryki nie są wstrzykiwane przez DI — WYMAGA WERYFIKACJI Z ZESPOŁEM jak fabryki są aktualnie używane]
+> `PdfGenerationService` jest zarejestrowany, ale fabryki nie są wstrzykiwane przez DI.
+> `GetInvoicePdfStream` (API-29) tworzy `DocumentFactoryProvider` bezpośrednio (`new DocumentFactoryProvider()`) i poprawnie wybiera fabrykę na podstawie `DocumentType.Id`.
+> `GenerateInvoicePdf` (API-28) zawsze tworzy `new InvoiceDocument(invoiceData)` niezależnie od typu dokumentu — BUG ⚠️:
+> ```csharp
+> // PdfGenerationService.cs › PdfGenerationService.GenerateInvoicePdf
+> IDocument document = new InvoiceDocument(invoiceData); // hardcoded — ignoruje DocumentType
+> ```
+> Dla Proformy i Storno API-28 generuje błędny layout faktury zwykłej. API-29 działa poprawnie.]
 
 ---
 

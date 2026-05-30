@@ -57,3 +57,10 @@
 - [UWAGA: API-29 pobiera konto bankowe z pierwszego dokumentu firmy (`FirstOrDefaultAsync` bez `OrderBy`) — nie jest to konto bankowe dokumentu z requestu. Kotwica: `DocumentService.cs › DocumentService.GetInvoicePdfStream`. — WYMAGA WERYFIKACJI Z ZESPOŁEM]
 
 - [UWAGA: Null-forgiving `documentRequestDto.DocumentSeries!.CurrentNumber.ToString()` — gdy `DocumentNumber == null` I `DocumentSeries == null` → `NullReferenceException → 500`. Kotwica: `DocumentService.cs › DocumentService.GetInvoicePdfStream`. — WYMAGA WERYFIKACJI Z ZESPOŁEM]
+
+- [UWAGA: `PdfGenerationService.GenerateInvoicePdf` (API-28) hardcoduje `new InvoiceDocument(invoiceData)` zamiast korzystać z wzorca fabryki. Wywołania dla `DocumentType` Proforma (`Id=2`) i Storno (`Id=3`) generują layout **faktury zwykłej**. API-29 działa poprawnie przez `DocumentFactoryProvider`. Kod:
+  ```csharp
+  // PdfGenerationService.cs › PdfGenerationService.GenerateInvoicePdf
+  IDocument document = new InvoiceDocument(invoiceData); // hardcoded — ignoruje DocumentType.Id
+  ```
+  Kotwica: `PdfGenerationService.cs › PdfGenerationService.GenerateInvoicePdf`. — WYMAGA WERYFIKACJI Z ZESPOŁEM]
