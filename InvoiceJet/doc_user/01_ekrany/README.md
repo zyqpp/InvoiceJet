@@ -29,6 +29,7 @@ Każdy dokument opisuje jeden ekran: co widać, co można zrobić, gdzie prowadz
 | [Faktura — formularz](10b_formularz_faktury.md) | Wystawianie i edycja faktury lub proformy |
 | [Proformy — lista](11_proformy.md) | Lista faktur proforma |
 | [Storna — lista](12_storna.md) | Lista faktur korygujących |
+| [Jak wygląda dokument PDF](13_dokument_pdf.md) | Sekcje, pola, skąd dane trafiają na wydruk, co jest wyliczane |
 
 ## Kartoteki
 

@@ -17,10 +17,11 @@ Procesy związane z tworzeniem, konwersją i eksportem dokumentów handlowych: f
 
 | Plik | ID dokumentu | Typ dokumentu | Opis |
 |---|---|---|---|
-| `wystawienie_faktury.md` | BPMN-DOC-01 | Faktura (TypeId=1) | Pełny flow: autouzupełnienie, formularz, zapis, PDF. |
-| `wystawienie_proformy.md` | BPMN-DOC-02 | Proforma (TypeId=2) | Identyczny flow jak faktura, różni się typem dokumentu. |
-| `wystawienie_storno.md` | BPMN-DOC-03 | Storno (TypeId=3) | Konwersja istniejącego dokumentu na storno (PUT). |
-| `eksport_pdf.md` | BPMN-DOC-04 | — | Generowanie PDF przez QuestPDF, pobranie przez przeglądarkę. |
+| [wystawienie_faktury.md](wystawienie_faktury.md) | BPMN-DOC-01 | Faktura (TypeId=1) | Pełny flow: autouzupełnienie, formularz, zapis, PDF. |
+| [wystawienie_proformy.md](wystawienie_proformy.md) | BPMN-DOC-02 | Proforma (TypeId=2) | Identyczny flow jak faktura, różni się typem dokumentu. |
+| [wystawienie_storno.md](wystawienie_storno.md) | BPMN-DOC-03 | Storno (TypeId=3) | Konwersja istniejącego dokumentu na storno (PUT). |
+| [eksport_pdf.md](eksport_pdf.md) | BPMN-DOC-04 | — | Generowanie PDF przez QuestPDF, pobranie przez przeglądarkę. |
+| **[szablon_dokumentu_pdf.md](szablon_dokumentu_pdf.md)** | PDF-TEMPLATE | wszystkie typy | **Kompletna dokumentacja szablonu PDF: sekcje, pola, źródła danych, obliczenia, anomalie.** |
 
 ## Technologie
 
