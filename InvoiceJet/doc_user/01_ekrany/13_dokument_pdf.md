@@ -127,15 +127,34 @@ Kwota **Total pay** wyświetlana jest pogrubioną czcionką i zakończona „lei
 
 ---
 
-## Faktury korygujące (storno) — wartości ujemne
+## Różnice między typami dokumentów
 
-Na stornach wszystkie kwoty wyświetlane są jako **ujemne** (ze znakiem minus):
+Każdy typ dokumentu ma własny szablon z innym znacznikiem i zachowaniem:
+
+### Faktura zwykła
+- Badge: 🔴 czerwony „Unpaid" lub 🟢 zielony „Paid" — zmienia się gdy zmieniasz status w formularzu
+- Wszystkie kwoty dodatnie
+- Tytuł: `Invoice #<numer>`
+
+### Faktura proforma
+- Badge: 🟡 żółty „Proforma" — stały, niezmienny
+- Wszystkie kwoty dodatnie
+- Tytuł: `Invoice #<numer>` (tak samo jak faktura)
+
+### Faktura korygująca (storno)
+- Badge: 🟡 żółty „Storno" — stały, niezmienny
+- **Wszystkie kwoty ujemne** (ze znakiem minus)
+- Tytuł: `Invoice #<numer>` (tak samo jak faktura)
+
+#### Dlaczego storno ma wartości ujemne?
+
+Na stornach wszystkie kwoty wyświetlane są ze znakiem minus:
 - Ilości: `-Qt.`
 - Ceny: `-Unit price`
 - Wartości: `-Value`, `-Total TVA`
 - Podsumowanie: `-Subtotal`, `-Total pay`
 
-To standardowe oznaczenie korekty — pokazuje że cofasz wcześniejszą transakcję.
+To standardowe oznaczenie korekty — pokazuje że cofasz wcześniejszą transakcję. Dane w systemie nie są zmieniane — minus pojawia się tylko na wydruku.
 
 ---
 
