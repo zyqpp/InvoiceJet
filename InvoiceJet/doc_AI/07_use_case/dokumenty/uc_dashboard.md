@@ -69,27 +69,44 @@ Przypadek użycia opisuje przeglądanie statystyk biznesowych firmy na ekranie d
 2. Liczniki i wykres pozostają puste lub z poprzednimi danymi
 3. System może wyświetlić komunikat o błędzie ładowania danych
 
-## Diagram (Mermaid flowchart)
+## Diagram (PlantUML UseCase)
 
-```mermaid
-flowchart TD
-    Start([Start]) --> Load[Załaduj /dashboard\nGET /api/Document/GetDashboardStats\nrok=bieżący, typ=1]
-    Load --> LoadOK{Sukces?}
-    LoadOK -->|Nie| ErrMsg[Komunikat: błąd ładowania danych]
-    LoadOK -->|Tak| ShowStats[Wyświetl liczniki:\nTotalDocuments, TotalClients\nTotalProducts, TotalBankAccounts]
-    ShowStats --> ShowChart[Wykres liniowy\n12 miesięcy: invoiceAmount + incomeAmount]
+```plantuml
+@startuml
+left to right direction
+skinparam packageStyle rectangle
+actor "Użytkownik" as U
 
-    ShowChart --> UserAction{Akcja\nużytkownika}
+rectangle "InvoiceJet — Dashboard" {
+  usecase "Wyświetl statystyki firmy" as UC1
+  usecase "Filtruj statystyki według roku" as UC2
+  usecase "Filtruj statystyki według typu dokumentu" as UC3
+  usecase "Nawiguj do innego ekranu" as UC4
+}
 
-    UserAction -->|Zmiana roku| SelYear[Selektor roku mat-select\ostatnie 10 lat]
-    SelYear --> Reload[onSelectionChange\nGET /api/Document/GetDashboardStats\nnowy rok / bieżący typ]
-    Reload --> ShowStats
+U --> UC1
+U --> UC2
+U --> UC3
+U --> UC4
+UC2 ..> UC1 : <<extend>>
+UC3 ..> UC1 : <<extend>>
 
-    UserAction -->|Zmiana typu dokumentu| SelType[Selektor typu mat-select\nFactura 1 / Proforma 2 / Storno 3]
-    SelType --> Reload2[onSelectionChange\nGET /api/Document/GetDashboardStats\nbieżący rok / nowy typ]
-    Reload2 --> ShowStats
+note right of UC1
+  GET /api/Document/GetDashboardStats
+  /{year}/{documentType}
+  Liczniki + wykres 12 miesięcy
+end note
 
-    UserAction -->|Nawigacja| NavSide[Klik w pasku bocznym\nPrzejście do innego ekranu]
+note right of UC2
+  Selektor roku (mat-select)
+  Ostatnie 10 lat
+end note
+
+note right of UC3
+  Selektor typu:
+  1=Faktura, 2=Proforma, 3=Storno
+end note
+@enduml
 ```
 
 ## Powiązane ekrany

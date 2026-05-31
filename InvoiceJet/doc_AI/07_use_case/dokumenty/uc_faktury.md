@@ -79,36 +79,45 @@ Przypadek użycia opisuje pełny cykl życia faktury (Factura, `documentTypeId=1
 3. System wyświetla komunikat o błędzie
 4. Faktura pozostaje na liście — użytkownik może ponowić próbę
 
-## Diagram (Mermaid flowchart)
+## Diagram (PlantUML UseCase)
 
-```mermaid
-flowchart TD
-    Start([Start]) --> InvList[Lista faktur\n/dashboard/invoices]
-    InvList --> Action{Akcja}
+```plantuml
+@startuml
+left to right direction
+skinparam packageStyle rectangle
+actor "Użytkownik" as U
 
-    Action -->|Nowa faktura| AddForm[/dashboard/add-invoice]
-    AddForm --> Autofill[GET /api/Document/GetDocumentAutofillInfo/1\nSelektory: seria, klient, konto]
-    Autofill --> AutoOK{Dane\ndostępne?}
-    AutoOK -->|Brak serii lub konta| CfgWarn[Ostrzeżenie: brak konfiguracji\nPrzejdź do serii / kont]
-    AutoOK -->|OK| FormFill[Uzupełnij formularz\nklient, daty, pozycje]
-    FormFill --> Calc[Oblicz netto/VAT/brutto\nw czasie rzeczywistym]
-    Calc --> Save[POST /api/Document/Add\ndocumentTypeId=1]
-    Save --> SaveOK{Sukces?}
-    SaveOK -->|Tak| NumGen[Backend generuje numer FVxxxx\nInkrementuje licznik serii]
-    NumGen --> InvList
-    SaveOK -->|Nie| SaveErr[Komunikat błędu]
-    SaveErr --> FormFill
+rectangle "InvoiceJet — Faktury" {
+  usecase "Wyświetl listę faktur" as UC1
+  usecase "Wystaw nową fakturę" as UC2
+  usecase "Edytuj fakturę" as UC3
+  usecase "Usuń fakturę" as UC4
+  usecase "Generuj PDF faktury" as UC5
+  usecase "Przekształć w storno" as UC6
+  usecase "Skonfiguruj serię i konto" as UC_CFG
+}
 
-    Action -->|Edytuj| EditLoad[GET /api/Document/GetDocumentById\n/dashboard/edit-invoice/:id]
-    EditLoad --> EditForm[Formularz z danymi]
-    EditForm --> EditSave[PUT /api/Document/Edit]
-    EditSave --> InvList
+U --> UC1
+U --> UC2
+U --> UC3
+U --> UC4
+U --> UC5
+U --> UC6
+UC2 ..> UC_CFG : <<include>>
+UC5 ..> UC2 : <<extend>>
 
-    Action -->|PDF| PdfReq[POST /api/Document/GetPdfStream]
-    PdfReq --> PdfOK{Sukces?}
-    PdfOK -->|Tak| PdfDl[Pobierz PDF\nQuestPDF stream]
-    PdfOK -->|Nie| PdfErr[Komunikat błędu]
-    PdfErr --> InvList
+note right of UC2
+  POST /api/Document/Add
+  documentTypeId=1
+  Wymaga: seria, klient, konto bankowe
+end note
+
+note right of UC6
+  PUT /api/Document/TransformToStorno
+  Zmienia DocumentTypeId=3
+  Dokument przenoszony do listy storn
+end note
+@enduml
 ```
 
 ## Powiązane ekrany

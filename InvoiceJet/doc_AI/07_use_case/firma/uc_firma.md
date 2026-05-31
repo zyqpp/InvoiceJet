@@ -78,45 +78,46 @@ Przypadek użycia opisuje zarządzanie dwoma powiązanymi obszarami: danymi wła
 4. System wyświetla komunikat o błędzie usunięcia
 5. Klient pozostaje na liście
 
-## Diagram (Mermaid flowchart)
+## Diagram (PlantUML UseCase)
 
-```mermaid
-flowchart TD
-    Start([Start]) --> Choice{Obszar}
+```plantuml
+@startuml
+left to right direction
+skinparam packageStyle rectangle
+actor "Użytkownik" as U
+actor "ANAF (rejestr)" as ANAF <<external>>
 
-    Choice -->|Własna firma| FirmLoad[GET /api/Firm/GetUserFirmDetails\nEkran /dashboard/firm-details]
-    FirmLoad --> FirmForm[Formularz danych firmy]
-    FirmForm --> ANAF_F{Integracja\nANAF?}
-    ANAF_F -->|Tak| ANAF_Call_F[GET /api/Firm/fromAnaf/CUI]
-    ANAF_Call_F --> ANAF_OK_F{Sukces?}
-    ANAF_OK_F -->|Tak| FirmFill[Uzupełnij pola automatycznie]
-    ANAF_OK_F -->|Nie| ANAF_Err_F[Komunikat: błąd ANAF]
-    FirmFill --> FirmSave
-    ANAF_Err_F --> FirmForm
-    FirmForm --> FirmSave[PUT /api/Firm/EditFirm/false]
-    FirmSave --> FirmOK[Dane firmy zaktualizowane]
+rectangle "InvoiceJet — Firma i Klienci" {
+  usecase "Edytuj dane własnej firmy" as UC1
+  usecase "Pobierz dane firmy z ANAF" as UC2
+  usecase "Wyświetl listę klientów" as UC3
+  usecase "Dodaj klienta" as UC4
+  usecase "Edytuj klienta" as UC5
+  usecase "Usuń klienta" as UC6
+  usecase "Pobierz dane klienta z ANAF" as UC7
+}
 
-    Choice -->|Klienci| ClientLoad[GET /api/Firm/GetUserClientFirms\nEkran /dashboard/clients]
-    ClientLoad --> ClientList[Lista klientów]
-    ClientList --> ClientChoice{Akcja}
+U --> UC1
+U --> UC3
+U --> UC4
+U --> UC5
+U --> UC6
+ANAF --> UC2
+ANAF --> UC7
+UC2 ..> UC1 : <<extend>>
+UC7 ..> UC4 : <<extend>>
+UC7 ..> UC5 : <<extend>>
 
-    ClientChoice -->|Dodaj| ClientDialog[Dialog AddOrEditClientDialog]
-    ClientDialog --> ANAF_C{Integracja\nANAF?}
-    ANAF_C -->|Tak| ANAF_Call_C[GET /api/Firm/fromAnaf/CUI]
-    ANAF_Call_C --> ClientFill[Uzupełnij pola]
-    ClientFill --> ClientAdd[POST /api/Firm/AddFirm/true]
-    ANAF_C -->|Nie| ClientAdd
-    ClientAdd --> ClientList
+note right of UC2
+  GET /api/Firm/fromAnaf/{cui}
+  Autouzupełnia pola formularza
+end note
 
-    ClientChoice -->|Edytuj| EditDialog[Dialog AddOrEditClientDialog\ntryb edycji]
-    EditDialog --> ClientEdit[PUT /api/Firm/EditFirm/true]
-    ClientEdit --> ClientList
-
-    ClientChoice -->|Usuń| ClientDel[PUT /api/Firm/DeleteFirms\ntablica ID]
-    ClientDel --> DelOK{Sukces?}
-    DelOK -->|Tak| ClientList
-    DelOK -->|Nie FK| DelErr[Komunikat: błąd usunięcia]
-    DelErr --> ClientList
+note right of UC6
+  PUT /api/Firm/DeleteFirms
+  Blokada: klient z fakturami
+end note
+@enduml
 ```
 
 ## Powiązane ekrany

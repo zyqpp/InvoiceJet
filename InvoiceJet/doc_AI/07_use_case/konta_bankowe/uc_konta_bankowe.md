@@ -79,32 +79,39 @@ Przypadek użycia opisuje zarządzanie kontami bankowymi firmy użytkownika w sy
 3. Wyświetlany jest komunikat o wymaganiach dotyczących formatu IBAN
 4. Dialog pozostaje otwarty
 
-## Diagram (Mermaid flowchart)
+## Diagram (PlantUML UseCase)
 
-```mermaid
-flowchart TD
-    Start([Start]) --> Load[GET /api/BankAccount/GetUserFirmBankAccounts\nEkran /dashboard/bank-accounts]
-    Load --> List[Tabela kont bankowych\npaginacja / zaznaczanie]
-    List --> Action{Akcja}
+```plantuml
+@startuml
+left to right direction
+skinparam packageStyle rectangle
+actor "Użytkownik" as U
 
-    Action -->|Dodaj| AddDialog[Dialog AddOrEditBankAccountDialog]
-    AddDialog --> AddFill[Wypełnij: Nazwa banku, IBAN, Waluta, Aktywne]
-    AddFill --> AddValid{Walidacja\nIBAN?}
-    AddValid -->|Błąd| AddErr[Komunikat: nieprawidłowy IBAN]
-    AddErr --> AddDialog
-    AddValid -->|OK| AddSave[POST — dodaj konto]
-    AddSave --> List
+rectangle "InvoiceJet — Konta bankowe" {
+  usecase "Wyświetl konta bankowe" as UC1
+  usecase "Dodaj konto bankowe" as UC2
+  usecase "Edytuj konto bankowe" as UC3
+  usecase "Usuń konto bankowe" as UC4
+  usecase "Aktywuj / dezaktywuj konto" as UC5
+}
 
-    Action -->|Edytuj| EditDialog[Dialog AddOrEditBankAccountDialog\ntryb edycji]
-    EditDialog --> EditFill[Modyfikuj pola]
-    EditFill --> EditSave[PUT — edytuj konto]
-    EditSave --> List
+U --> UC1
+U --> UC2
+U --> UC3
+U --> UC4
+UC5 ..> UC3 : <<extend>>
 
-    Action -->|Usuń zaznaczone| DelReq[PUT /api/BankAccount/DeleteUserFirmBankAccounts\nbody: int array]
-    DelReq --> DelOK{Sukces?}
-    DelOK -->|Tak| List
-    DelOK -->|Nie FK| DelErr2[Komunikat: konto powiązane z dokumentem]
-    DelErr2 --> List
+note right of UC2
+  POST /api/BankAccount/Add
+  Wymagane: BankName, IBAN, Currency
+end note
+
+note right of UC4
+  PUT /api/BankAccount/DeleteUserFirmBankAccounts
+  Blokada: konto powiązane z dokumentem
+  (CASCADE DELETE na Document)
+end note
+@enduml
 ```
 
 ## Powiązane ekrany

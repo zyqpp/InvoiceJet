@@ -78,31 +78,40 @@ Przypadek użycia opisuje zarządzanie seriami numeracji dokumentów w InvoiceJe
 2. Backend może zezwolić lub zablokować operację (zachowanie do weryfikacji)
 3. Jeśli usunięto jedyną serię danego typu — formularz dokumentu nie będzie miał serii do wyboru
 
-## Diagram (Mermaid flowchart)
+## Diagram (PlantUML UseCase)
 
-```mermaid
-flowchart TD
-    Start([Start]) --> Load[GET /api/DocumentSeries/GetAllDocumentSeriesForUserId\nEkran /dashboard/document-series]
-    Load --> List[Tabela serii\nsortowanie / paginacja]
-    List --> Action{Akcja}
+```plantuml
+@startuml
+left to right direction
+skinparam packageStyle rectangle
+actor "Użytkownik" as U
 
-    Action -->|Dodaj| AddDialog[Dialog AddOrEditDocumentSeriesDialog]
-    AddDialog --> AddFill[Typ dokumentu, Prefiks, Pierwszy numer, Domyślna]
-    AddFill --> AddSave[POST — dodaj serię]
-    AddSave --> List
+rectangle "InvoiceJet — Serie dokumentów" {
+  usecase "Wyświetl serie dokumentów" as UC1
+  usecase "Dodaj serię numeracji" as UC2
+  usecase "Edytuj serię" as UC3
+  usecase "Usuń serię" as UC4
+  usecase "Ustaw serię domyślną" as UC5
+}
 
-    Action -->|Edytuj| EditDialog[Dialog AddOrEditDocumentSeriesDialog\ntryb edycji]
-    EditDialog --> EditFill[Modyfikuj pola]
-    EditFill --> EditSave[PUT — edytuj serię]
-    EditSave --> List
+U --> UC1
+U --> UC2
+U --> UC3
+U --> UC4
+UC5 ..> UC3 : <<extend>>
 
-    Action -->|Usuń zaznaczone| DelReq[PUT /api/DocumentSeries/DeleteDocumentSeries\nquery: documentSeriesIds]
-    DelReq --> DelOK{Sukces?}
-    DelOK -->|Tak| List
-    DelOK -->|Nie| DelErr[Komunikat błędu]
-    DelErr --> List
+note right of UC2
+  POST /api/DocumentSeries/Add
+  Pola: DocumentType, SeriesName
+  FirstNumber, IsDefault
+end note
 
-    List -->|Brak serii| Warning[Ostrzeżenie:\nnowe dokumenty niemożliwe]
+note right of UC4
+  PUT /api/DocumentSeries/DeleteDocumentSeries
+  Usunięcie jedynej serii blokuje
+  wystawianie dokumentów danego typu
+end note
+@enduml
 ```
 
 ## Powiązane ekrany

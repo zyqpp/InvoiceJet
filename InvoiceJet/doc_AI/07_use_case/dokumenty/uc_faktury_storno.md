@@ -84,33 +84,44 @@ Przypadek użycia opisuje dwa sposoby tworzenia faktur storno (`documentTypeId=3
 3. Zwraca błąd autoryzacji (403 Forbidden lub 404)
 4. Lista nie ulega zmianie
 
-## Diagram (Mermaid flowchart)
+## Diagram (PlantUML UseCase)
 
-```mermaid
-flowchart TD
-    Start([Start]) --> Choice{Metoda\ntworzenia storna}
+```plantuml
+@startuml
+left to right direction
+skinparam packageStyle rectangle
+actor "Użytkownik" as U
 
-    Choice -->|Konwersja| SrcList[Lista faktur lub proform\n/dashboard/invoices lub invoice-proformas]
-    SrcList --> Check[Zaznacz dokumenty checkboxami]
-    Check --> Convert[PUT /api/Document/TransformToStorno\ntablica ID]
-    Convert --> ConvOK{Sukces?}
-    ConvOK -->|Tak - wszystkie| StornoList[Widoczne w /dashboard/invoice-stornos]
-    ConvOK -->|Częściowy błąd| PartialErr[Komunikat: częściowa konwersja\nbrak atomowości]
-    PartialErr --> StornoList
-    ConvOK -->|Błąd auth| AuthErr[Komunikat: brak dostępu]
+rectangle "InvoiceJet — Faktury Storno" {
+  usecase "Wyświetl listę storn" as UC1
+  usecase "Przekształć fakturę w storno" as UC2
+  usecase "Przekształć proformę w storno" as UC3
+  usecase "Wystaw nowe storno bezpośrednio" as UC4
+  usecase "Edytuj storno" as UC5
+  usecase "Generuj PDF storna" as UC6
+  usecase "Usuń storno" as UC7
+}
 
-    Choice -->|Bezpośrednie| AddForm[Formularz nowego dokumentu]
-    AddForm --> Autofill[GET /api/Document/GetDocumentAutofillInfo/3]
-    Autofill --> FormFill[Uzupełnij: klient, daty, pozycje korekty]
-    FormFill --> Save[POST /api/Document/Add\ndocumentTypeId=3]
-    Save --> StornoList
+U --> UC1
+U --> UC2
+U --> UC3
+U --> UC4
+U --> UC5
+U --> UC6
+U --> UC7
 
-    StornoList --> StornoAction{Akcja na stornie}
-    StornoAction -->|Edytuj| EditLoad[GET /api/Document/GetDocumentById]
-    EditLoad --> EditSave[PUT /api/Document/Edit]
-    EditSave --> StornoList
-    StornoAction -->|PDF| PdfReq[POST /api/Document/GetPdfStream\nFactura Storno]
-    PdfReq --> PdfDl[Pobierz PDF]
+note right of UC2
+  PUT /api/Document/TransformToStorno
+  Zmienia DocumentTypeId=3
+  UWAGA: brak atomowości przy batch
+end note
+
+note right of UC4
+  POST /api/Document/Add
+  documentTypeId=3
+  Wymaga serii dla storno
+end note
+@enduml
 ```
 
 ## Powiązane ekrany

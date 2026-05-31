@@ -74,33 +74,44 @@ Przypadek użycia opisuje wystawianie i zarządzanie fakturami proforma (`docume
 1. Backend zwraca błąd walidacji lub serwera
 2. Formularz pozostaje otwarty; wyświetlany jest komunikat o błędzie
 
-## Diagram (Mermaid flowchart)
+## Diagram (PlantUML UseCase)
 
-```mermaid
-flowchart TD
-    Start([Start]) --> ProList[Lista proform\n/dashboard/invoice-proformas]
-    ProList --> Action{Akcja}
+```plantuml
+@startuml
+left to right direction
+skinparam packageStyle rectangle
+actor "Użytkownik" as U
 
-    Action -->|Nowa proforma| AddForm[Formularz nowego dokumentu]
-    AddForm --> Autofill[GET /api/Document/GetDocumentAutofillInfo/2\ndocumentTypeId=2]
-    Autofill --> AutoOK{Seria\nproforma?}
-    AutoOK -->|Brak| SeriesWarn[Ostrzeżenie: brak serii proforma\nPrzejdź do serie_dokumentow]
-    AutoOK -->|OK| FormFill[Uzupełnij: klient, daty, pozycje]
-    FormFill --> Calc[Oblicz netto/VAT/brutto]
-    Calc --> Save[POST /api/Document/Add\ndocumentTypeId=2]
-    Save --> NumGen[Backend generuje PRFxxxx\nInkrementuje licznik]
-    NumGen --> ProList
+rectangle "InvoiceJet — Faktury Proforma" {
+  usecase "Wyświetl listę proform" as UC1
+  usecase "Wystaw nową proformę" as UC2
+  usecase "Edytuj proformę" as UC3
+  usecase "Usuń proformę" as UC4
+  usecase "Generuj PDF proformy" as UC5
+  usecase "Przekształć proformę w storno" as UC6
+  usecase "Skonfiguruj serię proforma" as UC_CFG
+}
 
-    Action -->|Edytuj| EditLoad[GET /api/Document/GetDocumentById]
-    EditLoad --> EditForm[Formularz z danymi]
-    EditForm --> EditSave[PUT /api/Document/Edit]
-    EditSave --> ProList
+U --> UC1
+U --> UC2
+U --> UC3
+U --> UC4
+U --> UC5
+U --> UC6
+UC2 ..> UC_CFG : <<include>>
+UC5 ..> UC2 : <<extend>>
 
-    Action -->|PDF| PdfReq[POST /api/Document/GetPdfStream]
-    PdfReq --> PdfDl[Pobierz PDF — Factura Proforma]
-    PdfDl --> ProList
+note right of UC2
+  POST /api/Document/Add
+  documentTypeId=2
+  Seria numeracji dla proform wymagana
+end note
 
-    Action -->|Przekształć na storno| Storno[UC-Dokumenty-FakturyStorno\nscenariusz konwersji]
+note right of UC6
+  PUT /api/Document/TransformToStorno
+  Zmienia DocumentTypeId=3
+end note
+@enduml
 ```
 
 ## Powiązane ekrany

@@ -79,35 +79,43 @@ Przypadek użycia opisuje kompletny CRUD katalogu produktów i usług przypisany
 3. System wyświetla komunikat o niemożności usunięcia
 4. Produkt pozostaje na liście
 
-## Diagram (Mermaid flowchart)
+## Diagram (PlantUML UseCase)
 
-```mermaid
-flowchart TD
-    Start([Start]) --> Load[GET /api/Product/GetAllProductsForUserId\nEkran /dashboard/products]
-    Load --> List[Tabela produktów\nsortowanie / paginacja / filtr]
-    List --> Action{Akcja}
+```plantuml
+@startuml
+left to right direction
+skinparam packageStyle rectangle
+actor "Użytkownik" as U
 
-    Action -->|Dodaj| AddDialog[Dialog AddOrEditProductDialog]
-    AddDialog --> AddFill[Wypełnij: Nazwa, Cena, J.m., VAT, ZawieraVAT]
-    AddFill --> AddSave[POST /api/Product/AddProduct]
-    AddSave --> SaveOK{Sukces?}
-    SaveOK -->|Tak| List
-    SaveOK -->|Nie| AddErr[Komunikat błędu]
-    AddErr --> AddDialog
+rectangle "InvoiceJet — Produkty i Usługi" {
+  usecase "Wyświetl katalog produktów" as UC1
+  usecase "Wyszukaj produkt" as UC2
+  usecase "Dodaj produkt lub usługę" as UC3
+  usecase "Edytuj produkt" as UC4
+  usecase "Usuń produkt" as UC5
+}
 
-    Action -->|Edytuj| EditDialog[Dialog AddOrEditProductDialog\ntryb edycji]
-    EditDialog --> EditFill[Modyfikuj pola]
-    EditFill --> EditSave[PUT /api/Product/EditProduct]
-    EditSave --> List
+U --> UC1
+U --> UC3
+U --> UC4
+U --> UC5
+UC2 ..> UC1 : <<extend>>
 
-    Action -->|Usuń zaznaczone| DelConfirm[PUT /api/Product/DeleteProducts\nquery: productIds]
-    DelConfirm --> DelOK{Sukces?}
-    DelOK -->|Tak| List
-    DelOK -->|Nie| DelErr[Komunikat: nie można usunąć]
-    DelErr --> List
+note right of UC3
+  POST /api/Product/AddProduct
+  Pola: Nazwa, Cena, J.m., VAT%, ContainsTva
+end note
 
-    Action -->|Filtruj| Filter[Filtr po stronie frontendu\nMatTableDataSource.filter]
-    Filter --> List
+note right of UC5
+  PUT /api/Product/DeleteProducts
+  Blokada: produkt użyty w dokumencie
+end note
+
+note right of UC2
+  Filtr kliencki
+  MatTableDataSource.filter
+end note
+@enduml
 ```
 
 ## Powiązane ekrany
