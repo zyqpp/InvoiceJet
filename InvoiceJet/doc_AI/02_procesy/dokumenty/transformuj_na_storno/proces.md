@@ -11,7 +11,7 @@
 
 ## Streszczenie
 
-Proces masowo konwertuje istniejące dokumenty (faktury, proformy) na faktury storno przez zmianę `DocumentTypeId` na wartość `3` (`StornoInvoice`). Endpoint przyjmuje tablicę ID dokumentów. KRYTYCZNA ANOMALIA: `CompleteAsync()` (alias `SaveChangesAsync()`) wywołany jest **wewnątrz pętli** po każdym dokumencie — brak transakcji obejmującej całą operację. Jeśli błąd wystąpi w połowie listy, część dokumentów zostanie przekonwertowana, część nie.
+Proces masowo konwertuje istniejące dokumenty (faktury, proformy) na faktury storno przez zmianę `DocumentTypeId` na wartość `3` (`StornoInvoice`). **Operacja modyfikuje istniejący dokument — nie tworzy nowego.** Wartości (`UnitPrice`, `TotalPrice`, `Quantity`) pozostają dodatnie w DB; ujemne wartości na PDF to wyłącznie efekt szablonu. Endpoint przyjmuje tablicę ID dokumentów. KRYTYCZNA ANOMALIA: `CompleteAsync()` wywołany jest **wewnątrz pętli** po każdym dokumencie — brak transakcji obejmującej całą operację. Jeśli błąd wystąpi w połowie listy, część dokumentów zostanie przekonwertowana, część nie.
 
 ## Cel procesu
 

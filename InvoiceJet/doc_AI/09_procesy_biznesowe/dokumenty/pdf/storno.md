@@ -69,14 +69,19 @@ footer.Cell().Text($"{-grandTotal:F2} lei"); // MINUS
 | Total TVA footer | `-Σ(TotalPrice − UnitPrice×Qty)` | `+Σ(TotalPrice − UnitPrice×Qty)` |
 | **Total pay** | `-grandTotal lei` | `+grandTotal lei` |
 
-> **Uwaga:** negacja jest tylko **wizualna w szablonie** (`-item.Quantity` w tekście).
-> Dane w bazie (`DocumentProduct.Quantity`, `DocumentProduct.UnitPrice`) są **przechowywane jako wartości dodatnie**. Storno nie zmienia danych w DB — tylko szablon PDF wyświetla je ze znakiem minus.
+> **Potwierdzone w kodzie:** negacja jest tylko **wizualna w szablonie** (`-item.Quantity` w tekście).
+> Dane w bazie (`DocumentProduct.Quantity`, `DocumentProduct.UnitPrice`) są **przechowywane jako wartości dodatnie**.
+>
+> Wynika to z architektury `TransformToStorno`: operacja zmienia **wyłącznie** `DocumentTypeId = 3` — nie tworzy nowego dokumentu, nie neguje żadnych wartości w DB.
+> → [ALG-08 TransformToStorno](../../../03_algorytmy/ALG-08_TransformToStorno.md) — sekcja „Czym jest storno w InvoiceJet"
 
 ---
 
-## Jak powstaje storno — kontekst
+## Jak powstaje storno — kontekst (zweryfikowany)
 
-Storno tworzone jest przez endpoint [`PUT /Document/TransformToStorno`](../../../04_api_i_integracje/01_api_frontend/document/PUT_Document_TransformToStorno.md), który **kopiuje pozycje z oryginalnej faktury** do nowego dokumentu typu Storno. Dane w `DocumentProduct` są identyczne z oryginałem — negacja następuje dopiero w szablonie PDF.
+Storno tworzone jest przez endpoint [`PUT /Document/TransformToStorno`](../../../04_api_i_integracje/01_api_frontend/document/PUT_Document_TransformToStorno.md).
+
+> ⚠️ **Korekta wcześniejszej dokumentacji:** storno **NIE kopiuje pozycji** do nowego dokumentu. Operacja modyfikuje **istniejący** dokument (fakturę), zmieniając tylko jego `DocumentTypeId` z `1` na `3`. Nie powstaje żaden nowy rekord — oryginalny dokument zmienia klasyfikację.
 
 ---
 
@@ -100,7 +105,10 @@ Storno tworzone jest przez endpoint [`PUT /Document/TransformToStorno`](../../..
 | ID | Opis |
 |---|---|
 | PDF-04 | Tytuł `Invoice #<nr>` — storno nie ma własnego tytułu odróżniającego od faktury |
-| STORNO-01 | Dane pozycji w DB przechowywane jako wartości **dodatnie** — negacja wyłącznie wizualna w szablonie. Deweloper/tester sprawdzający DB może być zdezorientowany. |
+| STORNO-06 | **ARCHITEKTONICZNIE:** storno to MUTACJA oryginału, nie nowy dokument — brak referencji storno→oryginał, brak możliwości wyświetlenia obu jednocześnie, numer dokumentu niezmieniony |
+| STORNO-07 | Wartości w DB zawsze dodatnie — przy analizie bazy danych saldo storn wygląda na sumę dodatnią. Ujemne wartości na PDF to wyłącznie efekt wizualny szablonu |
+| STORNO-03 | Numer dokumentu po transform pozostaje bez zmian (np. `FV0001` zamiast `STORNO0001`) |
+| STORNO-04 | `DocumentStatusId` nie jest resetowany — storno może mieć status „Paid" |
 
 ---
 
