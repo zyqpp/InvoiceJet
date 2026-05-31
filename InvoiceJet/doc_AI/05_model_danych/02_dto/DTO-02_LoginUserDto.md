@@ -5,7 +5,7 @@
 | ID | DTO-02 |
 | Plik | `InvoiceJet.Application/DTOs/LoginUserDto.cs` |
 | Kierunek | Request (Frontend → Backend) |
-| Endpoint | `POST /api/Auth/login` |
+| Endpoint | [POST /api/Auth/login](../../04_api_i_integracje/01_api_frontend/auth/POST_Auth_login.md) |
 | Ostatnia walidacja | 2026-05-31 |
 | Autor | Agent Claudiusz Sonte 4.6 max |
 

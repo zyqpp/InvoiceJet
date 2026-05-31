@@ -121,25 +121,25 @@ Brak (komunikaty błędów inline lub przez `console.log` — anomalia).
 
 ### ngOnInit
 1. Sprawdzenie czy URL zawiera `:id` → ustawienie `isEditMode`
-2. Wywołanie `GET /api/Document/GetDocumentAutofillInfo/{documentTypeId}` → wypełnienie selektorów
-3. Jeśli `isEditMode` → `GET /api/Document/GetDocumentById/{id}` → wstępne wypełnienie formularza
+2. Wywołanie [GET /api/Document/GetAutofillInfo](../../../04_api_i_integracje/01_api_frontend/document/GET_Document_GetAutofillInfo.md) → wypełnienie selektorów
+3. Jeśli `isEditMode` → [GET /api/Document/GetById](../../../04_api_i_integracje/01_api_frontend/document/GET_Document_GetById.md) → wstępne wypełnienie formularza
 
 ### onSubmit
 1. Walidacja formularza (zakomentowana — anomalia BA-01)
-2. Jeśli `isEditMode` → `PUT /api/Document/EditDocument`
-3. Jeśli `!isEditMode` → `POST /api/Document/AddDocument`
+2. Jeśli `isEditMode` → [PUT /api/Document/Edit](../../../04_api_i_integracje/01_api_frontend/document/PUT_Document_Edit.md)
+3. Jeśli `!isEditMode` → [POST /api/Document/Add](../../../04_api_i_integracje/01_api_frontend/document/POST_Document_Add.md)
 4. Sukces → `router.navigate([getNavigationUrl()])`
 
 ## Wywołania API
 
 | Akcja | Endpoint |
 |---|---|
-| Autouzupełnienie selektorów (ngOnInit) | `GET /api/Document/GetDocumentAutofillInfo/{documentTypeId}` |
-| Załadowanie dokumentu (tryb edycji) | `GET /api/Document/GetDocumentById/{id}` |
-| Dodanie dokumentu | `POST /api/Document/AddDocument` |
-| Edycja dokumentu | `PUT /api/Document/EditDocument` |
-| Generowanie PDF (zapis na dysk) | `POST /api/Document/GenerateDocumentPdf` |
-| Podgląd PDF (strumień) | `POST /api/Document/GetInvoicePdfStream` |
+| Autouzupełnienie selektorów (ngOnInit) | [GET /api/Document/GetAutofillInfo](../../../04_api_i_integracje/01_api_frontend/document/GET_Document_GetAutofillInfo.md) |
+| Załadowanie dokumentu (tryb edycji) | [GET /api/Document/GetById](../../../04_api_i_integracje/01_api_frontend/document/GET_Document_GetById.md) |
+| Dodanie dokumentu | [POST /api/Document/Add](../../../04_api_i_integracje/01_api_frontend/document/POST_Document_Add.md) |
+| Edycja dokumentu | [PUT /api/Document/Edit](../../../04_api_i_integracje/01_api_frontend/document/PUT_Document_Edit.md) |
+| Generowanie PDF (zapis na dysk) | [POST /api/Document/GeneratePdf](../../../04_api_i_integracje/01_api_frontend/document/POST_Document_GeneratePdf.md) |
+| Podgląd PDF (strumień) | [POST /api/Document/GetPdfStream](../../../04_api_i_integracje/01_api_frontend/document/POST_Document_GetPdfStream.md) |
 
 ## Klasy pochodne
 

@@ -107,8 +107,8 @@ sequenceDiagram
 
 ## Powiązania
 
-- Wywołany z ekranu: `01_ekrany/faktury/lista_faktur/` (GetTableRecords), `01_ekrany/faktury/dodaj_edytuj_fakture/` (GetDocumentById), analogicznie dla proforma i storno
-- Powiązane API: `GET /api/Document/GetTableRecords/{documentTypeId}`, `GET /api/Document/GetDocumentById/{id}`
+- Wywołany z ekranu: [Lista faktur](../../../01_ekrany/faktury/lista_faktur/ekran.md) (GetTableRecords), [Dodaj/edytuj fakturę](../../../01_ekrany/faktury/dodaj_edytuj_fakture/ekran.md) (GetDocumentById), analogicznie dla [proforma](../../../01_ekrany/faktury_proforma/lista_faktur_proforma/ekran.md) i [storno](../../../01_ekrany/faktury_storno/lista_faktur_storno/ekran.md)
+- Powiązane API: [GET /api/Document/GetTableRecords](../../../04_api_i_integracje/01_api_frontend/document/GET_Document_GetTableRecords.md), [GET /api/Document/GetById](../../../04_api_i_integracje/01_api_frontend/document/GET_Document_GetById.md)
 - Powiązany algorytm: Nie dotyczy
 
 ## Powiązania z kodem

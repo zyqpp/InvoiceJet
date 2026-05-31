@@ -57,28 +57,28 @@ Modal Angular Material do dodawania i edycji konta bankowego własnej firmy uży
 
 | Przycisk | Akcja | Wywołuje operację | Zamyka modal |
 |---|---|---|---|
-| Zapisz (tryb dodaj) | Wywołuje `POST /api/BankAccount/Add` | Tak | tak (z wynikiem) |
-| Zapisz (tryb edytuj) | Wywołuje `PUT /api/BankAccount/Edit` | Tak | tak (z wynikiem) |
+| Zapisz (tryb dodaj) | Wywołuje [POST /api/BankAccount/Add](../../../../04_api_i_integracje/01_api_frontend/bank_account/POST_BankAccount_Add.md) | Tak | tak (z wynikiem) |
+| Zapisz (tryb edytuj) | Wywołuje [PUT /api/BankAccount/Edit](../../../../04_api_i_integracje/01_api_frontend/bank_account/PUT_BankAccount_Edit.md) | Tak | tak (z wynikiem) |
 | Anuluj | Zamknięcie bez zmian | Nie | tak |
 
 ## Przepływ
 
 ### Tryb dodawania
 1. Formularz pusty
-2. Submit → `POST /api/BankAccount/Add`
+2. Submit → [POST /api/BankAccount/Add](../../../../04_api_i_integracje/01_api_frontend/bank_account/POST_BankAccount_Add.md)
 3. Dialog zamknięty z wynikiem → lista kont odświeżona
 
 ### Tryb edycji
 1. Formularz wypełniony danymi konta
-2. Submit → `PUT /api/BankAccount/Edit`
+2. Submit → [PUT /api/BankAccount/Edit](../../../../04_api_i_integracje/01_api_frontend/bank_account/PUT_BankAccount_Edit.md)
 3. Dialog zamknięty z wynikiem → lista kont odświeżona
 
 ## Wywołania API
 
 | Akcja | Endpoint |
 |---|---|
-| Dodanie konta | `POST /api/BankAccount/Add` |
-| Edycja konta | `PUT /api/BankAccount/Edit` |
+| Dodanie konta | [POST /api/BankAccount/Add](../../../../04_api_i_integracje/01_api_frontend/bank_account/POST_BankAccount_Add.md) |
+| Edycja konta | [PUT /api/BankAccount/Edit](../../../../04_api_i_integracje/01_api_frontend/bank_account/PUT_BankAccount_Edit.md) |
 
 ## Możliwe wyniki
 
@@ -96,7 +96,7 @@ Modal Angular Material do dodawania i edycji konta bankowego własnej firmy uży
 
 ## Wątpliwości i braki
 
-- DA-01: Usunięcie konta bankowego (`PUT /api/BankAccount/DeleteUserFirmBankAccounts`) jest dostępne z ekranu listy kont, nie z tego dialogu — realizowane bezpośrednio z listy przez operację batch.
+- DA-01: Usunięcie konta bankowego ([PUT /api/BankAccount/Delete](../../../../04_api_i_integracje/01_api_frontend/bank_account/PUT_BankAccount_Delete.md)) jest dostępne z ekranu listy kont, nie z tego dialogu — realizowane bezpośrednio z listy przez operację batch.
 - Brak widocznego komunikatu błędu dla użytkownika w przypadku niepowodzenia API.
 
 ## Rejestr zmian

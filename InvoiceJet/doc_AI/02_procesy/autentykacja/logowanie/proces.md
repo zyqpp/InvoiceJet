@@ -80,10 +80,10 @@ sequenceDiagram
 
 ## Powiązania
 
-- Wywołany z ekranu: `01_ekrany/login/`
+- Wywołany z ekranu: [Login](../../../01_ekrany/login/ekran.md)
 - Wywołany przez operację: formularz logowania (submit)
-- Powiązane API: `POST /api/Auth/login`
-- Powiązany algorytm: `03_algorytmy/autoryzacyjne/tworzenie_tokenu_jwt.md`, `03_algorytmy/autoryzacyjne/weryfikacja_tokenu_jwt.md`
+- Powiązane API: [POST /api/Auth/login](../../../04_api_i_integracje/01_api_frontend/auth/POST_Auth_login.md)
+- Powiązany algorytm: [tworzenie_tokenu_jwt](../../../03_algorytmy/autoryzacyjne/tworzenie_tokenu_jwt.md), [weryfikacja_tokenu_jwt](../../../03_algorytmy/autoryzacyjne/weryfikacja_tokenu_jwt.md)
 
 ## Powiązania z kodem
 

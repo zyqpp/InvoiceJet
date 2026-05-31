@@ -5,7 +5,7 @@
 | ID | DTO-07 |
 | Plik | `InvoiceJet.Application/DTOs/DocumentRequestDto.cs` |
 | Kierunek | Request + Response (dwukierunkowy) |
-| Endpointy | `POST /api/Document/Add`, `PUT /api/Document/Edit`, `GET /api/Document/GetDocumentById/{id}` |
+| Endpointy | [POST /api/Document/Add](../../04_api_i_integracje/01_api_frontend/document/POST_Document_Add.md), [PUT /api/Document/Edit](../../04_api_i_integracje/01_api_frontend/document/PUT_Document_Edit.md), [GET /api/Document/GetById](../../04_api_i_integracje/01_api_frontend/document/GET_Document_GetById.md) |
 | Ostatnia walidacja | 2026-05-31 |
 | Autor | Agent Claudiusz Sonte 4.6 max |
 

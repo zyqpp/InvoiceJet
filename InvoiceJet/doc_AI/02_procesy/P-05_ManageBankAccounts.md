@@ -6,7 +6,7 @@
 | Nazwa | ManageBankAccounts |
 | Kontroler | `BankAccountController` |
 | Serwis | `BankAccountService` |
-| Endpointy | `GET /api/BankAccount/GetAll`, `POST /api/BankAccount/Add`, `PUT /api/BankAccount/Edit`, `PUT /api/BankAccount/Delete` |
+| Endpointy | [GET /api/BankAccount/GetAll](../04_api_i_integracje/01_api_frontend/bank_account/GET_BankAccount_GetAll.md), [POST /api/BankAccount/Add](../04_api_i_integracje/01_api_frontend/bank_account/POST_BankAccount_Add.md), [PUT /api/BankAccount/Edit](../04_api_i_integracje/01_api_frontend/bank_account/PUT_BankAccount_Edit.md), [PUT /api/BankAccount/Delete](../04_api_i_integracje/01_api_frontend/bank_account/PUT_BankAccount_Delete.md) |
 | AuthGuard | TAK |
 | Ostatnia walidacja | 2026-05-31 |
 | Autor | Agent Claudiusz Sonte 4.6 max |

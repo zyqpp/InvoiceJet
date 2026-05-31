@@ -6,7 +6,7 @@
 | Nazwa | GetDashboardStats |
 | Kontroler | `DocumentController` |
 | Serwis | `DocumentService` |
-| Endpoint | `GET /api/Document/GetDashboardStats/{year}/{documentType}` |
+| Endpoint | [GET /api/Document/GetDashboardStats](../04_api_i_integracje/01_api_frontend/document/GET_Document_GetDashboardStats.md) |
 | AuthGuard | TAK |
 | Ostatnia walidacja | 2026-05-31 |
 | Autor | Agent Claudiusz Sonte 4.6 max |

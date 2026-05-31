@@ -79,8 +79,8 @@ sequenceDiagram
 
 ## Powiązania
 
-- Wywołany z ekranu: `01_ekrany/serie_dokumentow/`
-- Powiązane API: `PUT /api/DocumentSeries/Delete`
+- Wywołany z ekranu: [Serie dokumentów](../../../01_ekrany/serie_dokumentow/ekran.md)
+- Powiązane API: [PUT /api/DocumentSeries/Delete](../../../04_api_i_integracje/01_api_frontend/document_series/PUT_DocumentSeries_Delete.md)
 - Powiązany algorytm: Nie dotyczy
 
 ## Powiązania z kodem

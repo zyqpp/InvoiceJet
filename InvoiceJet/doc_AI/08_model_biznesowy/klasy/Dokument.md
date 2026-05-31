@@ -54,7 +54,7 @@ Dokument to centralny byt biznesowy systemu InvoiceJet — reprezentuje wystawio
 
 | Element | Lokalizacja |
 |---|---|
-| Encja DB | `dbo.Document` |
+| Encja DB | [dbo.Document](../../05_model_danych/01_db/dbo/dbo.Document.md) |
 | DTO | brak dedykowanego (dane w DocumentDto / DocumentRequestDto) |
 | Plik .cs | `InvoiceJet.Domain/Models/Document.cs` |
 

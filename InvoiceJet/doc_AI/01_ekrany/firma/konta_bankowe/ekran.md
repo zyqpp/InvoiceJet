@@ -92,8 +92,8 @@ Brak.
 
 | Akcja | Endpoint |
 |---|---|
-| Załadowanie (ngOnInit) | `GET /api/BankAccount/GetUserFirmBankAccounts` |
-| Usunięcie zaznaczonych | `PUT /api/BankAccount/DeleteUserFirmBankAccounts` `[FromBody] int[]` |
+| Załadowanie (ngOnInit) | [GET /api/BankAccount/GetAll](../../../04_api_i_integracje/01_api_frontend/bank_account/GET_BankAccount_GetAll.md) |
+| Usunięcie zaznaczonych | [PUT /api/BankAccount/Delete](../../../04_api_i_integracje/01_api_frontend/bank_account/PUT_BankAccount_Delete.md) `[FromBody] int[]` |
 
 ## Powiązania
 

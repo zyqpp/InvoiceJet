@@ -47,7 +47,7 @@ Firma reprezentuje podmiot gospodarczy, w imieniu którego użytkownik wystawia 
 
 | Element | Lokalizacja |
 |---|---|
-| Encja DB | `dbo.Firm` |
+| Encja DB | [dbo.Firm](../../05_model_danych/01_db/dbo/dbo.Firm.md) |
 | DTO | brak dedykowanego (dane w FirmDto) |
 | Plik .cs | `InvoiceJet.Domain/Models/Firm.cs` |
 

@@ -6,7 +6,7 @@
 | Nazwa | RegisterUser |
 | Kontroler | `AuthController` |
 | Serwis | `AuthService` |
-| Endpoint | `POST /api/Auth/register` |
+| Endpoint | [POST /api/Auth/register](../04_api_i_integracje/01_api_frontend/auth/POST_Auth_register.md) |
 | AuthGuard | NIE |
 | Ostatnia walidacja | 2026-05-31 |
 | Autor | Agent Claudiusz Sonte 4.6 max |

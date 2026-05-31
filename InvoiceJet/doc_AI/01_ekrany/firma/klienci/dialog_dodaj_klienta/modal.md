@@ -63,33 +63,33 @@ Modal Angular Material do dodawania i edycji danych firmy klienta. Otwierany z e
 
 | Przycisk | Akcja | Wywołuje operację | Zamyka modal |
 |---|---|---|---|
-| Zapisz (tryb dodaj) | Wywołuje `POST /api/Firm/AddFirm/true` | Tak | tak (z wynikiem) |
-| Zapisz (tryb edytuj) | Wywołuje `PUT /api/Firm/EditFirm/true` | Tak | tak (z wynikiem) |
+| Zapisz (tryb dodaj) | Wywołuje [POST /api/Firm/AddFirm](../../../../04_api_i_integracje/01_api_frontend/firm/POST_Firm_AddFirm.md) | Tak | tak (z wynikiem) |
+| Zapisz (tryb edytuj) | Wywołuje [PUT /api/Firm/EditFirm](../../../../04_api_i_integracje/01_api_frontend/firm/PUT_Firm_EditFirm.md) | Tak | tak (z wynikiem) |
 | Anuluj | Zamknięcie bez zmian | Nie | tak |
-| ☁ ANAF | Pobiera dane firmy z ANAF i wypełnia pola | `GET /api/Firm/fromAnaf/{cuiValue}` | nie |
+| ☁ ANAF | Pobiera dane firmy z ANAF i wypełnia pola | [GET /api/Firm/fromAnaf](../../../../04_api_i_integracje/01_api_frontend/firm/GET_Firm_fromAnaf.md) | nie |
 
 ## Przepływ
 
 ### Tryb dodawania (client = null)
 1. Formularz pusty
-2. Submit → `POST /api/Firm/AddFirm/true` (`isClient=true`)
+2. Submit → [POST /api/Firm/AddFirm](../../../../04_api_i_integracje/01_api_frontend/firm/POST_Firm_AddFirm.md) (`isClient=true`)
 3. Dialog zamknięty z wynikiem → lista klientów odświeżona
 
 ### Tryb edycji (client ≠ null)
 1. Formularz wypełniony danymi klienta
-2. Submit → `PUT /api/Firm/EditFirm/true` (`isClient=true`)
+2. Submit → [PUT /api/Firm/EditFirm](../../../../04_api_i_integracje/01_api_frontend/firm/PUT_Firm_EditFirm.md) (`isClient=true`)
 3. Dialog zamknięty z wynikiem → lista klientów odświeżona
 
 ### Autouzupełnienie ANAF
-- Ikona chmury → `GET /api/Firm/fromAnaf/{cuiValue}` → wypełnienie pól formularza
+- Ikona chmury → [GET /api/Firm/fromAnaf](../../../../04_api_i_integracje/01_api_frontend/firm/GET_Firm_fromAnaf.md) → wypełnienie pól formularza
 
 ## Wywołania API
 
 | Akcja | Endpoint |
 |---|---|
-| Dodanie klienta | `POST /api/Firm/AddFirm/true` |
-| Edycja klienta | `PUT /api/Firm/EditFirm/true` |
-| ANAF autouzupełnienie | `GET /api/Firm/fromAnaf/{cuiValue}` |
+| Dodanie klienta | [POST /api/Firm/AddFirm](../../../../04_api_i_integracje/01_api_frontend/firm/POST_Firm_AddFirm.md) |
+| Edycja klienta | [PUT /api/Firm/EditFirm](../../../../04_api_i_integracje/01_api_frontend/firm/PUT_Firm_EditFirm.md) |
+| ANAF autouzupełnienie | [GET /api/Firm/fromAnaf](../../../../04_api_i_integracje/01_api_frontend/firm/GET_Firm_fromAnaf.md) |
 
 ## Możliwe wyniki
 

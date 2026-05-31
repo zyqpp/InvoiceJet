@@ -103,8 +103,8 @@ sequenceDiagram
 
 ## Powiązania
 
-- Wywołany z ekranu: `01_ekrany/dashboard/`
-- Powiązane API: `GET /api/Document/GetDashboardStats/{year}/{documentType}`
+- Wywołany z ekranu: [Dashboard](../../../01_ekrany/dashboard/ekran.md)
+- Powiązane API: [GET /api/Document/GetDashboardStats](../../../04_api_i_integracje/01_api_frontend/document/GET_Document_GetDashboardStats.md)
 - Powiązany algorytm: Nie dotyczy
 
 ## Powiązania z kodem

@@ -5,7 +5,7 @@
 | ID | DTO-03 |
 | Plik | `InvoiceJet.Application/DTOs/FirmRequestDto.cs` |
 | Kierunek | Request + Response (dwukierunkowy) |
-| Endpointy | `POST /api/Firm/AddFirm/{isClient}`, `PUT /api/Firm/EditFirm/{isClient}`, `GET /api/Firm/fromAnaf/{cui}`, `GET /api/Firm/GetUserActiveFirm` |
+| Endpointy | [POST /api/Firm/AddFirm](../../04_api_i_integracje/01_api_frontend/firm/POST_Firm_AddFirm.md), [PUT /api/Firm/EditFirm](../../04_api_i_integracje/01_api_frontend/firm/PUT_Firm_EditFirm.md), [GET /api/Firm/fromAnaf](../../04_api_i_integracje/01_api_frontend/firm/GET_Firm_fromAnaf.md), [GET /api/Firm/GetUserActiveFirm](../../04_api_i_integracje/01_api_frontend/firm/GET_Firm_GetUserActiveFirm.md) |
 | Ostatnia walidacja | 2026-05-31 |
 | Autor | Agent Claudiusz Sonte 4.6 max |
 
@@ -30,7 +30,7 @@
 
 ## Użycie jako Response
 
-Przy `GET /api/Firm/GetUserActiveFirm` i `GET /api/Firm/fromAnaf/{cui}` — zwracany jako odpowiedź.
+Przy [GET /api/Firm/GetUserActiveFirm](../../04_api_i_integracje/01_api_frontend/firm/GET_Firm_GetUserActiveFirm.md) i [GET /api/Firm/fromAnaf](../../04_api_i_integracje/01_api_frontend/firm/GET_Firm_fromAnaf.md) — zwracany jako odpowiedź.
 
 ## Przykład JSON
 

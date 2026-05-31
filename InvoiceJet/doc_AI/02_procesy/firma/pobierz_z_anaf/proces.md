@@ -80,9 +80,9 @@ sequenceDiagram
 
 ## Powiązania
 
-- Wywołany z ekranu: `01_ekrany/firma/dane_firmy/`, `01_ekrany/firma/klienci/`
-- Powiązane API: `GET /api/Firm/fromAnaf/{cui}`
-- Powiązany algorytm: `03_algorytmy/dedykowane/integracja_anaf.md`
+- Wywołany z ekranu: [Dane firmy](../../../01_ekrany/firma/dane_firmy/ekran.md), [Klienci](../../../01_ekrany/firma/klienci/ekran.md)
+- Powiązane API: [GET /api/Firm/fromAnaf](../../../04_api_i_integracje/01_api_frontend/firm/GET_Firm_fromAnaf.md)
+- Powiązany algorytm: [integracja_anaf](../../../03_algorytmy/dedykowane/integracja_anaf.md)
 
 ## Powiązania z kodem
 

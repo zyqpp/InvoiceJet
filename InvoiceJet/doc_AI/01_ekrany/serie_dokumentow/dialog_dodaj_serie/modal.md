@@ -57,28 +57,28 @@ Modal Angular Material do dodawania i edycji serii numeracji dokumentów. Otwier
 
 | Przycisk | Akcja | Wywołuje operację | Zamyka modal |
 |---|---|---|---|
-| Zapisz (tryb dodaj) | Wywołuje `POST /api/DocumentSeries/Add` | Tak | tak (z wynikiem) |
-| Zapisz (tryb edytuj) | Wywołuje `PUT /api/DocumentSeries/Update` | Tak | tak (z wynikiem) |
+| Zapisz (tryb dodaj) | Wywołuje [POST /api/DocumentSeries/Add](../../../../04_api_i_integracje/01_api_frontend/document_series/POST_DocumentSeries_Add.md) | Tak | tak (z wynikiem) |
+| Zapisz (tryb edytuj) | Wywołuje [PUT /api/DocumentSeries/Update](../../../../04_api_i_integracje/01_api_frontend/document_series/PUT_DocumentSeries_Update.md) | Tak | tak (z wynikiem) |
 | Anuluj | Zamknięcie bez zmian | Nie | tak |
 
 ## Przepływ
 
 ### Tryb dodawania
 1. Formularz pusty; `currentNumber` domyślnie `1`
-2. Submit → `POST /api/DocumentSeries/Add`
+2. Submit → [POST /api/DocumentSeries/Add](../../../../04_api_i_integracje/01_api_frontend/document_series/POST_DocumentSeries_Add.md)
 3. Dialog zamknięty z wynikiem → lista serii odświeżona
 
 ### Tryb edycji
 1. Formularz wypełniony danymi serii
-2. Submit → `PUT /api/DocumentSeries/Update`
+2. Submit → [PUT /api/DocumentSeries/Update](../../../../04_api_i_integracje/01_api_frontend/document_series/PUT_DocumentSeries_Update.md)
 3. Dialog zamknięty z wynikiem → lista serii odświeżona
 
 ## Wywołania API
 
 | Akcja | Endpoint |
 |---|---|
-| Dodanie serii | `POST /api/DocumentSeries/Add` |
-| Edycja serii | `PUT /api/DocumentSeries/Update` |
+| Dodanie serii | [POST /api/DocumentSeries/Add](../../../../04_api_i_integracje/01_api_frontend/document_series/POST_DocumentSeries_Add.md) |
+| Edycja serii | [PUT /api/DocumentSeries/Update](../../../../04_api_i_integracje/01_api_frontend/document_series/PUT_DocumentSeries_Update.md) |
 
 ## Format numeru dokumentu
 

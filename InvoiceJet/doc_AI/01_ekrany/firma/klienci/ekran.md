@@ -98,8 +98,8 @@ Brak (anomalia: brak komunikatów sukcesu/błędu dla użytkownika).
 
 | Akcja | Endpoint |
 |---|---|
-| Załadowanie listy (ngOnInit) | `GET /api/Firm/GetUserClientFirms` |
-| Usunięcie zaznaczonych | `PUT /api/Firm/DeleteFirms?firmIds=...` (query string) |
+| Załadowanie listy (ngOnInit) | [GET /api/Firm/GetUserClientFirms](../../../04_api_i_integracje/01_api_frontend/firm/GET_Firm_GetUserClientFirms.md) |
+| Usunięcie zaznaczonych | [PUT /api/Firm/DeleteFirms](../../../04_api_i_integracje/01_api_frontend/firm/PUT_Firm_DeleteFirms.md) (query string) |
 
 ## Powiązania
 

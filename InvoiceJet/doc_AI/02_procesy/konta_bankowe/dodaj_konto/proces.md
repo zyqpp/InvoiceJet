@@ -73,8 +73,8 @@ sequenceDiagram
 
 ## Powiązania
 
-- Wywołany z ekranu: `01_ekrany/firma/konta_bankowe/`
-- Powiązane API: `POST /api/BankAccount/Add`
+- Wywołany z ekranu: [Konta bankowe](../../../01_ekrany/firma/konta_bankowe/ekran.md)
+- Powiązane API: [POST /api/BankAccount/Add](../../../04_api_i_integracje/01_api_frontend/bank_account/POST_BankAccount_Add.md)
 - Powiązany algorytm: Nie dotyczy
 
 ## Powiązania z kodem

@@ -87,9 +87,9 @@ sequenceDiagram
 
 ## Powiązania
 
-- Wywołany z ekranu: `01_ekrany/faktury/dodaj_edytuj_fakture/`, `01_ekrany/faktury_proforma/dodaj_edytuj_fakture_proforma/`
-- Powiązane API: `PUT /api/Document/Edit`
-- Powiązany algorytm: `03_algorytmy/wyliczeniowe/obliczanie_wartosci_dokumentu.md`
+- Wywołany z ekranu: [Dodaj/edytuj fakturę](../../../01_ekrany/faktury/dodaj_edytuj_fakture/ekran.md), [Dodaj/edytuj proformę](../../../01_ekrany/faktury_proforma/dodaj_edytuj_fakture_proforma/ekran.md)
+- Powiązane API: [PUT /api/Document/Edit](../../../04_api_i_integracje/01_api_frontend/document/PUT_Document_Edit.md)
+- Powiązany algorytm: [obliczanie_wartosci_dokumentu](../../../03_algorytmy/wyliczeniowe/obliczanie_wartosci_dokumentu.md)
 
 ## Powiązania z kodem
 

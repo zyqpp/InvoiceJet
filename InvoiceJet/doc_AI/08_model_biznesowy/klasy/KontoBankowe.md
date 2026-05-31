@@ -42,7 +42,7 @@ KontoBankowe to rachunek bankowy firmy użytkownika, na który klient powinien p
 
 | Element | Lokalizacja |
 |---|---|
-| Encja DB | `dbo.BankAccount` |
+| Encja DB | [dbo.BankAccount](../../05_model_danych/01_db/dbo/dbo.BankAccount.md) |
 | DTO | brak dedykowanego (dane w BankAccountDto) |
 | Plik .cs | `InvoiceJet.Domain/Models/BankAccount.cs` |
 

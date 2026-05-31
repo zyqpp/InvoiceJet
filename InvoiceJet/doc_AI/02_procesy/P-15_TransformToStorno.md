@@ -6,7 +6,7 @@
 | Nazwa | TransformToStorno |
 | Kontroler | `DocumentController` |
 | Serwis | `DocumentService` |
-| Endpoint | `PUT /api/Document/TransformToStorno` |
+| Endpoint | [PUT /api/Document/TransformToStorno](../04_api_i_integracje/01_api_frontend/document/PUT_Document_TransformToStorno.md) |
 | AuthGuard | TAK |
 | Ostatnia walidacja | 2026-05-31 |
 | Autor | Agent Claudiusz Sonte 4.6 max |

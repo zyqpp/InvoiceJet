@@ -96,10 +96,10 @@ Brak (komunikaty błędów niejawne — anomalia).
 
 | Akcja | Endpoint |
 |---|---|
-| Załadowanie danych (ngOnInit) | `GET /api/Firm/GetUserActiveFirm` |
-| Submit (edycja) | `PUT /api/Firm/EditFirm/false` (`isClient=false`) |
-| Submit (dodanie) | `POST /api/Firm/AddFirm/false` (`isClient=false`) |
-| Ikona chmury (ANAF) | `GET /api/Firm/fromAnaf/{cuiValue}` → autouzupełnienie pól |
+| Załadowanie danych (ngOnInit) | [GET /api/Firm/GetUserActiveFirm](../../../04_api_i_integracje/01_api_frontend/firm/GET_Firm_GetUserActiveFirm.md) |
+| Submit (edycja) | [PUT /api/Firm/EditFirm](../../../04_api_i_integracje/01_api_frontend/firm/PUT_Firm_EditFirm.md) (`isClient=false`) |
+| Submit (dodanie) | [POST /api/Firm/AddFirm](../../../04_api_i_integracje/01_api_frontend/firm/POST_Firm_AddFirm.md) (`isClient=false`) |
+| Ikona chmury (ANAF) | [GET /api/Firm/fromAnaf](../../../04_api_i_integracje/01_api_frontend/firm/GET_Firm_fromAnaf.md) → autouzupełnienie pól |
 
 ## Metody
 

@@ -43,7 +43,7 @@ SeriaDokumentow to konfiguracja numeracji dokumentów finansowych firmy. Definiu
 
 | Element | Lokalizacja |
 |---|---|
-| Encja DB | `dbo.DocumentSeries` |
+| Encja DB | [dbo.DocumentSeries](../../05_model_danych/01_db/dbo/dbo.DocumentSeries.md) |
 | DTO | brak dedykowanego (dane w DocumentSeriesDto) |
 | Plik .cs | `InvoiceJet.Domain/Models/DocumentSeries.cs` |
 

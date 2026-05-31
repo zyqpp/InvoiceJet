@@ -5,7 +5,7 @@
 | ID | DTO-13 |
 | Plik | `InvoiceJet.Application/DTOs/UserDto.cs` (lub `TokenResponseDto.cs`) |
 | Kierunek | Response (Backend → Frontend) |
-| Endpointy | `POST /api/Auth/register`, `POST /api/Auth/login` |
+| Endpointy | [POST /api/Auth/register](../../04_api_i_integracje/01_api_frontend/auth/POST_Auth_register.md), [POST /api/Auth/login](../../04_api_i_integracje/01_api_frontend/auth/POST_Auth_login.md) |
 | Ostatnia walidacja | 2026-05-31 |
 | Autor | Agent Claudiusz Sonte 4.6 max |
 

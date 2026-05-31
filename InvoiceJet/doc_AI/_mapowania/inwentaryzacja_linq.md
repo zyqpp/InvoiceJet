@@ -32,7 +32,7 @@
 - Projekt **nie używa zapytań bezpośrednich** (raw SQL, stored procedures, views)
 - `04_zapytania_bezposrednie/` jest celowo pusty
 - Zapytania LINQ są hermetyczne w repozytoriach, serwisy je wywołują przez interfejsy
-- Anomalia: LINQ-05 filtruje klientów przez UserFirm — ale relacja jest niejednoznaczna (patrz `dbo.UserFirm_relations.md`)
+- Anomalia: LINQ-05 filtruje klientów przez UserFirm — ale relacja jest niejednoznaczna (patrz [dbo.UserFirm relations](../05_model_danych/01_db/dbo/dbo.UserFirm_relations.md))
 
 ## Rejestr zmian
 

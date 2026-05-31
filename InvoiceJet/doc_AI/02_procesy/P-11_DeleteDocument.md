@@ -6,7 +6,7 @@
 | Nazwa | DeleteDocument |
 | Kontroler | `DocumentController` |
 | Serwis | `DocumentService` |
-| Endpoint | `PUT /api/Document/Delete` |
+| Endpoint | [PUT /api/Document/Delete](../04_api_i_integracje/01_api_frontend/document/PUT_Document_Delete.md) |
 | AuthGuard | TAK |
 | Ostatnia walidacja | 2026-05-31 |
 | Autor | Agent Claudiusz Sonte 4.6 max |

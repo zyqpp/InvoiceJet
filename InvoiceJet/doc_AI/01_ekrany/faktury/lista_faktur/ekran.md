@@ -96,14 +96,14 @@ Brak.
 
 | Akcja | Endpoint |
 |---|---|
-| Załadowanie danych (ngOnInit) | `GET /api/Document/GetDocumentTableRecords/1` |
-| Usunięcie zaznaczonych | `PUT /api/Document/DeleteDocuments` z `[FromBody] int[]` |
-| Przekształcenie w storno | `PUT /api/Document/TransformToStorno` z `[FromBody] int[]` |
+| Załadowanie danych (ngOnInit) | [GET /api/Document/GetTableRecords](../../../04_api_i_integracje/01_api_frontend/document/GET_Document_GetTableRecords.md) |
+| Usunięcie zaznaczonych | [PUT /api/Document/Delete](../../../04_api_i_integracje/01_api_frontend/document/PUT_Document_Delete.md) z `[FromBody] int[]` |
+| Przekształcenie w storno | [PUT /api/Document/TransformToStorno](../../../04_api_i_integracje/01_api_frontend/document/PUT_Document_TransformToStorno.md) z `[FromBody] int[]` |
 
 ## Powiązania
 
-- Powiązane procesy: `../../02_procesy/dokumenty/pobierz_dokumenty/proces.md`, `../../02_procesy/dokumenty/usun_dokumenty/proces.md`, `../../02_procesy/dokumenty/transformuj_na_storno/proces.md`
-- Powiązane API: `../../04_api_i_integracje/01_api_frontend/document/`
+- Powiązane procesy: [pobierz_dokumenty](../../../02_procesy/dokumenty/pobierz_dokumenty/proces.md), [usun_dokumenty](../../../02_procesy/dokumenty/usun_dokumenty/proces.md), [transformuj_na_storno](../../../02_procesy/dokumenty/transformuj_na_storno/proces.md)
+- Powiązane API: [GET /api/Document/GetTableRecords](../../../04_api_i_integracje/01_api_frontend/document/GET_Document_GetTableRecords.md)
 - Powiązane UC: Brak
 
 ## Powiązania z kodem

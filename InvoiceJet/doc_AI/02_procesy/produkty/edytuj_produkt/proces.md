@@ -78,8 +78,8 @@ sequenceDiagram
 
 ## Powiązania
 
-- Wywołany z ekranu: `01_ekrany/produkty/`
-- Powiązane API: `PUT /api/Product/Edit`
+- Wywołany z ekranu: [Produkty](../../../01_ekrany/produkty/ekran.md)
+- Powiązane API: [PUT /api/Product/Edit](../../../04_api_i_integracje/01_api_frontend/product/PUT_Product_Edit.md)
 - Powiązany algorytm: Nie dotyczy
 
 ## Powiązania z kodem

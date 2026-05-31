@@ -27,7 +27,7 @@ var userId = int.Parse(User.FindFirst("userId")!.Value);
 
 ### Co to jest UserFirm i dlaczego jest potrzebne?
 
-`UserFirm` to tabela pośrednicząca łącząca `User` z `Firm`. Jeden użytkownik ma jeden `UserFirm`. Wszystkie zasoby (produkty, konta bankowe, faktury) są powiązane z `UserFirmId`, nie z `UserId`. Dzięki temu możliwe jest rozszerzenie do modelu wieloużytkownikowego (wiele osób w jednej firmie) bez zmian logiki zasobów. Szczegóły: `ALG-10_DataIsolationPattern.md`, `dbo.UserFirm_relations.md`.
+`UserFirm` to tabela pośrednicząca łącząca `User` z `Firm`. Jeden użytkownik ma jeden `UserFirm`. Wszystkie zasoby (produkty, konta bankowe, faktury) są powiązane z `UserFirmId`, nie z `UserId`. Dzięki temu możliwe jest rozszerzenie do modelu wieloużytkownikowego (wiele osób w jednej firmie) bez zmian logiki zasobów. Szczegóły: [ALG-10 DataIsolationPattern](../03_algorytmy/ALG-10_DataIsolationPattern.md), [dbo.UserFirm relations](../05_model_danych/01_db/dbo/dbo.UserFirm_relations.md).
 
 ---
 

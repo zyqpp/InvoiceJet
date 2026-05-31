@@ -73,9 +73,9 @@ sequenceDiagram
 
 ## Powiązania
 
-- Wywołany z ekranu: `01_ekrany/serie_dokumentow/`
-- Powiązane API: `GET /api/DocumentSeries/GetAll`
-- Powiązany algorytm: `03_algorytmy/dedykowane/generowanie_numeru_dokumentu.md`
+- Wywołany z ekranu: [Serie dokumentów](../../../01_ekrany/serie_dokumentow/ekran.md)
+- Powiązane API: [GET /api/DocumentSeries/GetAll](../../../04_api_i_integracje/01_api_frontend/document_series/GET_DocumentSeries_GetAll.md)
+- Powiązany algorytm: [generowanie_numeru_dokumentu](../../../03_algorytmy/dedykowane/generowanie_numeru_dokumentu.md)
 
 ## Powiązania z kodem
 

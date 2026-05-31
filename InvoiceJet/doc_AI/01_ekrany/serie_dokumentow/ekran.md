@@ -94,13 +94,13 @@ Brak.
 
 | Akcja | Endpoint |
 |---|---|
-| Załadowanie (ngOnInit) | `GET /api/DocumentSeries/GetAllDocumentSeriesForUserId` |
-| Usunięcie zaznaczonych | `PUT /api/DocumentSeries/DeleteDocumentSeries?documentSeriesIds=...` (query string) |
+| Załadowanie (ngOnInit) | [GET /api/DocumentSeries/GetAll](../../../04_api_i_integracje/01_api_frontend/document_series/GET_DocumentSeries_GetAll.md) |
+| Usunięcie zaznaczonych | [PUT /api/DocumentSeries/Delete](../../../04_api_i_integracje/01_api_frontend/document_series/PUT_DocumentSeries_Delete.md) (query string) |
 
 ## Powiązania
 
-- Powiązane procesy: `../../02_procesy/serie_dokumentow/pobierz_serie/proces.md`, `../../02_procesy/serie_dokumentow/usun_serie/proces.md`
-- Powiązane API: `../../04_api_i_integracje/01_api_frontend/document_series/`
+- Powiązane procesy: [pobierz_serie](../../../02_procesy/serie_dokumentow/pobierz_serie/proces.md), [usun_serie](../../../02_procesy/serie_dokumentow/usun_serie/proces.md)
+- Powiązane API: [GET /api/DocumentSeries/GetAll](../../../04_api_i_integracje/01_api_frontend/document_series/GET_DocumentSeries_GetAll.md)
 - Powiązane UC: Brak
 
 ## Powiązania z kodem

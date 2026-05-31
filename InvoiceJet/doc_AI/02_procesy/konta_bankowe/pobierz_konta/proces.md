@@ -73,8 +73,8 @@ sequenceDiagram
 
 ## Powiązania
 
-- Wywołany z ekranu: `01_ekrany/firma/konta_bankowe/`, `01_ekrany/faktury/dodaj_edytuj_fakture/`
-- Powiązane API: `GET /api/BankAccount/GetAll`
+- Wywołany z ekranu: [Konta bankowe](../../../01_ekrany/firma/konta_bankowe/ekran.md), [Dodaj/edytuj fakturę](../../../01_ekrany/faktury/dodaj_edytuj_fakture/ekran.md)
+- Powiązane API: [GET /api/BankAccount/GetAll](../../../04_api_i_integracje/01_api_frontend/bank_account/GET_BankAccount_GetAll.md)
 - Powiązany algorytm: Nie dotyczy
 
 ## Powiązania z kodem

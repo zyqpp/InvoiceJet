@@ -5,7 +5,7 @@
 | ID | DTO-09 |
 | Plik | `InvoiceJet.Application/DTOs/DocumentTableRecordDto.cs` |
 | Kierunek | Response (Backend → Frontend) |
-| Endpoint | `GET /api/Document/GetTableRecords/{documentTypeId}` |
+| Endpoint | [GET /api/Document/GetTableRecords](../../04_api_i_integracje/01_api_frontend/document/GET_Document_GetTableRecords.md) |
 | Ostatnia walidacja | 2026-05-31 |
 | Autor | Agent Claudiusz Sonte 4.6 max |
 

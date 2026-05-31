@@ -59,28 +59,28 @@ Modal Angular Material do dodawania i edycji produktu lub usługi w katalogu fir
 
 | Przycisk | Akcja | Wywołuje operację | Zamyka modal |
 |---|---|---|---|
-| Zapisz (tryb dodaj) | Wywołuje `POST /api/Product/Add` | Tak | tak (z wynikiem) |
-| Zapisz (tryb edytuj) | Wywołuje `PUT /api/Product/Edit` | Tak | tak (z wynikiem) |
+| Zapisz (tryb dodaj) | Wywołuje [POST /api/Product/Add](../../../../04_api_i_integracje/01_api_frontend/product/POST_Product_Add.md) | Tak | tak (z wynikiem) |
+| Zapisz (tryb edytuj) | Wywołuje [PUT /api/Product/Edit](../../../../04_api_i_integracje/01_api_frontend/product/PUT_Product_Edit.md) | Tak | tak (z wynikiem) |
 | Anuluj | Zamknięcie bez zmian | Nie | tak |
 
 ## Przepływ
 
 ### Tryb dodawania
 1. Formularz pusty
-2. Submit → `POST /api/Product/Add`
+2. Submit → [POST /api/Product/Add](../../../../04_api_i_integracje/01_api_frontend/product/POST_Product_Add.md)
 3. Dialog zamknięty z wynikiem → lista produktów odświeżona
 
 ### Tryb edycji
 1. Formularz wypełniony danymi produktu
-2. Submit → `PUT /api/Product/Edit`
+2. Submit → [PUT /api/Product/Edit](../../../../04_api_i_integracje/01_api_frontend/product/PUT_Product_Edit.md)
 3. Dialog zamknięty z wynikiem → lista produktów odświeżona
 
 ## Wywołania API
 
 | Akcja | Endpoint |
 |---|---|
-| Dodanie produktu | `POST /api/Product/Add` |
-| Edycja produktu | `PUT /api/Product/Edit` |
+| Dodanie produktu | [POST /api/Product/Add](../../../../04_api_i_integracje/01_api_frontend/product/POST_Product_Add.md) |
+| Edycja produktu | [PUT /api/Product/Edit](../../../../04_api_i_integracje/01_api_frontend/product/PUT_Product_Edit.md) |
 
 ## Możliwe wyniki
 

@@ -96,13 +96,13 @@ Brak.
 
 | Akcja | Endpoint |
 |---|---|
-| Załadowanie (ngOnInit) | `GET /api/Product/GetAllProductsForUserId` |
-| Usunięcie zaznaczonych | `PUT /api/Product/DeleteProducts?productIds=...` (query string) |
+| Załadowanie (ngOnInit) | [GET /api/Product/GetAll](../../../04_api_i_integracje/01_api_frontend/product/GET_Product_GetAll.md) |
+| Usunięcie zaznaczonych | [PUT /api/Product/Delete](../../../04_api_i_integracje/01_api_frontend/product/PUT_Product_Delete.md) (query string) |
 
 ## Powiązania
 
-- Powiązane procesy: `../../02_procesy/produkty/pobierz_produkty/proces.md`, `../../02_procesy/produkty/usun_produkty/proces.md`
-- Powiązane API: `../../04_api_i_integracje/01_api_frontend/product/`
+- Powiązane procesy: [pobierz_produkty](../../../02_procesy/produkty/pobierz_produkty/proces.md), [usun_produkty](../../../02_procesy/produkty/usun_produkty/proces.md)
+- Powiązane API: [GET /api/Product/GetAll](../../../04_api_i_integracje/01_api_frontend/product/GET_Product_GetAll.md)
 - Powiązane UC: Brak
 
 ## Powiązania z kodem

@@ -6,7 +6,7 @@
 | Nazwa | GetDocuments |
 | Kontroler | `DocumentController` |
 | Serwis | `DocumentService` |
-| Endpointy | `GET /api/Document/GetTableRecords/{documentTypeId}`, `GET /api/Document/GetDocumentById/{id}` |
+| Endpointy | [GET /api/Document/GetTableRecords](../04_api_i_integracje/01_api_frontend/document/GET_Document_GetTableRecords.md), [GET /api/Document/GetById](../04_api_i_integracje/01_api_frontend/document/GET_Document_GetById.md) |
 | AuthGuard | TAK |
 | Ostatnia walidacja | 2026-05-31 |
 | Autor | Agent Claudiusz Sonte 4.6 max |

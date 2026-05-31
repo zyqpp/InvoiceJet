@@ -5,7 +5,7 @@
 | ID | DTO-05 |
 | Plik | `InvoiceJet.Application/DTOs/ProductRequestDto.cs` |
 | Kierunek | Request + Response (dwukierunkowy) |
-| Endpointy | `GET /api/Product/GetAll`, `POST /api/Product/Add`, `PUT /api/Product/Edit` |
+| Endpointy | [GET /api/Product/GetAll](../../04_api_i_integracje/01_api_frontend/product/GET_Product_GetAll.md), [POST /api/Product/Add](../../04_api_i_integracje/01_api_frontend/product/POST_Product_Add.md), [PUT /api/Product/Edit](../../04_api_i_integracje/01_api_frontend/product/PUT_Product_Edit.md) |
 | Ostatnia walidacja | 2026-05-31 |
 | Autor | Agent Claudiusz Sonte 4.6 max |
 

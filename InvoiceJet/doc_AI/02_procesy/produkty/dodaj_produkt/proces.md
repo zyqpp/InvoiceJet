@@ -81,8 +81,8 @@ sequenceDiagram
 
 ## Powiązania
 
-- Wywołany z ekranu: `01_ekrany/produkty/`
-- Powiązane API: `POST /api/Product/Add`
+- Wywołany z ekranu: [Produkty](../../../01_ekrany/produkty/ekran.md)
+- Powiązane API: [POST /api/Product/Add](../../../04_api_i_integracje/01_api_frontend/product/POST_Product_Add.md)
 - Powiązany algorytm: Nie dotyczy
 
 ## Powiązania z kodem

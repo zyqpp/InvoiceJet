@@ -104,8 +104,8 @@ sequenceDiagram
 
 ## Powiązania
 
-- Wywołany z ekranu: `01_ekrany/faktury/dodaj_edytuj_fakture/`, `01_ekrany/faktury_proforma/dodaj_edytuj_fakture_proforma/`, `01_ekrany/faktury_storno/dodaj_edytuj_fakture_storno/`
-- Powiązane API: `GET /api/Document/GetDocumentAutofillInfo/{documentTypeId}`
+- Wywołany z ekranu: [Dodaj/edytuj fakturę](../../../01_ekrany/faktury/dodaj_edytuj_fakture/ekran.md), [Dodaj/edytuj proformę](../../../01_ekrany/faktury_proforma/dodaj_edytuj_fakture_proforma/ekran.md), [Dodaj/edytuj storno](../../../01_ekrany/faktury_storno/dodaj_edytuj_fakture_storno/ekran.md)
+- Powiązane API: [GET /api/Document/GetAutofillInfo](../../../04_api_i_integracje/01_api_frontend/document/GET_Document_GetAutofillInfo.md)
 - Powiązany algorytm: Nie dotyczy
 
 ## Powiązania z kodem

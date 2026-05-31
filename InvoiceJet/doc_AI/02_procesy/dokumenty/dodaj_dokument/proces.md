@@ -96,9 +96,9 @@ sequenceDiagram
 
 ## Powiązania
 
-- Wywołany z ekranu: `01_ekrany/faktury/dodaj_edytuj_fakture/`, `01_ekrany/faktury_proforma/dodaj_edytuj_fakture_proforma/`, `01_ekrany/faktury_storno/dodaj_edytuj_fakture_storno/`
-- Powiązane API: `POST /api/Document/Add`
-- Powiązany algorytm: `03_algorytmy/dedykowane/generowanie_numeru_dokumentu.md`, `03_algorytmy/wyliczeniowe/obliczanie_wartosci_dokumentu.md`
+- Wywołany z ekranu: [Dodaj/edytuj fakturę](../../../01_ekrany/faktury/dodaj_edytuj_fakture/ekran.md), [Dodaj/edytuj proformę](../../../01_ekrany/faktury_proforma/dodaj_edytuj_fakture_proforma/ekran.md), [Dodaj/edytuj storno](../../../01_ekrany/faktury_storno/dodaj_edytuj_fakture_storno/ekran.md)
+- Powiązane API: [POST /api/Document/Add](../../../04_api_i_integracje/01_api_frontend/document/POST_Document_Add.md)
+- Powiązany algorytm: [generowanie_numeru_dokumentu](../../../03_algorytmy/dedykowane/generowanie_numeru_dokumentu.md), [obliczanie_wartosci_dokumentu](../../../03_algorytmy/wyliczeniowe/obliczanie_wartosci_dokumentu.md)
 
 ## Powiązania z kodem
 

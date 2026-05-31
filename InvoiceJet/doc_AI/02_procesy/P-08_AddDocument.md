@@ -6,7 +6,7 @@
 | Nazwa | AddDocument |
 | Kontroler | `DocumentController` |
 | Serwis | `DocumentService` |
-| Endpoint | `POST /api/Document/Add` |
+| Endpoint | [POST /api/Document/Add](../04_api_i_integracje/01_api_frontend/document/POST_Document_Add.md) |
 | AuthGuard | TAK |
 | Ostatnia walidacja | 2026-05-31 |
 | Autor | Agent Claudiusz Sonte 4.6 max |

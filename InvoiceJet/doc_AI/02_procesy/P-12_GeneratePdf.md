@@ -6,7 +6,7 @@
 | Nazwa | GeneratePdf |
 | Kontroler | `DocumentController` |
 | Serwis | `DocumentService` |
-| Endpointy | `POST /api/Document/GenerateInvoicePdf`, `POST /api/Document/GetPdfStream` |
+| Endpointy | [POST /api/Document/GeneratePdf](../04_api_i_integracje/01_api_frontend/document/POST_Document_GeneratePdf.md), [POST /api/Document/GetPdfStream](../04_api_i_integracje/01_api_frontend/document/POST_Document_GetPdfStream.md) |
 | AuthGuard | TAK |
 | Ostatnia walidacja | 2026-05-31 |
 | Autor | Agent Claudiusz Sonte 4.6 max |

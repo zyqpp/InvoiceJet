@@ -86,8 +86,8 @@ sequenceDiagram
 
 ## Powiązania
 
-- Wywołany z ekranu: `01_ekrany/faktury/lista_faktur/`, `01_ekrany/faktury_proforma/lista_faktur_proforma/`, `01_ekrany/faktury_storno/lista_faktur_storno/`
-- Powiązane API: `PUT /api/Document/Delete`
+- Wywołany z ekranu: [Lista faktur](../../../01_ekrany/faktury/lista_faktur/ekran.md), [Lista proform](../../../01_ekrany/faktury_proforma/lista_faktur_proforma/ekran.md), [Lista storn](../../../01_ekrany/faktury_storno/lista_faktur_storno/ekran.md)
+- Powiązane API: [PUT /api/Document/Delete](../../../04_api_i_integracje/01_api_frontend/document/PUT_Document_Delete.md)
 - Powiązany algorytm: Nie dotyczy
 
 ## Powiązania z kodem

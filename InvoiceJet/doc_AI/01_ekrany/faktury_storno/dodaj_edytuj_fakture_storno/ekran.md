@@ -84,7 +84,7 @@ Identyczne pola jak `EKRAN-FormularzFaktury` — patrz `../../00_wspolne/base_in
 
 Storno może powstać:
 1. Ręcznie — przez formularz (ten ekran, tryb dodawania)
-2. Automatycznie — przez `PUT /api/Document/TransformToStorno` z listy faktur (`../faktury/lista_faktur/ekran.md`); w tym przypadku komponent nie jest używany — akcja odbywa się bezpośrednio z listy
+2. Automatycznie — przez [PUT /api/Document/TransformToStorno](../../../04_api_i_integracje/01_api_frontend/document/PUT_Document_TransformToStorno.md) z [listy faktur](../../../01_ekrany/faktury/lista_faktur/ekran.md); w tym przypadku komponent nie jest używany — akcja odbywa się bezpośrednio z listy
 
 ## Wywołania API
 
@@ -92,18 +92,18 @@ Identyczne jak `EKRAN-FormularzFaktury`, ale `GetDocumentAutofillInfo/3` (Docume
 
 | Akcja | Endpoint |
 |---|---|
-| Załadowanie autofill (ngOnInit) | `GET /api/Document/GetDocumentAutofillInfo/3` |
-| Załadowanie dokumentu (tryb edycji) | `GET /api/Document/GetDocumentById/{id}` |
-| Submit (dodanie) | `POST /api/Document/AddDocument` |
-| Submit (edycja) | `PUT /api/Document/EditDocument` |
-| Generowanie PDF | `POST /api/Document/GenerateDocumentPdf` |
-| Podgląd PDF | `POST /api/Document/GetInvoicePdfStream` |
+| Załadowanie autofill (ngOnInit) | [GET /api/Document/GetAutofillInfo](../../../04_api_i_integracje/01_api_frontend/document/GET_Document_GetAutofillInfo.md) |
+| Załadowanie dokumentu (tryb edycji) | [GET /api/Document/GetById](../../../04_api_i_integracje/01_api_frontend/document/GET_Document_GetById.md) |
+| Submit (dodanie) | [POST /api/Document/Add](../../../04_api_i_integracje/01_api_frontend/document/POST_Document_Add.md) |
+| Submit (edycja) | [PUT /api/Document/Edit](../../../04_api_i_integracje/01_api_frontend/document/PUT_Document_Edit.md) |
+| Generowanie PDF | [POST /api/Document/GeneratePdf](../../../04_api_i_integracje/01_api_frontend/document/POST_Document_GeneratePdf.md) |
+| Podgląd PDF | [POST /api/Document/GetPdfStream](../../../04_api_i_integracje/01_api_frontend/document/POST_Document_GetPdfStream.md) |
 
 ## Powiązania
 
-- Klasa bazowa: `../../00_wspolne/base_invoice_component/ekran.md`
-- Powiązane procesy: `../../02_procesy/dokumenty/dodaj_dokument/proces.md`, `../../02_procesy/dokumenty/edytuj_dokument/proces.md`, `../../02_procesy/dokumenty/transformuj_na_storno/proces.md`
-- Powiązane API: `../../04_api_i_integracje/01_api_frontend/document/`
+- Klasa bazowa: [BaseInvoiceComponent](../../../01_ekrany/00_wspolne/base_invoice_component/ekran.md)
+- Powiązane procesy: [dodaj_dokument](../../../02_procesy/dokumenty/dodaj_dokument/proces.md), [edytuj_dokument](../../../02_procesy/dokumenty/edytuj_dokument/proces.md), [transformuj_na_storno](../../../02_procesy/dokumenty/transformuj_na_storno/proces.md)
+- Powiązane API: [POST /api/Document/Add](../../../04_api_i_integracje/01_api_frontend/document/POST_Document_Add.md)
 - Powiązane UC: Brak
 
 ## Powiązania z kodem

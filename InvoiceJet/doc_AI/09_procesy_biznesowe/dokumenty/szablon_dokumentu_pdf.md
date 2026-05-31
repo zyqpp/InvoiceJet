@@ -261,7 +261,7 @@ Gdzie `DocumentNumber` = wartość z `DocumentStreamDto.DocumentNumber` (przecho
 | PDF-02 | Dwa endpointy z różnym zachowaniem — frontend używa obu | architektura |
 | PDF-03 | `CurrentNumber` pobierany z frontendu (nie z DB) — możliwy race condition na numer | FullDocumentNumber |
 | PDF-04 | Tytuł PDF zawsze `Invoice #...` niezależnie od typu — proforma i storno mają ten sam tytuł co faktura | szablon |
-| PDF-05 | Brak pola `TotalNetAmount` i `TotalVatAmount` w `dbo.Document` — tylko TotalPrice (brutto); rozbicie w PDF wyliczane z pozycji | model danych |
+| PDF-05 | Brak pola `TotalNetAmount` i `TotalVatAmount` w [dbo.Document](../../05_model_danych/01_db/dbo/dbo.Document.md) — tylko TotalPrice (brutto); rozbicie w PDF wyliczane z pozycji | model danych |
 | PDF-06 | BankAccount na PDF = pierwsze konto WHERE UserFirmId — brak możliwości wyboru konta na poziomie dokumentu przez usera | logika doboru konta |
 
 ---

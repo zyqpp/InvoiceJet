@@ -44,7 +44,7 @@ Uzytkownik to konto osoby fizycznej zarejestrowanej w systemie InvoiceJet. Repre
 
 | Element | Lokalizacja |
 |---|---|
-| Encja DB | `dbo.User` |
+| Encja DB | [dbo.User](../../05_model_danych/01_db/dbo/dbo.User.md) |
 | DTO | brak wyodrębnionego DTO-Uzytkownik (dane zwracane w odpowiedzi JWT) |
 | Plik .cs | `InvoiceJet.Domain/Models/User.cs` |
 

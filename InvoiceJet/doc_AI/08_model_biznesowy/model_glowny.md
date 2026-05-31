@@ -122,7 +122,7 @@ classDiagram
 
 ## Uwagi do diagramu
 
-- `Klient` i `Firma` to ta sama struktura danych w bazie (tabela `dbo.Firm`) — rozróżniane przez kontekst powiązania z użytkownikiem (`UserFirm.IsClient`).
+- `Klient` i `Firma` to ta sama struktura danych w bazie (tabela [dbo.Firm](../05_model_danych/01_db/dbo/dbo.Firm.md)) — rozróżniane przez kontekst powiązania z użytkownikiem (`UserFirm.IsClient`).
 - `Uzytkownik` posiada wskaźnik aktywnej firmy — w danej chwili pracuje w kontekście jednej firmy.
 - `PozycjaDokumentu` przechowuje migawkę cenową niezależną od aktualnej ceny w `ProduktKatalogowy`.
 - Powiązanie `Dokument → SeriaDokumentow` jest pośrednie — dokument przechowuje wygenerowany numer tekstowy, nie referencję do serii.

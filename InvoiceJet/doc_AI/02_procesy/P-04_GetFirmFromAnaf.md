@@ -6,7 +6,7 @@
 | Nazwa | GetFirmFromAnaf |
 | Kontroler | `FirmController` |
 | Serwis | `FirmService` |
-| Endpoint | `GET /api/Firm/fromAnaf/{cui}` |
+| Endpoint | [GET /api/Firm/fromAnaf](../04_api_i_integracje/01_api_frontend/firm/GET_Firm_fromAnaf.md) |
 | AuthGuard | TAK |
 | Ostatnia walidacja | 2026-05-31 |
 | Autor | Agent Claudiusz Sonte 4.6 max |

@@ -5,7 +5,7 @@
 | ID | DTO-06 |
 | Plik | `InvoiceJet.Application/DTOs/DocumentSeriesRequestDto.cs` |
 | Kierunek | Request + Response (dwukierunkowy) |
-| Endpointy | `GET /api/DocumentSeries/GetAll`, `POST /api/DocumentSeries/Add`, `PUT /api/DocumentSeries/Update` |
+| Endpointy | [GET /api/DocumentSeries/GetAll](../../04_api_i_integracje/01_api_frontend/document_series/GET_DocumentSeries_GetAll.md), [POST /api/DocumentSeries/Add](../../04_api_i_integracje/01_api_frontend/document_series/POST_DocumentSeries_Add.md), [PUT /api/DocumentSeries/Update](../../04_api_i_integracje/01_api_frontend/document_series/PUT_DocumentSeries_Update.md) |
 | Ostatnia walidacja | 2026-05-31 |
 | Autor | Agent Claudiusz Sonte 4.6 max |
 

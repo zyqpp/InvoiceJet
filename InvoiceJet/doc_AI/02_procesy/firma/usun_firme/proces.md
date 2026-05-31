@@ -80,8 +80,8 @@ sequenceDiagram
 
 ## Powiązania
 
-- Wywołany z ekranu: `01_ekrany/firma/klienci/`
-- Powiązane API: `DELETE /api/Firm/DeleteFirms` lub `PUT /api/Firm/DeleteFirms` (weryfikacja metody HTTP wymagana)
+- Wywołany z ekranu: [Klienci](../../../01_ekrany/firma/klienci/ekran.md)
+- Powiązane API: [PUT /api/Firm/DeleteFirms](../../../04_api_i_integracje/01_api_frontend/firm/PUT_Firm_DeleteFirms.md)
 - Powiązany algorytm: Nie dotyczy
 
 ## Powiązania z kodem

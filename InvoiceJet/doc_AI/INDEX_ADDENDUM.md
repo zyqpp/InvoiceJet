@@ -41,7 +41,7 @@ Pliki utworzone po wygenerowaniu INDEX.md:
 
 | Plik | Opis |
 |---|---|
-| `dbo.UserFirm_relations.md` | Szczegóły relacji UserFirm — wzorzec izolacji danych |
+| [dbo.UserFirm_relations.md](05_model_danych/01_db/dbo/dbo.UserFirm_relations.md) | Szczegóły relacji UserFirm — wzorzec izolacji danych |
 
 ## `_szablony/` — szablony dokumentów
 

@@ -69,8 +69,8 @@ sequenceDiagram
 
 ## Powiązania
 
-- Wywołany z ekranu: `01_ekrany/firma/dane_firmy/`
-- Powiązane API: `GET /api/Firm/GetUserActiveFirm` (lub zbliżony endpoint — weryfikacja wymagana)
+- Wywołany z ekranu: [Dane firmy](../../../01_ekrany/firma/dane_firmy/ekran.md)
+- Powiązane API: [GET /api/Firm/GetUserActiveFirm](../../../04_api_i_integracje/01_api_frontend/firm/GET_Firm_GetUserActiveFirm.md)
 - Powiązany algorytm: Nie dotyczy
 
 ## Powiązania z kodem

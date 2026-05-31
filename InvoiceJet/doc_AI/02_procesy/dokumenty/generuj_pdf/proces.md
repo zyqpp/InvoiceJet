@@ -113,9 +113,9 @@ sequenceDiagram
 
 ## Powiązania
 
-- Wywołany z ekranu: `01_ekrany/faktury/lista_faktur/` (pobierz PDF), `01_ekrany/00_wspolne/modale_wspolne/pdf_viewer/` (podgląd)
-- Powiązane API: `POST /api/Document/GenerateInvoicePdf`, `POST /api/Document/GetPdfStream`
-- Powiązany algorytm: `03_algorytmy/generowania_pdf/generuj_pdf_na_dysk.md`, `03_algorytmy/generowania_pdf/generuj_pdf_stream.md`
+- Wywołany z ekranu: [Lista faktur](../../../01_ekrany/faktury/lista_faktur/ekran.md) (pobierz PDF), [PDF Viewer (modal)](../../../01_ekrany/00_wspolne/modale_wspolne/pdf_viewer/modal.md) (podgląd)
+- Powiązane API: [POST /api/Document/GeneratePdf](../../../04_api_i_integracje/01_api_frontend/document/POST_Document_GeneratePdf.md), [POST /api/Document/GetPdfStream](../../../04_api_i_integracje/01_api_frontend/document/POST_Document_GetPdfStream.md)
+- Powiązany algorytm: [generuj_pdf_na_dysk](../../../03_algorytmy/generowania_pdf/generuj_pdf_na_dysk.md), [generuj_pdf_stream](../../../03_algorytmy/generowania_pdf/generuj_pdf_stream.md)
 
 ## Powiązania z kodem
 

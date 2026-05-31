@@ -76,8 +76,8 @@ sequenceDiagram
 
 ## Powiązania
 
-- Wywołany z ekranu: `01_ekrany/firma/konta_bankowe/`
-- Powiązane API: `PUT /api/BankAccount/Edit`
+- Wywołany z ekranu: [Konta bankowe](../../../01_ekrany/firma/konta_bankowe/ekran.md)
+- Powiązane API: [PUT /api/BankAccount/Edit](../../../04_api_i_integracje/01_api_frontend/bank_account/PUT_BankAccount_Edit.md)
 - Powiązany algorytm: Nie dotyczy
 
 ## Powiązania z kodem

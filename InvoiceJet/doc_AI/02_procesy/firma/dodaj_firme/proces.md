@@ -107,8 +107,8 @@ sequenceDiagram
 
 ## Powiązania
 
-- Wywołany z ekranu: `01_ekrany/firma/dane_firmy/` (`isClient=false`), `01_ekrany/firma/klienci/` (`isClient=true`)
-- Powiązane API: `POST /api/Firm/AddFirm/{isClient}`
+- Wywołany z ekranu: [Dane firmy](../../../01_ekrany/firma/dane_firmy/ekran.md) (`isClient=false`), [Klienci](../../../01_ekrany/firma/klienci/ekran.md) (`isClient=true`)
+- Powiązane API: [POST /api/Firm/AddFirm](../../../04_api_i_integracje/01_api_frontend/firm/POST_Firm_AddFirm.md)
 - Powiązany algorytm: Nie dotyczy
 
 ## Powiązania z kodem

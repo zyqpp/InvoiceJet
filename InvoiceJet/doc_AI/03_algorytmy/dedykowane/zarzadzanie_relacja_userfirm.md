@@ -107,7 +107,7 @@ sequenceDiagram
 | `false` | Własna firma użytkownika (wystawca faktur) | Ekran [Dane firmy](../../01_ekrany/firma/dane_firmy/ekran.md) |
 | `true` | Firma klienta (nabywca na fakturach) | Dialog [Dodaj klienta](../../01_ekrany/firma/klienci/dialog_dodaj_klienta/modal.md) |
 
-**Uwaga:** nie istnieje osobna tabela dla firm-klientów — wszystkie firmy są w `dbo.Firm`, rozróżniane wyłącznie przez `UserFirm.IsClient`.
+**Uwaga:** nie istnieje osobna tabela dla firm-klientów — wszystkie firmy są w [dbo.Firm](../../05_model_danych/01_db/dbo/dbo.Firm.md), rozróżniane wyłącznie przez `UserFirm.IsClient`.
 
 ---
 

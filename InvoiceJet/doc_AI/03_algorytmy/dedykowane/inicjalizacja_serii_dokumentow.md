@@ -31,7 +31,7 @@ Dla każdej kolejnej firmy (gdy `user.ActiveUserFirm != null`) — NIE jest wywo
 
 ## Jakie serie są tworzone
 
-Na podstawie seedowanych typów dokumentów (`dbo.DocumentType`):
+Na podstawie seedowanych typów dokumentów ([dbo.DocumentType](../../05_model_danych/01_db/dbo/dbo.DocumentType.md)):
 
 | DocumentTypeId | Nazwa | Tworzona seria |
 |---|---|---|

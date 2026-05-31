@@ -73,8 +73,8 @@ sequenceDiagram
 
 ## Powiązania
 
-- Wywołany z ekranu: `01_ekrany/produkty/`, `01_ekrany/faktury/dodaj_edytuj_fakture/`
-- Powiązane API: `GET /api/Product/GetAll`
+- Wywołany z ekranu: [Produkty](../../../01_ekrany/produkty/ekran.md), [Dodaj/edytuj fakturę](../../../01_ekrany/faktury/dodaj_edytuj_fakture/ekran.md)
+- Powiązane API: [GET /api/Product/GetAll](../../../04_api_i_integracje/01_api_frontend/product/GET_Product_GetAll.md)
 - Powiązany algorytm: Nie dotyczy
 
 ## Powiązania z kodem

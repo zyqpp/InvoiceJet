@@ -6,7 +6,7 @@
 | Nazwa | GetDocumentAutofillInfo |
 | Kontroler | `DocumentController` |
 | Serwis | `DocumentService` |
-| Endpoint | `GET /api/Document/GetDocumentAutofillInfo/{documentTypeId}` |
+| Endpoint | [GET /api/Document/GetAutofillInfo](../04_api_i_integracje/01_api_frontend/document/GET_Document_GetAutofillInfo.md) |
 | AuthGuard | TAK |
 | Ostatnia walidacja | 2026-05-31 |
 | Autor | Agent Claudiusz Sonte 4.6 max |

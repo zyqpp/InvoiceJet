@@ -44,7 +44,7 @@ PozycjaDokumentu to pojedyncza linia pozycji na fakturze — konkretny produkt l
 
 | Element | Lokalizacja |
 |---|---|
-| Encja DB | `dbo.DocumentProduct` |
+| Encja DB | [dbo.DocumentProduct](../../05_model_danych/01_db/dbo/dbo.DocumentProduct.md) |
 | DTO | brak dedykowanego (dane w DocumentProductDto / DocumentProductRequestDto) |
 | Plik .cs | `InvoiceJet.Domain/Models/DocumentProduct.cs` |
 

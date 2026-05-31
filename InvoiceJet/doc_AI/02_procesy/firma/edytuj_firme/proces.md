@@ -80,8 +80,8 @@ sequenceDiagram
 
 ## Powiązania
 
-- Wywołany z ekranu: `01_ekrany/firma/dane_firmy/` (`isClient=false`), `01_ekrany/firma/klienci/` (`isClient=true`)
-- Powiązane API: `PUT /api/Firm/EditFirm/{isClient}`
+- Wywołany z ekranu: [Dane firmy](../../../01_ekrany/firma/dane_firmy/ekran.md) (`isClient=false`), [Klienci](../../../01_ekrany/firma/klienci/ekran.md) (`isClient=true`)
+- Powiązane API: [PUT /api/Firm/EditFirm](../../../04_api_i_integracje/01_api_frontend/firm/PUT_Firm_EditFirm.md)
 - Powiązany algorytm: Nie dotyczy
 
 ## Powiązania z kodem

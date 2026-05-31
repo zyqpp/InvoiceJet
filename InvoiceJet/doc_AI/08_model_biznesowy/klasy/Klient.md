@@ -45,7 +45,7 @@ Klient to kontrahent (odbiorca faktury) — podmiot gospodarczy, na rzecz które
 
 | Element | Lokalizacja |
 |---|---|
-| Encja DB | `dbo.Firm` (z `UserFirm.IsClient = true`) |
+| Encja DB | [dbo.Firm](../../05_model_danych/01_db/dbo/dbo.Firm.md) (z `UserFirm.IsClient = true`) |
 | DTO | brak dedykowanego (dane w FirmDto) |
 | Plik .cs | `InvoiceJet.Domain/Models/Firm.cs` |
 

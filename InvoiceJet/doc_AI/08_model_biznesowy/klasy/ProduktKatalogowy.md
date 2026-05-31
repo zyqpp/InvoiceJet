@@ -43,7 +43,7 @@ ProduktKatalogowy to pozycja z katalogu produktów i usług firmy użytkownika, 
 
 | Element | Lokalizacja |
 |---|---|
-| Encja DB | `dbo.Product` |
+| Encja DB | [dbo.Product](../../05_model_danych/01_db/dbo/dbo.Product.md) |
 | DTO | brak dedykowanego (dane w ProductDto) |
 | Plik .cs | `InvoiceJet.Domain/Models/Product.cs` |
 

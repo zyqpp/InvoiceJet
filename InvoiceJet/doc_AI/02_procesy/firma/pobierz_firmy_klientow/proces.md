@@ -68,9 +68,9 @@ sequenceDiagram
 
 ## Powiązania
 
-- Wywołany z ekranu: `01_ekrany/firma/klienci/`, `01_ekrany/faktury/dodaj_edytuj_fakture/`
-- Powiązane API: `GET /api/Firm/GetUserClientFirms` (weryfikacja nazwy wymagana)
-- Powiązane procesy: `../dodaj_firme/proces.md`, `../edytuj_firme/proces.md`, `../usun_firme/proces.md`
+- Wywołany z ekranu: [Klienci](../../../01_ekrany/firma/klienci/ekran.md), [Dodaj/edytuj fakturę](../../../01_ekrany/faktury/dodaj_edytuj_fakture/ekran.md)
+- Powiązane API: [GET /api/Firm/GetUserClientFirms](../../../04_api_i_integracje/01_api_frontend/firm/GET_Firm_GetUserClientFirms.md)
+- Powiązane procesy: [dodaj_firme](../dodaj_firme/proces.md), [edytuj_firme](../edytuj_firme/proces.md), [usun_firme](../usun_firme/proces.md)
 - Powiązany algorytm: Nie dotyczy
 
 ## Powiązania z kodem

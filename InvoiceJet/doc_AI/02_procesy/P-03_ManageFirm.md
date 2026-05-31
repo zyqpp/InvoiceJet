@@ -6,7 +6,7 @@
 | Nazwa | ManageFirm |
 | Kontroler | `FirmController` |
 | Serwis | `FirmService` |
-| Endpointy | `POST /api/Firm/AddFirm/{isClient}`, `PUT /api/Firm/EditFirm/{isClient}` |
+| Endpointy | [POST /api/Firm/AddFirm](../04_api_i_integracje/01_api_frontend/firm/POST_Firm_AddFirm.md), [PUT /api/Firm/EditFirm](../04_api_i_integracje/01_api_frontend/firm/PUT_Firm_EditFirm.md) |
 | AuthGuard | TAK |
 | Ostatnia walidacja | 2026-05-31 |
 | Autor | Agent Claudiusz Sonte 4.6 max |

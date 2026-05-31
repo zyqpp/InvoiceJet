@@ -90,10 +90,10 @@ sequenceDiagram
 
 ## Powiązania
 
-- Wywołany z ekranu: `01_ekrany/register/`
+- Wywołany z ekranu: [Register](../../../01_ekrany/register/ekran.md)
 - Wywołany przez operację: formularz rejestracji (submit)
-- Powiązane API: `POST /api/Auth/register`
-- Powiązany algorytm: `03_algorytmy/autoryzacyjne/tworzenie_tokenu_jwt.md`, `03_algorytmy/walidacji/walidacja_hasla.md`
+- Powiązane API: [POST /api/Auth/register](../../../04_api_i_integracje/01_api_frontend/auth/POST_Auth_register.md)
+- Powiązany algorytm: [tworzenie_tokenu_jwt](../../../03_algorytmy/autoryzacyjne/tworzenie_tokenu_jwt.md), [walidacja_hasla](../../../03_algorytmy/walidacji/walidacja_hasla.md)
 
 ## Powiązania z kodem
 
