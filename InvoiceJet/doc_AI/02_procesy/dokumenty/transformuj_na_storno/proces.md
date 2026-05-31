@@ -23,7 +23,7 @@ Masowo anulować wystawione dokumenty poprzez zmianę ich typu na Faktura Storno
 |---|---|
 | ID procesu | PROC-TransformToStorno |
 | Typ | główny |
-| Inicjator | Ekran listy faktur storno + zaznaczenie dokumentów do konwersji + operacja „Transformuj na storno" |
+| Inicjator | [Ekran listy faktur](../../../01_ekrany/faktury/lista_faktur/ekran.md) — zaznaczenie dokumentów + „Transform to Storno" (NIE z ekranu storn!) |
 | Warunki startu | Użytkownik zalogowany (JWT); wybrane co najmniej jeden dokument do konwersji |
 | Warunki zakończenia (sukces) | `DocumentTypeId` każdego dokumentu zmienione na `3`; HTTP 200 |
 | Warunki zakończenia (błąd) | Dokument nie istnieje (błąd lub pominięcie); błąd częściowy (TS-01) |
@@ -33,34 +33,38 @@ Masowo anulować wystawione dokumenty poprzez zmianę ich typu na Faktura Storno
 
 ```mermaid
 sequenceDiagram
-    participant F as Frontend
+    participant F as Frontend (Lista faktur)
     participant A as DocumentController
     participant S as DocumentService
+    participant UW as UnitOfWork
     participant R as DocumentRepository
     participant D as Database
 
-    F->>A: PUT /api/Document/TransformToStorno (int[] documentIds)
+    F->>A: PUT /api/Document/TransformToStorno [int[] documentIds]
     A->>S: TransformToStorno(documentIds)
     S->>S: Pobierz userId z JWT claims
 
-    loop Dla każdego documentId (UWAGA: brak transakcji obejmującej pętlę!)
+    loop Dla każdego documentId
         S->>R: GetByIdAsync(documentId)
-        R->>D: SELECT Document WHERE Id = @documentId
+        R->>D: SELECT * FROM Document WHERE Id = documentId
         D-->>R: Document lub null
+
         alt Dokument nie istnieje
             R-->>S: null
-            S->>S: Pomiń lub błąd
+            Note over S: pomiń lub błąd
         else Dokument istnieje
             R-->>S: document
             S->>S: document.DocumentTypeId = 3 (StornoInvoice)
             S->>R: UpdateAsync(document)
-            S->>R: CompleteAsync() ← WEWNĄTRZ PĘTLI! Osobny SaveChanges per dokument
-            R->>D: UPDATE Document SET DocumentTypeId = 3 WHERE Id = @id; COMMIT
-            D-->>R: OK
+            Note over S,D: ⚠️ ANOMALIA TS-01 — CompleteAsync wewnątrz pętli (brak wspólnej transakcji)
+            S->>UW: CompleteAsync()
+            UW->>D: UPDATE Document SET DocumentTypeId = 3 WHERE Id = documentId
+            D-->>UW: OK
+            UW-->>S: OK
         end
     end
 
-    S-->>A: 200 OK
+    S-->>A: void
     A-->>F: 200 OK
 ```
 
@@ -86,15 +90,14 @@ sequenceDiagram
 
 ## Powiązania
 
-- Wywołany z ekranu: `01_ekrany/faktury_storno/lista_faktur_storno/`
-- Powiązane API: `PUT /api/Document/TransformToStorno`
-- Powiązany algorytm: `03_algorytmy/dedykowane/transformacja_na_storno.md`
-
-## Powiązania z kodem
-
-- Kontroler: `InvoiceJetAPI/Controllers/DocumentController.cs`
-- Serwis: `InvoiceJetAPI/Services/DocumentService.cs`
-- Repozytorium: `InvoiceJetAPI/Repositories/DocumentRepository.cs`
+| Typ | Dokument |
+|---|---|
+| Inicjujący ekran | [Lista faktur (InvoicesComponent)](../../../01_ekrany/faktury/lista_faktur/ekran.md) |
+| Wynikowy ekran | [Lista storn (InvoiceStornosComponent)](../../../01_ekrany/faktury_storno/lista_faktur_storno/ekran.md) |
+| API | [PUT /api/Document/TransformToStorno](../../../04_api_i_integracje/01_api_frontend/document/PUT_Document_TransformToStorno.md) |
+| Algorytm | [ALG-08 TransformToStorno](../../../03_algorytmy/ALG-08_TransformToStorno.md) |
+| Szablon PDF storno | [pdf/storno.md](../../../09_procesy_biznesowe/dokumenty/pdf/storno.md) |
+| Model | [dbo.Document](../../../05_model_danych/01_db/dbo/dbo.Document.md) |
 
 ## Wątpliwości i braki
 
