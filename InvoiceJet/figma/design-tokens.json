@@ -1,0 +1,71 @@
+{
+  "$meta": {
+    "source": "InvoiceJetUI code (angular.json + styles.scss + component scss)",
+    "materialTheme": "indigo-pink (prebuilt)",
+    "baseTheme": "light",
+    "lastValidated": "2026-05-31",
+    "note": "Dark theme values listed for reference only; not built in phase 1."
+  },
+  "brand": {
+    "primary": "#3f51b5",
+    "primaryContrast": "#ffffff",
+    "accent": "#ff4081",
+    "warn": "#f44336"
+  },
+  "color": {
+    "light": {
+      "surface": {
+        "page": "#f8fafc",
+        "card": "#ffffff",
+        "dialog": "#f8fafc",
+        "hover": "#f1f5f9",
+        "subtle": "#f0f0f0",
+        "iconCircle": "#e2e2e2"
+      },
+      "border": { "default": "#e5e7eb" },
+      "text": {
+        "primary": "rgba(0,0,0,0.87)",
+        "secondary": "#636363",
+        "error": "#ff0000"
+      },
+      "status": {
+        "warning": "#ffa726",
+        "info": "#42a5f5",
+        "error": "#ef5350",
+        "special": "#ab47bc"
+      }
+    },
+    "dark": {
+      "bgDeep": "#0f172a",
+      "surface": "#1e293b",
+      "text": "#ffffff",
+      "muted": "#94a3b8"
+    }
+  },
+  "typography": {
+    "fontFamily": "Inter, sans-serif",
+    "weights": { "regular": 400, "semibold": 600, "bold": 700 },
+    "sizes": { "statTitle": 18, "statValue": 30, "icon": 24 }
+  },
+  "spacing": {
+    "base": 8,
+    "scale": [8, 10, 16, 20, 24],
+    "containerPadding": 24,
+    "containerMaxWidth": 1240,
+    "navbarHeight": 64,
+    "sidebarWidth": 300,
+    "sidebarPadding": 20,
+    "formMaxWidth": 500,
+    "gridGap": 16
+  },
+  "sizing": {
+    "avatar": 40,
+    "radiusSm": 5,
+    "radiusFull": "50%"
+  },
+  "layout": {
+    "dashboardGridColumns": { "xl": 4, "lg": 3, "md": 2, "sm": 1 },
+    "dashboardBreakpoints": { "xl": 1200, "lg": 900, "md": 600 }
+  },
+  "icons": "Material Icons (mat-icon)"
+}

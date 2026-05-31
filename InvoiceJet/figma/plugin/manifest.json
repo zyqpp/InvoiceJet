@@ -1,0 +1,7 @@
+{
+  "name": "InvoiceJet Design System Setup",
+  "id": "invoicejet-ds-setup",
+  "api": "1.0.0",
+  "main": "code.js",
+  "editorType": ["figma"]
+}
