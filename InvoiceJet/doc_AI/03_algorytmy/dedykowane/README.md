@@ -7,12 +7,14 @@ Algorytmy specyficzne dla domeny biznesowej InvoiceJet, nieprzypadające do kate
 ```
 dedykowane/
 ├── README.md
-├── generowanie_numeru_dokumentu.md  ← SeriesName + CurrentNumber.D4 (race condition!)
-├── integracja_anaf.md               ← POST do ANAF API po CUI (rumuński US)
-├── transformacja_na_storno.md       ← masowa zmiana DocumentTypeId=3 (bug atomowości)
-├── pipeline_obslugi_wyjatkow.md     ← ExceptionMiddleware → mapa wyjątek → HTTP
-├── izolacja_danych_userfirm.md      ← UserFirm-based data isolation pattern
-└── seed_typow_dokumentow.md         ← DbSeeder.SeedDocumentTypes() przy starcie
+├── generowanie_numeru_dokumentu.md     ← SeriesName + CurrentNumber.D4 (race condition!)
+├── integracja_anaf.md                  ← POST do ANAF API po CUI
+├── transformacja_na_storno.md          ← zmiana DocumentTypeId=3 (brak atomowości)
+├── pipeline_obslugi_wyjatkow.md        ← ExceptionMiddleware → mapa wyjątek → HTTP
+├── izolacja_danych_userfirm.md         ← UserFirm-based data isolation pattern
+├── seed_typow_dokumentow.md            ← DbSeeder.SeedDocumentTypes() przy starcie
+├── zarzadzanie_relacja_userfirm.md     ← ManageUserFirmRelation (firma↔user)
+└── inicjalizacja_serii_dokumentow.md   ← AddInitialDocumentSeries (pierwsza firma)
 ```
 
 ## Kluczowe dokumenty

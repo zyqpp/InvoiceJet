@@ -35,15 +35,28 @@ LineTotal = Price × Quantity × (1 + VatRate / 100)
 TotalPrice = Σ(LineTotal) dla każdej pozycji
 ```
 
-## Implementacja backend (szacowana)
+## Implementacja backend (zweryfikowana w kodzie)
+
+> ⚠️ **Korekta:** poprzednia wersja tego dokumentu miała fragment „szacowany" z błędną formułą.
+> Backend **nie przelicza** ceny brutto per pozycja — sumuje `TotalPrice` z DTO (wartość obliczoną przez frontend).
 
 ```csharp
-// DocumentService › AddDocument
-decimal totalPrice = documentRequestDto.Products!.Sum(p =>
-    p.Price * p.Quantity * (1 + p.VatRate / 100)
-);
-document.TotalPrice = totalPrice;
+// DocumentService › UpdateDocumentProducts (wywoływana z AddDocument i EditDocument)
+decimal totalInvoicePrice        = 0;  // suma netto
+decimal totalInvoicePriceWithTva = 0;  // suma brutto
+
+foreach (var dto in documentProductsDto)
+{
+    // ...tworzenie DocumentProduct...
+    totalInvoicePrice        += dto.UnitPrice * dto.Quantity;  // netto — backend oblicza
+    totalInvoicePriceWithTva += dto.TotalPrice;                // brutto — z DTO (frontend obliczył)
+}
+
+document.UnitPrice  = totalInvoicePrice;
+document.TotalPrice = totalInvoicePriceWithTva;
 ```
+
+Szczegóły: [wyliczeniowe/aktualizacja_produktow_dokumentu.md](wyliczeniowe/aktualizacja_produktow_dokumentu.md)
 
 ## Implementacja frontend (BaseInvoiceComponent)
 

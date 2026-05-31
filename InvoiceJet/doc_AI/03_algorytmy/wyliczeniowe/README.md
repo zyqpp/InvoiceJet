@@ -2,17 +2,13 @@
 
 Algorytmy odpowiedzialne za obliczenia finansowe i matematyczne na danych biznesowych dokumentów.
 
-## Drzewo zawartości
+## Zawartość
 
-```
-wyliczeniowe/
-├── README.md
-└── obliczanie_wartosci_dokumentu.md   ← TotalPrice = Σ(Price × Qty × (1 + VAT/100))
-```
-
-## Kluczowe dokumenty
-
-- [`obliczanie_wartosci_dokumentu.md`](obliczanie_wartosci_dokumentu.md) — wzór obliczania sumy brutto dokumentu; implementacja backend (LINQ) i frontend (Angular reactive form).
+| Plik | Opis |
+|---|---|
+| [obliczanie_ceny_pozycji.md](obliczanie_ceny_pozycji.md) | Cena brutto wiersza `UnitPrice × Qty × (1+VAT/100)` — **tylko frontend**; backend akceptuje wartość z DTO bez przeliczenia |
+| [obliczanie_wartosci_dokumentu.md](obliczanie_wartosci_dokumentu.md) | Sumy dokumentu: netto (backend oblicza) i brutto (backend sumuje z DTO) |
+| [aktualizacja_produktow_dokumentu.md](aktualizacja_produktow_dokumentu.md) | `UpdateDocumentProducts` — pełna podmiana pozycji, akumulacja sum, zapis snapshotów cen |
 
 ## Powiązane katalogi
 
