@@ -300,6 +300,9 @@ Autouzupełnia pozostałe pola wiersza danymi z katalogu:
 | DTO żądania | [DTO-07 DocumentRequestDto](../../../05_model_danych/02_dto/DTO-07_DocumentRequestDto.md) |
 | Powiązany proces (dodaj) | [dodaj_dokument](../../../02_procesy/dokumenty/dodaj_dokument/proces.md) |
 | Powiązany proces (edycja) | [edytuj_dokument](../../../02_procesy/dokumenty/edytuj_dokument/proces.md) |
+| Algorytm (numeracja) | [ALG-02 Generowanie numeru dokumentu](../../../03_algorytmy/ALG-02_DocumentNumberGeneration.md) |
+| Algorytm (produkty) | [ALG-Wyliczeniowe-AktualizacjaProduktow](../../../03_algorytmy/wyliczeniowe/aktualizacja_produktow_dokumentu.md) |
+| Ekran po sukcesie | [E-09 Lista faktur](../E-09_InvoicesComponent/E-09_ekran.md) |
 | Wymagana rola | User |
 
 **Pola wejściowe (z formularza do DTO):**
@@ -317,7 +320,7 @@ Autouzupełnia pozostałe pola wiersza danymi z katalogu:
 
 | Wynik | Warunek | Komunikat | Akcja UI |
 |---|---|---|---|
-| Sukces | HTTP 200 | toastr: „Document added/updated successfully" | `router.navigateByUrl("/dashboard/invoices")` |
+| Sukces | HTTP 200 | toastr: „Document added/updated successfully" | redirect → [E-09 Lista faktur](../E-09_InvoicesComponent/E-09_ekran.md) |
 | Błąd walidacji | `invoiceForm.invalid` | brak komunikatu (cichy return) | formularz pozostaje |
 | Błąd serwera | HTTP 4xx/5xx | brak obsługi (anomalia BA-06) | brak reakcji UI |
 
@@ -387,7 +390,8 @@ Autouzupełnia pozostałe pola wiersza danymi z katalogu:
 | Etykieta UI | „←" (strzałka/ikona wstecz) |
 | Wyzwalacz | `(click)` → `goBack()` |
 | Wywoływane API | brak |
-| Efekt | `router.navigateByUrl("/dashboard/invoices")` |
+| Ekran docelowy | [E-09 Lista faktur](../E-09_InvoicesComponent/E-09_ekran.md) |
+| Efekt | redirect → [E-09 Lista faktur](../E-09_InvoicesComponent/E-09_ekran.md) |
 
 ---
 

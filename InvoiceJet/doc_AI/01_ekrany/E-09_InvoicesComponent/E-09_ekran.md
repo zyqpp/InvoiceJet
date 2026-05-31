@@ -156,10 +156,11 @@ Ekran listy faktur zwykłych (`DocumentTypeId = 1`). Prezentuje tabelę wystawio
 | Etykieta UI | „New Invoice" (przycisk `mat-raised-button color="primary"`) |
 | Ikona | `add` (Material Icons) |
 | Wyzwalacz | `(click)` → `openNewInvoiceDialog()` |
-| Wywoływane API | brak (nawigacja) |
-| Powiązany proces | brak bezpośredniego (formularz ma własny) |
+| Wywoływane API | brak — czysta nawigacja do ekranu |
+| Docelowy ekran | [E-10 Formularz faktury (dodaj)](../E-10_AddOrEditInvoiceComponent/E-10_ekran.md) |
+| Powiązany proces | [dodaj_dokument](../../../02_procesy/dokumenty/dodaj_dokument/proces.md) (proces wywołuje formularz, nie ta operacja bezpośrednio) |
 | Wymagana rola | User |
-| Efekt | `router.navigate(["dashboard/add-invoice"])` |
+| Efekt | nawigacja → [/dashboard/add-invoice](../E-10_AddOrEditInvoiceComponent/E-10_ekran.md) |
 
 **Pola wejściowe:** brak (tylko nawigacja)
 
@@ -167,7 +168,7 @@ Ekran listy faktur zwykłych (`DocumentTypeId = 1`). Prezentuje tabelę wystawio
 
 | Wynik | Warunek | Komunikat | Akcja UI |
 |---|---|---|---|
-| Sukces | zawsze | brak | przejście do `/dashboard/add-invoice` |
+| Sukces | zawsze | brak | otwiera [E-10 Formularz faktury (tryb dodaj)](../E-10_AddOrEditInvoiceComponent/E-10_ekran.md) |
 
 **Dane testowe:**
 
@@ -184,22 +185,24 @@ Ekran listy faktur zwykłych (`DocumentTypeId = 1`). Prezentuje tabelę wystawio
 | ID | OP-E09-02 |
 | Etykieta UI | klik całego wiersza tabeli (klasa CSS `clickable`) |
 | Wyzwalacz | `(click)` na `<tr>` → `openEditInvoiceDialog(row)` |
-| Parametr | `row.id` — `IDocumentTableRecord.id` = `Document.Id` |
-| Wywoływane API | brak (nawigacja; API ładuje formularz edycji) |
-| Efekt | `router.navigate(["/dashboard/edit-invoice", row.id])` |
+| Parametr | `row.id` — `IDocumentTableRecord.id` = [dbo.Document](../../../05_model_danych/01_db/dbo/dbo.Document.md).`Id` |
+| Wywoływane API | brak — czysta nawigacja do ekranu |
+| Docelowy ekran | [E-10 Formularz faktury (tryb edycja)](../E-10_AddOrEditInvoiceComponent/E-10_ekran.md) |
+| Powiązany proces | [edytuj_dokument](../../../02_procesy/dokumenty/edytuj_dokument/proces.md) |
+| Efekt | nawigacja → [/dashboard/edit-invoice/{id}](../E-10_AddOrEditInvoiceComponent/E-10_ekran.md) |
 | Wymagana rola | User |
 
 **Możliwe wyniki:**
 
 | Wynik | Warunek | Akcja UI |
 |---|---|---|
-| Sukces | zawsze | przejście do `/dashboard/edit-invoice/{id}` |
+| Sukces | zawsze | otwiera [E-10 Formularz faktury (tryb edycja)](../E-10_AddOrEditInvoiceComponent/E-10_ekran.md) |
 
 **Dane testowe:**
 
 | Scenariusz | Prereq | Oczekiwany URL |
 |---|---|---|
-| Klik wiersza z id=42 | faktura id=42 istnieje | `/dashboard/edit-invoice/42` |
+| Klik wiersza z id=42 | faktura id=42 istnieje | `/dashboard/edit-invoice/42` → [E-10](../E-10_AddOrEditInvoiceComponent/E-10_ekran.md) |
 
 ---
 
