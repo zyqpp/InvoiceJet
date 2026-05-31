@@ -33,41 +33,70 @@ Zapisać nową firmę (własną lub klienta) powiązaną z kontem zalogowanego u
 
 ```mermaid
 sequenceDiagram
+    autonumber
     participant F as Frontend
     participant A as FirmController
     participant S as FirmService
-    participant R as FirmRepository / UserFirmRepository
+    participant FR as FirmRepository
+    participant UFR as UserFirmRepository
+    participant UR as UserRepository
+    participant DS as DocumentSeriesService
     participant D as Database
 
-    F->>A: POST /api/Firm/AddFirm/{isClient} (FirmRequestDto)
-    A->>S: AddFirm(firmRequestDto, isClient)
-    S->>S: Pobierz userId z JWT claims
-    S->>R: GetUserFirmByUserId(userId)
-    R->>D: SELECT UserFirm WHERE UserId = @userId
-    D-->>R: UserFirm
-    R-->>S: userFirm
-    alt isClient = false
-        S->>R: AddAsync(firm) — przypisz UserFirm.FirmId
-        R->>D: INSERT INTO Firm; UPDATE UserFirm SET FirmId = @firmId
-    else isClient = true
-        S->>R: AddAsync(firm) — dodaj do UserFirm.ClientFirms
-        R->>D: INSERT INTO Firm; INSERT INTO UserFirmClientFirm (powiązanie)
+    F->>A: POST /api/Firm/AddFirm/{isClient} (FirmDto)
+    A->>S: AddFirm(firmDto, isClient)
+
+    Note over S: Krok 1 - zapis rekordu Firm
+    S->>FR: AddAsync(firm)
+    FR->>D: INSERT INTO Firm
+    D-->>FR: firm.Id
+    FR-->>S: OK
+    S->>S: CompleteAsync() - pierwszy SaveChanges
+
+    Note over S: Krok 2 - ManageUserFirmRelation(firmId, isClient)
+    S->>S: userId = GetCurrentUserId() z JWT
+    S->>UFR: GetUserFirmById(userId, firmId)
+    UFR->>D: SELECT UserFirm WHERE UserId=userId AND FirmId=firmId
+    D-->>UFR: UserFirm lub null
+    UFR-->>S: existingUserFirm
+
+    alt existingUserFirm == null - nowe powiązanie
+        S->>UFR: AddAsync(newUserFirm z IsClient=isClient)
+        UFR->>D: INSERT INTO UserFirm
+        S->>UR: GetUserByIdAsync(userId)
+        UR->>D: SELECT User WHERE Id=userId
+        D-->>UR: user
+        UR-->>S: user
+
+        alt user.ActiveUserFirm == null - pierwsza firma usera
+            S->>S: user.ActiveUserFirm = newUserFirm
+            S->>DS: AddInitialDocumentSeries(newUserFirm)
+            Note over DS,D: tworzy domyslne serie dla Faktura i Proforma i Storno
+        end
+
+    else existingUserFirm != null - aktualizacja flagi
+        S->>S: existingUserFirm.IsClient = isClient
     end
-    R-->>S: OK
-    S-->>A: 201 Created
+
+    S->>S: CompleteAsync() - drugi SaveChanges
+    S-->>A: firmDto z nadanym Id
     A-->>F: 201 Created
 ```
 
-## Kroki
+## Kroki (zweryfikowane z kodem FirmService.cs)
 
-1. **Odbiór żądania** — `FirmController` odbiera `FirmRequestDto` i parametr ścieżki `isClient` (bool) z POST `/api/Firm/AddFirm/{isClient}`.
-2. **Ekstrakcja userId** — serwis pobiera `userId` z claims JWT.
-3. **Pobranie UserFirm** — `UserFirmRepository.GetUserFirmByUserId(userId)` zwraca bieżące powiązanie użytkownika.
-4. **Rozgałęzienie logiki wg `isClient`**:
-   - `false` — tworzy nowy rekord `Firm` i ustawia go jako własną firmę użytkownika (`UserFirm.FirmId`).
-   - `true` — tworzy nowy rekord `Firm` i dodaje go do kolekcji klientów (`UserFirm.ClientFirms`).
-5. **Zapis** — `FirmRepository.AddAsync(firm)` + `UnitOfWork.CompleteAsync()`.
-6. **Odpowiedź** — HTTP 201 Created.
+1. **Odbiór żądania** — `FirmController` odbiera `FirmDto` i parametr ścieżki `isClient` (bool).
+2. **Zapis Firm** — `FirmRepository.AddAsync(firm)` + `CompleteAsync()` — **pierwszy SaveChanges**. Firma dostaje `Id`.
+3. **ManageUserFirmRelation(firmId, isClient)**:
+   - Pobierz `userId` z JWT claims
+   - `UserFirmRepository.GetUserFirmById(userId, firmId)` — sprawdź czy powiązanie już istnieje
+   - **Jeśli NIE istnieje:** utwórz `UserFirm { UserId, FirmId, IsClient=isClient }` i dodaj
+     - Jeśli `user.ActiveUserFirm == null` (pierwsza firma usera): ustaw jako aktywną i wywołaj `DocumentSeriesService.AddInitialDocumentSeries` — tworzy domyślne serie numeracji
+   - **Jeśli ISTNIEJE:** zaktualizuj tylko `existingUserFirm.IsClient = isClient`
+4. **CompleteAsync()** — **drugi SaveChanges** dla UserFirm i User.
+5. **Odpowiedź** — `firmDto` z nadanym `Id`, HTTP 201 Created.
+
+> ⚠️ **Uwaga:** `isClient` NIE rozgałęzia logiki tworzenia osobnych tabel — decyduje wyłącznie o wartości flagi `UserFirm.IsClient`. Nie istnieje tabela `UserFirmClientFirm` — klienci to rekordy `UserFirm` z `IsClient=true`.
 
 ## Obsługa błędów
 
