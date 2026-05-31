@@ -14,9 +14,13 @@ Opis biznesowy: [do uzupełnienia w fazie 11]
 │   │   └── ekran.md
 │   ├── sidebar/
 │   │   └── ekran.md
-│   └── modale_wspolne/
-│       └── token_expired_dialog/
-│           └── modal.md
+│   ├── modale_wspolne/
+│   │   ├── token_expired_dialog/
+│   │   │   └── modal.md
+│   │   └── pdf_viewer/
+│   │       └── modal.md
+│   └── base_invoice_component/
+│       └── ekran.md
 ├── login/
 │   ├── README.md
 │   └── ekran.md
@@ -33,16 +37,24 @@ Opis biznesowy: [do uzupełnienia w fazie 11]
 │   │   └── ekran.md
 │   ├── klienci/
 │   │   ├── README.md
-│   │   └── ekran.md
+│   │   ├── ekran.md
+│   │   └── dialog_dodaj_klienta/
+│   │       └── modal.md
 │   └── konta_bankowe/
 │       ├── README.md
-│       └── ekran.md
+│       ├── ekran.md
+│       └── dialog_dodaj_konto/
+│           └── modal.md
 ├── produkty/
 │   ├── README.md
-│   └── ekran.md
+│   ├── ekran.md
+│   └── dialog_dodaj_produkt/
+│       └── modal.md
 ├── serie_dokumentow/
 │   ├── README.md
-│   └── ekran.md
+│   ├── ekran.md
+│   └── dialog_dodaj_serie/
+│       └── modal.md
 ├── faktury/
 │   ├── README.md
 │   ├── lista_faktur/
@@ -65,7 +77,9 @@ Opis biznesowy: [do uzupełnienia w fazie 11]
 
 ## Kluczowe dokumenty
 
-- [`mapa_przejsc.md`](mapa_przejsc.md) — diagram przejść między ekranami z uprawnieniami
+- [`mapa_przejsc.md`](mapa_przejsc.md) — diagram przejść między ekranami z uprawnieniami i ścieżkami URL
+- [`00_wspolne/base_invoice_component/ekran.md`](00_wspolne/base_invoice_component/ekran.md) — klasa bazowa formularzy dokumentów (faktury, proformy, storna)
+- [`00_wspolne/modale_wspolne/token_expired_dialog/modal.md`](00_wspolne/modale_wspolne/token_expired_dialog/modal.md) — globalny dialog wygaśnięcia sesji JWT
 
 ## Rejestr zmian
 
