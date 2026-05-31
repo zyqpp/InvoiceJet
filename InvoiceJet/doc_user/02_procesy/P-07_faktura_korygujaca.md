@@ -1,49 +1,47 @@
-# Jak wystawić fakturę korygującą (storno)
+# P-07 — Jak wystawić fakturę korygującą (storno)
 
-## Kiedy wystawiasz storno?
+## Kiedy?
 - Gdy popełniono błąd na fakturze i trzeba ją formalnie anulować lub poprawić
 - Gdy klient zwrócił towar lub zrezygnował z usługi po wystawieniu faktury
 
-## Ważna zasada
-> Faktura korygująca (storno) **nie jest tworzona od zera**. Aplikacja tworzy ją automatycznie na podstawie wskazanej faktury pierwotnej. Możesz ją edytować po stworzeniu.
+> Faktura korygująca (storno) **nie jest tworzona od zera**. Aplikacja tworzy ją automatycznie na podstawie wskazanej faktury pierwotnej.
 
 ---
 
 ## Kroki
 
 ### 1. Przejdź do listy faktur
-W menu bocznym kliknij **Invoices**.
+W [menu bocznym](../01_ekrany/03_nawigacja.md) kliknij **Invoices** → [Lista faktur](../01_ekrany/10_faktury.md).
 
 ### 2. Znajdź fakturę do skorygowania
-Możesz przewinąć listę lub posortować kolumny, żeby znaleźć właściwą fakturę.
+Przewiń listę lub kliknij nagłówek kolumny, żeby posortować i łatwiej znaleźć właściwą fakturę.
 
 ### 3. Zaznacz fakturę
-Kliknij checkbox po lewej stronie wiersza tej faktury.
+Kliknij checkbox (☐) po lewej stronie wiersza.
 
 ### 4. Kliknij „Transform to Storno"
-Przycisk pojawi się po zaznaczeniu faktury. Kliknij go.
+Przycisk pojawi się po zaznaczeniu. Kliknij go.
 
-### 5. Aplikacja automatycznie tworzy storno
-System tworzy nowy dokument korygujący na podstawie zaznaczonej faktury. Zobaczysz go na liście **Invoice Stornos**.
+### 5. Storno zostało utworzone ✅
+System tworzy nowy dokument korygujący. Pojawi się na liście [Storn](../01_ekrany/12_storna.md).
 
 ### 6. (Opcjonalnie) Edytuj storno
-Jeśli chcesz zmienić dane w dokumencie korygującym:
-1. Przejdź do **Invoice Stornos** w menu bocznym
-2. Kliknij na wiersz storna
-3. Zmień co trzeba i kliknij **Save**
+1. W [menu bocznym](../01_ekrany/03_nawigacja.md) kliknij **Invoice Stornos** → [Lista storn](../01_ekrany/12_storna.md)
+2. Kliknij na wiersz storna → [Formularz](../01_ekrany/10b_formularz_faktury.md)
+3. Zmień dane → **Save**
 
-### 7. Wygeneruj PDF
-Z formularza storna możesz wygenerować plik PDF dokumentu korygującego.
+### 7. (Opcjonalnie) Wygeneruj PDF
+Z [formularza storna](../01_ekrany/10b_formularz_faktury.md) kliknij **Generate PDF** → [P-10](P-10_generowanie_pdf.md).
 
 ---
 
-## Często zadawane pytania
+## FAQ
 
 **Czy oryginalna faktura zostaje usunięta?**
-Nie. Oryginalna faktura pozostaje na liście faktur. Obok niej pojawia się nowy dokument korygujący w zakładce Invoice Stornos.
+Nie. Pozostaje na [liście faktur](../01_ekrany/10_faktury.md). Obok niej istnieje teraz dokument korygujący na [liście storn](../01_ekrany/12_storna.md).
 
-**Czy mogę wykonać storno do proformy?**
-Nie — opcja „Transform to Storno" dostępna jest wyłącznie dla faktur zwykłych.
+**Czy mogę zrobić storno do proformy?**
+Nie — opcja „Transform to Storno" działa wyłącznie dla faktur zwykłych → [Faktury](../01_ekrany/10_faktury.md).
 
-**Co jeśli zaznaczyłem kilka faktur?**
-Możesz przekształcić kilka faktur jednocześnie — dla każdej zostanie utworzone oddzielne storno.
+**Czy mogę zaznaczyć kilka faktur naraz?**
+Tak — dla każdej zaznaczonej faktury zostanie utworzone oddzielne storno.

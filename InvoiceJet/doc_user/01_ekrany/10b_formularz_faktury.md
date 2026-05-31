@@ -1,47 +1,64 @@
 # Formularz faktury — dodawanie i edycja
 
 ## Co to jest?
-Formularz do wystawienia nowej faktury lub edycji istniejącej. Działa tak samo dla faktur zwykłych i proform — różni je tylko typ dokumentu.
+Formularz do wystawienia nowej faktury lub edycji istniejącej. Ten sam formularz obsługuje [faktury zwykłe](10_faktury.md), [proformy](11_proformy.md) i [storna](12_storna.md) — różni je tylko typ dokumentu.
+
+---
 
 ## Sekcja: dane dokumentu
 
 | Pole | Opis |
 |---|---|
-| **Client** | Kontrahent — wpisz fragment nazwy, a system podpowie z Twojej bazy klientów |
-| **Document Series** | Seria numeracyjna — wybierz z listy (wcześniej skonfigurowanej) |
+| **Client** | Kontrahent — wpisz fragment nazwy, wybierz z podpowiedzi → [Klienci](06_klienci.md) |
+| **Document Series** | Seria numeracyjna — wybierz z listy → [Serie dokumentów](09_serie_dokumentow.md) |
 | **Issue Date** | Data wystawienia — wybierz z kalendarza |
 | **Due Date** | Termin płatności — wybierz z kalendarza |
-| **Status** | Status płatności: **Unpaid** (nieopłacona) lub **Paid** (opłacona) |
+| **Status** | **Unpaid** (nieopłacona) lub **Paid** (opłacona) |
 
-## Sekcja: pozycje faktury (tabela produktów)
+---
 
-Tutaj dodajesz, co sprzedajesz. Każda pozycja to jeden wiersz tabeli.
+## Sekcja: pozycje faktury
+
+Tutaj dodajesz co sprzedajesz. Każda pozycja to jeden wiersz.
 
 | Kolumna | Opis |
 |---|---|
-| **Name** | Nazwa produktu/usługi — wpisz ręcznie lub wybierz z katalogu |
+| **Name** | Nazwa — wpisz ręcznie lub wybierz z katalogu → [Produkty](08_produkty.md) |
 | **Unit Price** | Cena za jednostkę |
 | **Quantity** | Ilość |
-| **Unit of Measurement** | Jednostka miary (szt., kg, godz. itd.) |
+| **Unit of Measurement** | Jednostka miary (szt., godz., kg…) |
 | **TVA Value** | Stawka VAT (%) |
-| **Contains TVA** | Czy podana cena jest brutto (z VAT) |
-| **Total Price** | Wartość wiersza (wyliczana automatycznie) |
-| **Actions** | Usuń tę pozycję |
+| **Contains TVA** | Zaznacz jeśli podana cena jest brutto (z VAT) |
+| **Total Price** | Wyliczane automatycznie |
+| **Actions** | 🗑 Usuń tę pozycję |
+
+Kliknij **Add Product** (lub „+"), żeby dodać kolejny wiersz.
+
+---
 
 ## Przyciski akcji
 
 | Przycisk | Co robi |
 |---|---|
-| **Add Product** (lub „+") | Dodaje nowy wiersz do tabeli pozycji |
 | **Save** | Zapisuje fakturę |
-| **Preview PDF** | Otwiera podgląd faktury w formacie PDF (bez zapisywania) |
-| **Generate PDF** | Generuje i zapisuje plik PDF faktury |
+| **Preview PDF** | Otwiera podgląd dokumentu PDF w oknie (bez zapisywania pliku) |
+| **Generate PDF** | Generuje i zapisuje plik PDF |
+
+---
 
 ## Podgląd PDF
-Po kliknięciu **Preview PDF** otworzy się okno z gotowym dokumentem. Możesz go obejrzeć, a następnie zamknąć okno i wrócić do edycji.
+Po kliknięciu **Preview PDF** otwiera się okno z gotowym dokumentem. Możesz go obejrzeć, a następnie zamknąć i wrócić do edycji.
+Szczegóły: [P-10 Generowanie PDF](../02_procesy/P-10_generowanie_pdf.md).
+
+---
 
 ## Ważne informacje
-- Przed wystawieniem faktury musisz mieć uzupełnione [dane firmy](05_dane_firmy.md) i przynajmniej jedną [serię dokumentów](09_serie_dokumentow.md)
-- Klientów możesz dodawać do bazy na bieżąco — jeśli nie ma go na liście podpowiedzi, wejdź do zakładki [Klienci](06_klienci.md) i dodaj go tam najpierw
-- Pozycje faktury możesz wpisać ręcznie lub skorzystać z podpowiedzi z [katalogu produktów](08_produkty.md)
-- Wartość każdej pozycji i suma całkowita są wyliczane automatycznie
+- Przed wystawieniem faktury musisz mieć uzupełnione: [Dane firmy](05_dane_firmy.md) i przynajmniej jedną [Serię dokumentów](09_serie_dokumentow.md)
+- Jeśli klient nie ma go na liście podpowiedzi → wejdź do [Klientów](06_klienci.md) i dodaj go najpierw
+- Wartości pozycji i suma końcowa wyliczane są automatycznie
+
+---
+
+📖 Instrukcja krok po kroku: [P-06 Wystawianie faktury](../02_procesy/P-06_wystawianie_faktury.md)
+
+🔗 Wróć do listy: [Faktury](10_faktury.md) · [Proformy](11_proformy.md) · [Storna](12_storna.md)

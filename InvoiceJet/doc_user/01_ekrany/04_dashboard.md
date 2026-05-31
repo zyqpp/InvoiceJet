@@ -1,31 +1,38 @@
 # Pulpit główny (Dashboard)
 
 ## Co to jest?
-Pierwsza strona, którą widzisz po zalogowaniu. Pokazuje szybki przegląd stanu Twojej działalności — liczniki dokumentów oraz wykres przychodów.
+Pierwsza strona po zalogowaniu. Pokazuje szybki przegląd stanu Twojej działalności — liczniki dokumentów oraz wykres przychodów.
+
+---
 
 ## Co widać na pulpicie?
 
 ### Liczniki (karty statystyk)
-Cztery karty z podstawowymi liczbami:
 
 | Karta | Co pokazuje |
 |---|---|
 | **Total Documents** | Łączna liczba wystawionych dokumentów |
-| **Total Clients** | Liczba zapisanych kontrahentów |
-| **Total Products** | Liczba produktów/usług w katalogu |
-| **Total Bank Accounts** | Liczba kont bankowych firmy |
+| **Total Clients** | Liczba zapisanych kontrahentów → [Klienci](06_klienci.md) |
+| **Total Products** | Liczba produktów/usług w katalogu → [Produkty](08_produkty.md) |
+| **Total Bank Accounts** | Liczba kont bankowych firmy → [Konta bankowe](07_konta_bankowe.md) |
 
 ### Wykres przychodów
-Liniowy wykres przedstawiający miesięczne przychody w wybranym roku. Pokazuje dwie linie:
+Liniowy wykres miesięcznych przychodów w wybranym roku. Pokazuje dwie linie:
 - **Invoice Amount** — wartość wystawionych dokumentów
 - **Income Amount** — faktycznie uzyskany przychód
 
+---
+
 ## Co możesz zrobić?
-- **Wybrać rok** — z listy rozwijanej wybierz, który rok chcesz zobaczyć (dostępne ostatnie 10 lat)
-- **Wybrać typ dokumentu** — filtruj wykres według:
-  - *Factura* — faktury zwykłe
-  - *Factura Proforma* — proformy
-  - *Factura Storno* — faktury korygujące
+
+| Akcja | Jak |
+|---|---|
+| **Wybrać rok** | Lista rozwijana — dostępne ostatnie 10 lat |
+| **Filtrować po typie dokumentu** | Lista rozwijana: *Factura* ([Faktury](10_faktury.md)) · *Factura Proforma* ([Proformy](11_proformy.md)) · *Factura Storno* ([Storna](12_storna.md)) |
+
+Wykres aktualizuje się automatycznie po każdej zmianie.
+
+---
 
 ## Wskazówka
-Pulpit aktualizuje się automatycznie po zmianie roku lub typu dokumentu. Jeśli dopiero zaczynasz i nie masz żadnych dokumentów, liczniki będą pokazywać zera, a wykres będzie pusty — to normalne.
+Jeśli dopiero zaczynasz i nie masz żadnych dokumentów, liczniki pokazują zera, a wykres jest pusty — to normalne. Zacznij od [wystawienia pierwszej faktury](../02_procesy/P-06_wystawianie_faktury.md).

@@ -1,25 +1,38 @@
-# Jak dodać konto bankowe
+# P-04 — Jak dodać konto bankowe
 
-## Kiedy to robisz?
-Przed pierwszą fakturą — konto bankowe może być drukowane na dokumentach jako dane do przelewu.
+---
 
 ## Kroki
 
-1. W menu bocznym kliknij **Bank Accounts**
-2. Kliknij przycisk **Add Bank Account** (prawy górny róg tabeli)
-3. W oknie dialogowym wypełnij:
-   - **Bank Name** — nazwa banku (np. „ING Bank")
-   - **IBAN** — numer konta w formacie IBAN
-   - **Currency** — waluta: **RON** lub **EUR**
-   - **Is Active** — zaznacz, jeśli konto ma być aktywne
-4. Kliknij **Save**
+1. W [menu bocznym](../01_ekrany/03_nawigacja.md) kliknij **Bank Accounts** → [opis ekranu](../01_ekrany/07_konta_bankowe.md)
+2. Kliknij **Add Bank Account**
+3. Wypełnij formularz:
 
-## Jak edytować istniejące konto?
-Kliknij na wiersz konta w tabeli — otworzy się ten sam formularz z wypełnionymi danymi.
+   | Pole | Co wpisać |
+   |---|---|
+   | **Bank Name** | Nazwa banku (np. „ING Bank") |
+   | **IBAN** | Numer konta w formacie IBAN |
+   | **Currency** | Waluta: **RON** lub **EUR** |
+   | **Is Active** | Zaznacz, żeby konto było aktywne |
+
+4. Kliknij **Save** ✅
+
+---
+
+## Jak edytować konto?
+Kliknij na wiersz konta w tabeli — otworzy się formularz z wypełnionymi danymi.
 
 ## Jak usunąć konto?
-1. Zaznacz konto checkboxem po lewej stronie
+1. Zaznacz konto (☐)
 2. Kliknij **Delete**
 
+---
+
 ## Wskazówka
-Możesz mieć kilka kont (np. jedno w RON, jedno w EUR). Wszystkie będą dostępne do wyboru przy wystawianiu dokumentów.
+Możesz mieć wiele kont (np. jedno w RON, jedno w EUR).
+
+---
+
+## Co dalej?
+
+➡️ [P-05b Skonfiguruj serię numeracji dokumentów](P-05b_konfiguracja_serii.md)

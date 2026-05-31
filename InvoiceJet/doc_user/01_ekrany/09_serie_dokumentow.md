@@ -3,34 +3,53 @@
 ## Co to jest?
 Ekran do zarządzania numeracją dokumentów. Seria definiuje, jak będą numerowane Twoje faktury — np. „FV/2024/001", „FV/2024/002" itd.
 
+> ⚠️ **Wymagane przed pierwszą fakturą.** Bez skonfigurowanej serii nie możesz wystawić dokumentu.
+
+---
+
 ## Kolumny tabeli
 
 | Kolumna | Co pokazuje |
 |---|---|
-| ☐ (checkbox) | Zaznaczanie |
-| **Document Type** | Typ dokumentu: Faktura / Proforma / Storno |
-| **Series Name** | Prefiks / nazwa serii (np. „FV", „PRO") |
-| **First Number** | Od jakiego numeru zaczyna się numeracja |
-| **Current Number** | Aktualny numer (automatycznie rośnie) |
-| **Is Default** | Czy ta seria jest domyślna dla danego typu |
+| ☐ | Zaznaczanie do operacji masowych |
+| **Document Type** | Typ: [Faktura](10_faktury.md) / [Proforma](11_proformy.md) / [Storno](12_storna.md) |
+| **Series Name** | Prefiks numeru (np. „FV/2024/") |
+| **First Number** | Numer startowy |
+| **Current Number** | Aktualny numer (rośnie automatycznie) |
+| **Is Default** | Czy seria jest domyślna dla danego typu |
+
+---
 
 ## Co możesz zrobić?
 
 ### Dodanie serii
-Kliknij **Add Document Series**. W formularzu:
-- Wybierz typ dokumentu (faktura, proforma lub storno)
-- Wpisz nazwę serii (prefiks, np. „FV/2024/")
-- Podaj numer startowy
+Kliknij **Add Document Series** — otworzy się okno dialogowe.
+
+**Pola formularza serii:**
+
+| Pole | Opis |
+|---|---|
+| **Document Type** | Typ dokumentu: Faktura, Proforma lub Storno |
+| **Series Name** | Prefiks numeru (np. „FV/2024/", „PRO/") |
+| **First Number** | Od jakiego numeru zacząć (zwykle `1`) |
 
 ### Edycja serii
-Kliknij na wiersz serii, aby zmienić jej ustawienia.
+Kliknij na wiersz serii — otworzy się formularz edycji.
 
 ### Usunięcie serii
-Zaznacz serie (checkbox) i kliknij **Delete**.
+1. Zaznacz serie (☐)
+2. Kliknij **Delete**
+
+---
 
 ## Ważne informacje
-- Każdy typ dokumentu może mieć własną serię numeracji
-- Możesz mieć kilka serii dla tego samego typu (np. dla różnych lat)
-- Przy wystawianiu faktury wybierasz, z której serii ma być nadany numer
-- Numer bieżący rośnie automatycznie przy każdym nowym dokumencie
-- **Zalecane:** przed wystawieniem pierwszej faktury skonfiguruj przynajmniej jedną serię dla faktur
+- Zalecane: oddzielna seria dla każdego typu dokumentu
+- Możesz mieć kilka serii dla tego samego typu (np. różne lata)
+- Numer bieżący rośnie automatycznie — nie musisz go pilnować
+- Przy wystawianiu dokumentu wybierasz serię z listy
+
+---
+
+📖 Instrukcja krok po kroku: [P-05b Konfiguracja serii dokumentów](../02_procesy/P-05b_konfiguracja_serii.md)
+
+🔗 Powiązane: [Faktury](10_faktury.md) · [Proformy](11_proformy.md) · [Storna](12_storna.md)

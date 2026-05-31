@@ -1,25 +1,57 @@
 # Faktury korygujące — storno (Invoice Stornos)
 
 ## Co to jest?
-Lista faktur korygujących (storno). Faktura korygująca wystawiana jest, gdy trzeba anulować lub poprawić wcześniej wystawioną fakturę — np. w przypadku błędu lub zwrotu towaru.
+Lista faktur korygujących. Faktura korygująca wystawiana jest, gdy trzeba anulować lub poprawić wcześniej wystawioną [fakturę](10_faktury.md) — np. w przypadku błędu lub zwrotu towaru.
 
-## Ważna zasada
+---
 
-> **Nowego storna nie można dodać ręcznie z tego ekranu.**
-> Storno tworzy się wyłącznie przez opcję **„Transform to Storno"** na liście faktur zwykłych.
+> ⚠️ **Nowego storna nie można dodać ręcznie z tego ekranu.**
+> Storno tworzy się wyłącznie przez opcję **„Transform to Storno"** na liście [Faktur](10_faktury.md).
+> → [Jak wystawić fakturę korygującą](../02_procesy/P-07_faktura_korygujaca.md)
 
-Szczegóły — patrz [instrukcja: wystawienie faktury korygującej](../02_procesy/P-07_faktura_korygujaca.md).
+---
 
 ## Kolumny tabeli
 
-Identyczne z [listą faktur](10_faktury.md):
-Numer dokumentu · Klient · Data wystawienia · Termin płatności · Wartość brutto · Status
+| Kolumna | Co pokazuje |
+|---|---|
+| ☐ | Zaznaczanie |
+| **Document Number** | Numer storna |
+| **Client Name** | Kontrahent → [Klienci](06_klienci.md) |
+| **Issue Date** | Data wystawienia |
+| **Due Date** | Termin |
+| **Total Value** | Wartość brutto |
+| **Status** | **Unpaid** / **Paid** |
+
+---
 
 ## Co możesz zrobić?
-- **Przeglądać** listę wystawionych storn
-- **Edytować** storno — kliknij na wiersz (otworzy się formularz edycji)
-- **Usunąć** — zaznacz (checkbox) i kliknij **Delete**
-- **Wyświetlić / wygenerować PDF** — z formularza edycji
 
-## Formularz storno
-Taki sam jak [formularz faktury](10b_formularz_faktury.md). Dane są wstępnie wypełnione na podstawie oryginalnej faktury — możesz je przejrzeć i w razie potrzeby zmienić.
+| Akcja | Jak |
+|---|---|
+| **Przeglądanie** | Przewijaj listę, klikaj nagłówki kolumn żeby sortować |
+| **Edycja storna** | Kliknij na wiersz → [Formularz](10b_formularz_faktury.md) |
+| **Usunięcie** | Zaznacz (☐) → **Delete** |
+| **PDF** | Z [formularza](10b_formularz_faktury.md) → Preview PDF / Generate PDF |
+
+---
+
+## Jak powstaje storno?
+
+1. Przejdź do [Faktury](10_faktury.md)
+2. Zaznacz fakturę do skorygowania (☐)
+3. Kliknij **Transform to Storno**
+4. Aplikacja automatycznie tworzy dokument korygujący
+5. Pojawia się na tej liście — możesz go teraz edytować
+
+---
+
+## Ważne informacje
+- Oryginalna faktura pozostaje na liście [Faktur](10_faktury.md) — nie jest usuwana
+- Storno **nie dotyczy proform** — tę opcję mają wyłącznie faktury zwykłe
+
+---
+
+📖 Instrukcja krok po kroku: [P-07 Faktura korygująca (storno)](../02_procesy/P-07_faktura_korygujaca.md)
+
+🔗 Powiązane: [Faktury](10_faktury.md) · [Formularz](10b_formularz_faktury.md)

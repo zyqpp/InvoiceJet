@@ -1,17 +1,23 @@
-# Jak założyć konto (rejestracja)
+# P-01 — Jak założyć konto (rejestracja)
 
-## Kiedy to robisz?
+## Kiedy?
 Tylko raz — przy pierwszym uruchomieniu aplikacji.
+
+---
 
 ## Kroki
 
 1. Otwórz aplikację InvoiceJet w przeglądarce
-2. Na ekranie logowania kliknij link **Register** (lub „Zarejestruj się")
+2. Na [ekranie logowania](../01_ekrany/01_logowanie.md) kliknij link **Register**
 3. Wypełnij formularz rejestracyjny
 4. Kliknij przycisk potwierdzenia
-5. Konto zostało utworzone — możesz się teraz [zalogować](P-02_logowanie.md)
+5. Konto zostało utworzone ✅
+
+---
 
 ## Co dalej?
-Po pierwszym zalogowaniu przejdź od razu do **Firm Details** i uzupełnij dane swojej firmy. Bez tego nie wystawisz żadnego dokumentu.
 
-➡️ Następny krok: [Konfiguracja danych firmy](P-03_konfiguracja_firmy.md)
+➡️ [P-02 Zaloguj się](P-02_logowanie.md)
+
+Po zalogowaniu koniecznie wykonaj:
+➡️ [P-03 Uzupełnij dane firmy](P-03_konfiguracja_firmy.md) — bez tego nie wystawisz faktury
