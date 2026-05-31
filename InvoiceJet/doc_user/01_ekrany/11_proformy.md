@@ -1,5 +1,9 @@
 # Faktury proforma (Invoice Proformas)
 
+![Lista proform — wygląd identyczny z listą faktur](../assets/screens/faktury.png)
+
+> Ekran proform wygląda identycznie jak [lista faktur](10_faktury.md) — te same kolumny i układ.
+
 ## Co to jest?
 Lista faktur proforma. Proforma to dokument wstępny informujący klienta o warunkach planowanej transakcji. **Nie jest dokumentem księgowym** — nie podlega ewidencji VAT i nie zastępuje faktury właściwej.
 

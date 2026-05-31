@@ -1,5 +1,7 @@
 # Logowanie
 
+![Ekran logowania](../assets/screens/login.png)
+
 ## Co to jest?
 Ekran startowy aplikacji. Wpisujesz tutaj swój adres e-mail i hasło, aby uzyskać dostęp do systemu.
 

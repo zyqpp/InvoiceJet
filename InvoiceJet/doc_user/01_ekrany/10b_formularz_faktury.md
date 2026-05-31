@@ -1,5 +1,7 @@
 # Formularz faktury — dodawanie i edycja
 
+![Formularz faktury](../assets/screens/formularz_faktury.png)
+
 ## Co to jest?
 Formularz do wystawienia nowej faktury lub edycji istniejącej. Ten sam formularz obsługuje [faktury zwykłe](10_faktury.md), [proformy](11_proformy.md) i [storna](12_storna.md) — różni je tylko typ dokumentu.
 
@@ -47,6 +49,9 @@ Kliknij **Add Product** (lub „+"), żeby dodać kolejny wiersz.
 ---
 
 ## Podgląd PDF
+
+![Podgląd dokumentu PDF](../assets/screens/pdf_podglad.png)
+
 Po kliknięciu **Preview PDF** otwiera się okno z gotowym dokumentem. Możesz go obejrzeć, a następnie zamknąć i wrócić do edycji.
 Szczegóły: [P-10 Generowanie PDF](../02_procesy/P-10_generowanie_pdf.md).
 

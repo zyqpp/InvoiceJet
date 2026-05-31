@@ -1,5 +1,7 @@
 # Pulpit główny (Dashboard)
 
+![Pulpit główny](../assets/screens/dashboard.png)
+
 ## Co to jest?
 Pierwsza strona po zalogowaniu. Pokazuje szybki przegląd stanu Twojej działalności — liczniki dokumentów oraz wykres przychodów.
 

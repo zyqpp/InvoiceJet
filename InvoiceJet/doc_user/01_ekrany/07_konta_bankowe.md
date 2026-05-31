@@ -1,5 +1,7 @@
 # Konta bankowe (Bank Accounts)
 
+![Lista kont bankowych](../assets/screens/konta_bankowe.png)
+
 ## Co to jest?
 Lista kont bankowych Twojej firmy. Numer konta może być drukowany na fakturach jako dane do przelewu.
 

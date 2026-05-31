@@ -1,5 +1,7 @@
 # Faktury (Invoices)
 
+![Lista faktur](../assets/screens/faktury.png)
+
 ## Co to jest?
 Lista wszystkich wystawionych faktur zwykłych. Stąd zarządzasz dokumentami sprzedaży — przeglądasz, edytujesz, usuwasz faktury oraz tworzysz do nich faktury korygujące (storno).
 

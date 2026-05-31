@@ -1,5 +1,9 @@
 # Faktury korygujące — storno (Invoice Stornos)
 
+![Lista storn — wygląd identyczny z listą faktur](../assets/screens/faktury.png)
+
+> Ekran storn wygląda identycznie jak [lista faktur](10_faktury.md) — te same kolumny i układ. Różnica: brak przycisku „Transform to Storno".
+
 ## Co to jest?
 Lista faktur korygujących. Faktura korygująca wystawiana jest, gdy trzeba anulować lub poprawić wcześniej wystawioną [fakturę](10_faktury.md) — np. w przypadku błędu lub zwrotu towaru.
 

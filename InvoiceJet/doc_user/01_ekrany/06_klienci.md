@@ -1,5 +1,7 @@
 # Klienci (Clients)
 
+![Lista klientów](../assets/screens/klienci.png)
+
 ## Co to jest?
 Lista Twoich kontrahentów — firm, którym wystawiasz faktury. Stąd zarządzasz całą bazą klientów.
 

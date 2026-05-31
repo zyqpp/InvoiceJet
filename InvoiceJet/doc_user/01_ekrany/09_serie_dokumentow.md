@@ -1,5 +1,7 @@
 # Serie dokumentów (Document Series)
 
+![Lista serii dokumentów](../assets/screens/serie_dokumentow.png)
+
 ## Co to jest?
 Ekran do zarządzania numeracją dokumentów. Seria definiuje, jak będą numerowane Twoje faktury — np. „FV/2024/001", „FV/2024/002" itd.
 

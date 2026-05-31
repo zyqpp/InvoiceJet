@@ -1,5 +1,7 @@
 # Dane firmy (Firm Details)
 
+![Ekran danych firmy](../assets/screens/dane_firmy.png)
+
 ## Co to jest?
 Ekran, na którym wprowadzasz i aktualizujesz dane swojej firmy jako wystawcy faktur. Dane te są automatycznie drukowane na każdym dokumencie.
 

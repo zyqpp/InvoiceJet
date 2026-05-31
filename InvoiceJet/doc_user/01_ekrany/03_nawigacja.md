@@ -1,5 +1,7 @@
 # Nawigacja — pasek górny i menu boczne
 
+![Nawigacja — pasek górny i menu boczne](../assets/screens/nawigacja.png)
+
 ## Pasek górny (navbar)
 
 Widoczny na każdym ekranie po zalogowaniu.

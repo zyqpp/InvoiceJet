@@ -1,5 +1,7 @@
 # Produkty i usługi (Products)
 
+![Katalog produktów i usług](../assets/screens/produkty.png)
+
 ## Co to jest?
 Katalog produktów i usług oferowanych przez Twoją firmę. Raz dodany produkt możesz wielokrotnie wybierać przy wystawianiu faktur — bez ręcznego wpisywania tych samych danych za każdym razem.
 

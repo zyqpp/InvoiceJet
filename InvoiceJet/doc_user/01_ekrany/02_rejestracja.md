@@ -1,5 +1,7 @@
 # Rejestracja
 
+![Ekran rejestracji](../assets/screens/rejestracja.png)
+
 ## Co to jest?
 Ekran tworzenia nowego konta w aplikacji InvoiceJet.
 
