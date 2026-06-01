@@ -1,0 +1,7 @@
+{
+  "name": "InvoiceJet Login Screen",
+  "id": "invoicejet-login-screen",
+  "api": "1.0.0",
+  "main": "login-screen.js",
+  "editorType": ["figma"]
+}
