@@ -3,6 +3,10 @@
 {% block styles %}
 {{ super() }}
 <style>
+/* Ukryj domyslne zakladki Material - behavior navigation.tabs zostaje,
+   wizualnie zastapiamy wlasnym paskiem kategorii */
+.md-tabs { display: none !important; }
+
 /* ── Pasek kategorii (pod headerem) ── */
 .ij-cat-bar {
   background: #3f51b5;

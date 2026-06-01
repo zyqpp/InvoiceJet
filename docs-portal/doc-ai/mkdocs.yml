@@ -26,6 +26,8 @@ theme:
     text: Inter
     code: Roboto Mono
   features:
+    - navigation.tabs          # ← KLUCZOWE: zwęża sidebar do aktywnej sekcji
+    - navigation.tabs.sticky   # pasek zawsze widoczny przy scrollu
     - navigation.sections
     - navigation.expand
     - navigation.indexes
