@@ -113,8 +113,7 @@
 
   // ── 2. Przełącznik portali w headerze ──
   function addPortalSwitch() {
-    var actions = document.querySelector(".md-header__inner > .md-header__source, .md-header__inner");
-    if (!actions || document.getElementById("ij-portal-sw")) return;
+    if (document.getElementById("ij-portal-sw")) return;
     var sw = document.createElement("div");
     sw.id = "ij-portal-sw";
     sw.className = "ij-portal-switch";
@@ -123,11 +122,53 @@
     var header = document.querySelector(".md-header__inner");
     if (header) header.appendChild(sw);
   }
-  document.addEventListener("DOMContentLoaded", addPortalSwitch);
+
+  // ── 3. Przycisk "Edytuj plik" ──
+  var DOCS_DIR = "G:\\Projekty informatyczne\\Gotowe aplikacje\\InvoiceJet\\InvoiceJet\\doc_AI\\";
+  var EDITOR_PORT = 8010;
+
+  function addEditButton() {
+    if (document.getElementById("ij-edit-btn")) return;
+    // Pobierz ścieżkę .md z aktualnego URL
+    var urlPath = window.location.pathname.replace(/^\//, '').replace(/\.html$/, '.md');
+    // index.html → README.md
+    urlPath = urlPath.replace(/\/index\.md$/, '/README.md').replace(/^index\.md$/, 'README.md');
+    if (!urlPath) return;
+
+    var filePath = DOCS_DIR + urlPath.replace(/\//g, '\\');
+    var editUrl = 'http://127.0.0.1:' + EDITOR_PORT + '/edit?path=' + encodeURIComponent(filePath);
+
+    var btn = document.createElement('a');
+    btn.id = 'ij-edit-btn';
+    btn.href = editUrl;
+    btn.title = 'Edytuj ten plik (otworzy edytor)';
+    btn.innerHTML = '✏️';
+    btn.style.cssText = 'margin-left:6px;font-size:1rem;opacity:.7;text-decoration:none;transition:opacity .15s;cursor:pointer;';
+    btn.onmouseover = function(){ this.style.opacity='1'; };
+    btn.onmouseout  = function(){ this.style.opacity='.7'; };
+    btn.onclick = function(e) {
+      e.preventDefault();
+      fetch(editUrl)
+        .then(function(r){ return r.json(); })
+        .then(function(d){ if(!d.ok) alert('Błąd: ' + d.msg); })
+        .catch(function(){ alert('Serwer edycji nie działa!\nUruchom: .\\start-editor.ps1'); });
+    };
+
+    var header = document.querySelector(".md-header__inner");
+    if (header) header.appendChild(btn);
+  }
+
+  document.addEventListener("DOMContentLoaded", function(){ addPortalSwitch(); addEditButton(); });
 
   // SPA navigation
   if (typeof document$ !== "undefined") {
-    document$.subscribe(function() { setActiveBtn(); addPortalSwitch(); });
+    document$.subscribe(function() {
+      setActiveBtn();
+      addPortalSwitch();
+      var old = document.getElementById("ij-edit-btn");
+      if (old) old.remove();
+      addEditButton();
+    });
   }
 })();
 </script>
