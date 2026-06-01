@@ -31,43 +31,7 @@ Umożliwić nowej osobie utworzenie konta i uzyskanie dostępu do aplikacji w je
 
 ## Diagram sekwencji
 
-```mermaid
-sequenceDiagram
-    participant F as Frontend
-    participant A as AuthController
-    participant S as AuthService
-    participant R as UserRepository
-    participant D as Database
-
-    F->>A: POST /api/Auth/register (RegisterUserDto)
-    A->>S: RegisterUser(registerUserDto)
-    S->>R: GetUserByEmail(email)
-    R->>D: SELECT * FROM User WHERE Email = @email
-    D-->>R: wynik (null lub User)
-    alt E-mail już istnieje
-        R-->>S: User (nie null)
-        S-->>A: throw UserAlreadyExistsException
-        A-->>F: 409 Conflict
-    else E-mail wolny
-        R-->>S: null
-        S->>S: Walidacja hasła (regex)
-        alt Hasło niepoprawne
-            S-->>A: throw InvalidPasswordException
-            A-->>F: 400 Bad Request
-        else Hasło poprawne
-            S->>S: BCrypt.HashPassword(password)
-            S->>R: AddAsync(user) + CompleteAsync()
-            R->>D: INSERT INTO User (...)
-            D-->>R: OK
-            S->>R: ManageUserFirmRelation(userId)
-            R->>D: INSERT INTO UserFirm (UserId, FirmId=null)
-            D-->>R: OK
-            S->>S: CreateToken(user) → JWT (HmacSha512, 10 min)
-            S-->>A: { token: "..." }
-            A-->>F: 200 OK + { token }
-        end
-    end
-```
+→ Przeniesiony do: [BP-AUTH-01 Rejestracja konta](../../../09_procesy_biznesowe/autentykacja/BP-AUTH-01_rejestracja.md#diagram-sekwencji)
 
 ## Kroki
 

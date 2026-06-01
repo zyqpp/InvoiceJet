@@ -31,29 +31,7 @@ Dodać dane konta bankowego firmy (nazwa banku, IBAN, waluta), aby można je by�
 
 ## Diagram sekwencji
 
-```mermaid
-sequenceDiagram
-    participant F as Frontend
-    participant A as BankAccountController
-    participant S as BankAccountService
-    participant R as BankAccountRepository
-    participant D as Database
-
-    F->>A: POST /api/BankAccount/Add (BankAccountRequestDto)
-    A->>S: Add(bankAccountRequestDto)
-    S->>S: Pobierz userId z JWT claims
-    S->>R: GetUserFirmIdByUserId(userId)
-    R->>D: SELECT UserFirmId FROM UserFirm WHERE UserId = @userId
-    D-->>R: userFirmId
-    R-->>S: userFirmId
-    S->>S: Mapuj BankAccountRequestDto → BankAccount; ustaw UserFirmId
-    S->>R: AddAsync(bankAccount) + CompleteAsync()
-    R->>D: INSERT INTO BankAccount (BankName, Iban, Currency, UserFirmId)
-    D-->>R: OK
-    R-->>S: OK
-    S-->>A: 201 Created
-    A-->>F: 201 Created
-```
+→ Przeniesiony do: [BP-CFG-02 Zarządzanie kontami bankowymi](../../../09_procesy_biznesowe/konfiguracja/BP-CFG-02_konta_bankowe.md#diagram-sekwencji)
 
 ## Kroki
 

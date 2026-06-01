@@ -31,58 +31,11 @@ Wygenerować plik PDF dokumentu handlowego (faktura, proforma lub storno) w form
 
 ## Diagram sekwencji — GenerateInvoicePdf
 
-```mermaid
-sequenceDiagram
-    participant F as Frontend
-    participant A as DocumentController
-    participant S as DocumentService
-    participant R as DocumentRepository
-    participant D as Database
-    participant Q as QuestPDF
-
-    F->>A: POST /api/Document/GenerateInvoicePdf (DocumentRequestDto)
-    A->>S: GenerateInvoicePdf(documentRequestDto)
-    S->>R: Pobierz Document (lub użyj DTO bezpośrednio)
-    R->>D: SELECT Document z JOIN (jeśli pobiera z DB)
-    D-->>R: Document
-    S->>Q: new InvoiceDocument(data)
-    Note over Q: HARDKODOWANE! Zawsze InvoiceDocument niezależnie od DocumentTypeId
-    Q->>Q: GeneratePdf() → byte[]
-    Q-->>S: byte[]
-    S-->>A: byte[]
-    A-->>F: 200 OK + PDF bytes
-```
+→ Przeniesiony do: [BP-DOC-04 Generowanie i podgląd PDF](../../../09_procesy_biznesowe/dokumenty/BP-DOC-04_eksport_pdf.md#diagram-sekwencji)
 
 ## Diagram sekwencji — GetPdfStream
 
-```mermaid
-sequenceDiagram
-    participant F as Frontend
-    participant A as DocumentController
-    participant S as DocumentService
-    participant R as DocumentRepository
-    participant D as Database
-    participant FAB as InvoiceDocumentFactory
-    participant Q as QuestPDF
-
-    F->>A: POST /api/Document/GetPdfStream (DocumentRequestDto)
-    A->>S: GetPdfStream(documentRequestDto)
-    S->>R: GetByIdWithDetailsAsync(document.Id)
-    R->>D: SELECT Document z pełnymi JOINami
-    D-->>R: Document lub null
-    alt Dokument nie istnieje
-        R-->>S: null
-        S-->>A: throw DocumentNotFoundException
-        A-->>F: 404 Not Found
-    else Dokument istnieje
-        S->>FAB: InvoiceDocumentFactory.Create(documentTypeId)
-        FAB-->>S: IDocument (InvoiceDocument | ProformaDocument | StornoDocument)
-        S->>Q: document.GeneratePdf() → MemoryStream
-        Q-->>S: MemoryStream
-        S-->>A: FileStreamResult (application/pdf)
-        A-->>F: 200 OK + PDF stream
-    end
-```
+→ Przeniesiony do: [BP-DOC-04 Generowanie i podgląd PDF](../../../09_procesy_biznesowe/dokumenty/BP-DOC-04_eksport_pdf.md#diagram-sekwencji)
 
 ## Kroki — GenerateInvoicePdf
 

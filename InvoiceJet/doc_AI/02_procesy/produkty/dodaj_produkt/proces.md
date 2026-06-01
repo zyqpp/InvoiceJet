@@ -31,36 +31,7 @@ Dodać nową pozycję (produkt lub usługę) do katalogu firmy, aby można ją b
 
 ## Diagram sekwencji
 
-```mermaid
-sequenceDiagram
-    participant F as Frontend
-    participant A as ProductController
-    participant S as ProductService
-    participant R as ProductRepository
-    participant D as Database
-
-    F->>A: POST /api/Product/Add (ProductRequestDto)
-    A->>S: AddProduct(productRequestDto)
-    S->>S: Pobierz userId z JWT claims
-    S->>R: GetUserFirmIdByUserId(userId)
-    R->>D: SELECT UserFirmId FROM UserFirm WHERE UserId = @userId
-    D-->>R: userFirmId
-    R-->>S: userFirmId
-    S->>S: Mapuj ProductRequestDto → Product; ustaw UserFirmId
-    S->>R: AddAsync(product) + CompleteAsync()
-    R->>D: INSERT INTO Product (Name, MeasureUnit, Price, VatRate, UserFirmId)
-    alt Nazwa unikalna — OK
-        D-->>R: OK
-        R-->>S: OK
-        S-->>A: 201 Created
-        A-->>F: 201 Created
-    else Naruszenie UNIQUE INDEX na Name
-        D-->>R: SqlException (UniqueConstraint)
-        R-->>S: Exception
-        S-->>A: Exception nieobsłużony → ExceptionMiddleware
-        A-->>F: 500 Internal Server Error
-    end
-```
+→ Przeniesiony do: [BP-PRD-01 Zarządzanie katalogiem produktów i usług](../../../09_procesy_biznesowe/produkty/BP-PRD-01_produkty_i_uslugi.md#diagram-sekwencji)
 
 ## Kroki
 

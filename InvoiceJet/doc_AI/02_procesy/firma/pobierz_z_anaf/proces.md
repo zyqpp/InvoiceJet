@@ -31,27 +31,7 @@ Skrócić czas wprowadzania danych firmy przez automatyczne pobranie informacji 
 
 ## Diagram sekwencji
 
-```mermaid
-sequenceDiagram
-    participant F as Frontend
-    participant A as FirmController
-    participant S as FirmService
-    participant X as ANAF API (zewnętrzne)
-
-    F->>A: GET /api/Firm/fromAnaf/{cui}
-    A->>S: GetFirmFromAnaf(cui)
-    S->>S: Pobierz bieżącą datę (DateTime.Now.ToString("yyyy-MM-dd"))
-    S->>X: POST {AnafApiUrl} z body: [{cui: @cui, data: @date}]
-    X-->>S: Odpowiedź JSON (found[])
-    alt found.length == 0
-        S-->>A: throw FirmNotFoundException
-        A-->>F: 404 Not Found
-    else found.length > 0
-        S->>S: Mapuj found[0].date_generale + adresa_domiciliu_fiscal → FirmRequestDto
-        S-->>A: FirmRequestDto
-        A-->>F: 200 OK + FirmRequestDto
-    end
-```
+→ Przeniesiony do: [BP-FIRM-01 Zarządzanie danymi własnej firmy](../../../09_procesy_biznesowe/firma/BP-FIRM-01_dane_firmy.md#diagram-sekwencji)
 
 ## Kroki
 

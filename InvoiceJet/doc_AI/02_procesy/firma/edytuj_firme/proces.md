@@ -31,35 +31,7 @@ Zaktualizować dane firmy (nazwa, NIP, REGON, adres, województwo, miasto) zapis
 
 ## Diagram sekwencji
 
-```mermaid
-sequenceDiagram
-    participant F as Frontend
-    participant A as FirmController
-    participant S as FirmService
-    participant R as FirmRepository
-    participant D as Database
-
-    F->>A: PUT /api/Firm/EditFirm/{isClient} (FirmRequestDto)
-    A->>S: EditFirm(firmRequestDto, isClient)
-    S->>S: Pobierz userId z JWT claims
-    S->>R: GetByIdAsync(firmRequestDto.id)
-    R->>D: SELECT Firm WHERE Id = @id
-    D-->>R: Firm lub null
-    alt Firma nie istnieje
-        R-->>S: null
-        S-->>A: throw FirmNotFoundException
-        A-->>F: 404 Not Found
-    else Firma istnieje
-        R-->>S: firm
-        S->>S: Aktualizuj pola: FirmName, CuiValue, RegCom, Address, County, City
-        S->>R: CompleteAsync()
-        R->>D: UPDATE Firm SET ... WHERE Id = @id
-        D-->>R: OK
-        R-->>S: OK
-        S-->>A: 200 OK
-        A-->>F: 200 OK
-    end
-```
+→ Przeniesiony do: [BP-FIRM-01 Zarządzanie danymi własnej firmy](../../../09_procesy_biznesowe/firma/BP-FIRM-01_dane_firmy.md#diagram-sekwencji)
 
 ## Kroki
 

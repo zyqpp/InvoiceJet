@@ -31,36 +31,7 @@ Wydać zalogowanemu użytkownikowi token JWT umożliwiający dostęp do wszystki
 
 ## Diagram sekwencji
 
-```mermaid
-sequenceDiagram
-    participant F as Frontend
-    participant A as AuthController
-    participant S as AuthService
-    participant R as UserRepository
-    participant D as Database
-
-    F->>A: POST /api/Auth/login (LoginUserDto)
-    A->>S: LoginUser(loginUserDto)
-    S->>R: GetUserByEmail(email)
-    R->>D: SELECT * FROM User WHERE Email = @email
-    D-->>R: wynik (null lub User)
-    alt E-mail nie istnieje
-        R-->>S: null
-        S-->>A: throw UserNotFoundException
-        A-->>F: 401 Unauthorized
-    else E-mail istnieje
-        R-->>S: User
-        S->>S: BCrypt.Verify(password, user.PasswordHash)
-        alt Hasło niepoprawne
-            S-->>A: throw InvalidCredentialsException
-            A-->>F: 401 Unauthorized
-        else Hasło poprawne
-            S->>S: CreateToken(user) → JWT (HmacSha512, 10 min)
-            S-->>A: { token: "..." }
-            A-->>F: 200 OK + { token }
-        end
-    end
-```
+→ Przeniesiony do: [BP-AUTH-02 Logowanie i wylogowanie](../../../09_procesy_biznesowe/autentykacja/BP-AUTH-02_logowanie.md#diagram-sekwencji)
 
 ## Kroki
 

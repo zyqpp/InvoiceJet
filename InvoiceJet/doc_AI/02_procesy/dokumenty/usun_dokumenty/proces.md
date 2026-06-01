@@ -31,39 +31,7 @@ Usunąć błędnie wystawione lub nieaktualne dokumenty z listy faktur/proform/s
 
 ## Diagram sekwencji
 
-```mermaid
-sequenceDiagram
-    participant F as Frontend
-    participant A as DocumentController
-    participant S as DocumentService
-    participant R as DocumentRepository
-    participant D as Database
-
-    F->>A: PUT /api/Document/Delete (int[] documentIds)
-    A->>S: DeleteDocuments(documentIds)
-    S->>S: Pobierz userId z JWT claims
-    S->>R: GetUserFirmIdByUserId(userId)
-    R->>D: SELECT UserFirmId FROM UserFirm WHERE UserId = @userId
-    D-->>R: userFirmId
-    loop Dla każdego documentId
-        S->>R: GetByIdAndUserFirmIdAsync(documentId, userFirmId)
-        R->>D: SELECT Document WHERE Id = @id AND UserFirmId = @userFirmId
-        D-->>R: Document lub null
-        alt Dokument nie istnieje / nie należy do UserFirm
-            R-->>S: null
-            S->>S: Pomiń lub rzuć wyjątek
-        else Dokument istnieje
-            S->>R: DeleteAsync(document)
-            R->>D: DELETE FROM Document WHERE Id = @id
-            Note over D: CASCADE: usuwa DocumentProduct[] powiązane z dokumentem
-            D-->>R: OK
-        end
-    end
-    S->>R: CompleteAsync()
-    R->>D: COMMIT
-    S-->>A: 200 OK
-    A-->>F: 200 OK
-```
+→ Przeniesiony do: [BP-DOC-05 Usuwanie dokumentów](../../../09_procesy_biznesowe/dokumenty/BP-DOC-05_usuwanie_dokumentow.md#diagram-sekwencji)
 
 ## Kroki
 

@@ -31,44 +31,7 @@ Stworzyć i zapisać nowy dokument handlowy z przypisanym numerem, danymi kontra
 
 ## Diagram sekwencji
 
-```mermaid
-sequenceDiagram
-    participant F as Frontend
-    participant A as DocumentController
-    participant S as DocumentService
-    participant R as DocumentRepository / DocumentSeriesRepository
-    participant D as Database
-
-    F->>A: POST /api/Document/Add (DocumentRequestDto)
-    A->>S: AddDocument(documentRequestDto)
-    S->>S: Pobierz userId z JWT claims
-    S->>R: GetUserFirmIdByUserId(userId)
-    R->>D: SELECT UserFirmId FROM UserFirm WHERE UserId = @userId
-    D-->>R: userFirmId
-    S->>R: GetDocumentSeriesByIdAsync(documentSeries.Id)
-    R->>D: SELECT DocumentSeries WHERE Id = @id
-    D-->>R: DocumentSeries lub null
-    alt Seria nie istnieje
-        R-->>S: null
-        S-->>A: throw DocumentSeriesNotFoundException
-        A-->>F: 404 Not Found
-    else Seria istnieje
-        S->>S: Wygeneruj DocumentNumber = SeriesName + CurrentNumber.D4
-        S->>S: Mapuj DocumentRequestDto → Document (AutoMapper)
-        S->>S: Ustaw UserFirmId, DocumentNumber, DocumentStatusId, IssueDate
-        S->>S: Dodaj DocumentProduct[] do dokumentu
-        S->>S: Oblicz TotalPrice = Σ(Price * Quantity * (1 + VatRate/100))
-        S->>R: AddAsync(document) + CompleteAsync() ← ZAPIS #1
-        R->>D: INSERT INTO Document; INSERT INTO DocumentProduct[]
-        D-->>R: OK
-        S->>S: documentSeries.CurrentNumber++
-        S->>R: CompleteAsync() ← ZAPIS #2 (osobny! brak atomowości)
-        R->>D: UPDATE DocumentSeries SET CurrentNumber = @n
-        D-->>R: OK
-        S-->>A: 201 Created
-        A-->>F: 201 Created
-    end
-```
+→ Przeniesiony do: [BP-DOC-01 Wystawienie faktury zwykłej](../../../09_procesy_biznesowe/dokumenty/BP-DOC-01_wystawienie_faktury.md#diagram-sekwencji)
 
 ## Kroki
 

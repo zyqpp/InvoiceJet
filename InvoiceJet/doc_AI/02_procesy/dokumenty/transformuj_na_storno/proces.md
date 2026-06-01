@@ -31,42 +31,7 @@ Masowo anulować wystawione dokumenty poprzez zmianę ich typu na Faktura Storno
 
 ## Diagram sekwencji
 
-```mermaid
-sequenceDiagram
-    participant F as Frontend (Lista faktur)
-    participant A as DocumentController
-    participant S as DocumentService
-    participant UW as UnitOfWork
-    participant R as DocumentRepository
-    participant D as Database
-
-    F->>A: PUT /api/Document/TransformToStorno [int[] documentIds]
-    A->>S: TransformToStorno(documentIds)
-    S->>S: Pobierz userId z JWT claims
-
-    loop Dla każdego documentId
-        S->>R: GetByIdAsync(documentId)
-        R->>D: SELECT * FROM Document WHERE Id = documentId
-        D-->>R: Document lub null
-
-        alt Dokument nie istnieje
-            R-->>S: null
-            Note over S: pomiń lub błąd
-        else Dokument istnieje
-            R-->>S: document
-            S->>S: document.DocumentTypeId = 3 (StornoInvoice)
-            S->>R: UpdateAsync(document)
-            Note over S,D: ⚠️ ANOMALIA TS-01 — CompleteAsync wewnątrz pętli (brak wspólnej transakcji)
-            S->>UW: CompleteAsync()
-            UW->>D: UPDATE Document SET DocumentTypeId = 3 WHERE Id = documentId
-            D-->>UW: OK
-            UW-->>S: OK
-        end
-    end
-
-    S-->>A: void
-    A-->>F: 200 OK
-```
+→ Przeniesiony do: [BP-DOC-03 Wystawienie / konwersja na storno](../../../09_procesy_biznesowe/dokumenty/BP-DOC-03_wystawienie_storno.md#diagram-sekwencji)
 
 ## Kroki
 

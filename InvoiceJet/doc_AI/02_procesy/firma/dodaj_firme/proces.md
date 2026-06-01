@@ -31,57 +31,7 @@ Zapisać nową firmę (własną lub klienta) powiązaną z kontem zalogowanego u
 
 ## Diagram sekwencji
 
-```mermaid
-sequenceDiagram
-    autonumber
-    participant F as Frontend
-    participant A as FirmController
-    participant S as FirmService
-    participant FR as FirmRepository
-    participant UFR as UserFirmRepository
-    participant UR as UserRepository
-    participant DS as DocumentSeriesService
-    participant D as Database
-
-    F->>A: POST /api/Firm/AddFirm/{isClient} (FirmDto)
-    A->>S: AddFirm(firmDto, isClient)
-
-    Note over S: Krok 1 - zapis rekordu Firm
-    S->>FR: AddAsync(firm)
-    FR->>D: INSERT INTO Firm
-    D-->>FR: firm.Id
-    FR-->>S: OK
-    S->>S: CompleteAsync() - pierwszy SaveChanges
-
-    Note over S: Krok 2 - ManageUserFirmRelation(firmId, isClient)
-    S->>S: userId = GetCurrentUserId() z JWT
-    S->>UFR: GetUserFirmById(userId, firmId)
-    UFR->>D: SELECT UserFirm WHERE UserId=userId AND FirmId=firmId
-    D-->>UFR: UserFirm lub null
-    UFR-->>S: existingUserFirm
-
-    alt existingUserFirm == null - nowe powiązanie
-        S->>UFR: AddAsync(newUserFirm z IsClient=isClient)
-        UFR->>D: INSERT INTO UserFirm
-        S->>UR: GetUserByIdAsync(userId)
-        UR->>D: SELECT User WHERE Id=userId
-        D-->>UR: user
-        UR-->>S: user
-
-        alt user.ActiveUserFirm == null - pierwsza firma usera
-            S->>S: user.ActiveUserFirm = newUserFirm
-            S->>DS: AddInitialDocumentSeries(newUserFirm)
-            Note over DS,D: tworzy domyslne serie dla Faktura i Proforma i Storno
-        end
-
-    else existingUserFirm != null - aktualizacja flagi
-        S->>S: existingUserFirm.IsClient = isClient
-    end
-
-    S->>S: CompleteAsync() - drugi SaveChanges
-    S-->>A: firmDto z nadanym Id
-    A-->>F: 201 Created
-```
+→ Przeniesiony do: [BP-FIRM-01 Zarządzanie danymi własnej firmy](../../../09_procesy_biznesowe/firma/BP-FIRM-01_dane_firmy.md#diagram-sekwencji)
 
 ## Kroki (zweryfikowane z kodem FirmService.cs)
 

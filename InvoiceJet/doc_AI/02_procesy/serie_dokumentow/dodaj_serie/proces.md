@@ -31,29 +31,7 @@ Zdefiniować nową serię numeracji, której będzie można używać przy wystaw
 
 ## Diagram sekwencji
 
-```mermaid
-sequenceDiagram
-    participant F as Frontend
-    participant A as DocumentSeriesController
-    participant S as DocumentSeriesService
-    participant R as DocumentSeriesRepository
-    participant D as Database
-
-    F->>A: POST /api/DocumentSeries/Add (DocumentSeriesRequestDto)
-    A->>S: Add(documentSeriesRequestDto)
-    S->>S: Pobierz userId z JWT claims
-    S->>R: GetUserFirmIdByUserId(userId)
-    R->>D: SELECT UserFirmId FROM UserFirm WHERE UserId = @userId
-    D-->>R: userFirmId
-    R-->>S: userFirmId
-    S->>S: Mapuj DTO → DocumentSeries; ustaw UserFirmId, CurrentNumber=1
-    S->>R: AddAsync(documentSeries) + CompleteAsync()
-    R->>D: INSERT INTO DocumentSeries (SeriesName, CurrentNumber, DocumentTypeId, UserFirmId)
-    D-->>R: OK
-    R-->>S: OK
-    S-->>A: 201 Created
-    A-->>F: 201 Created
-```
+→ Przeniesiony do: [BP-CFG-03 Konfiguracja serii numeracji dokumentów](../../../09_procesy_biznesowe/konfiguracja/BP-CFG-03_serie_dokumentow.md#diagram-sekwencji)
 
 ## Kroki
 

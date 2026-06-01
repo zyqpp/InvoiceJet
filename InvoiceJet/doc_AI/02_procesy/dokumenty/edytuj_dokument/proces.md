@@ -31,40 +31,7 @@ Zaktualizować dane istniejącego dokumentu (np. poprawić dane klienta, zmieni�
 
 ## Diagram sekwencji
 
-```mermaid
-sequenceDiagram
-    participant F as Frontend
-    participant A as DocumentController
-    participant S as DocumentService
-    participant R as DocumentRepository
-    participant D as Database
-
-    F->>A: PUT /api/Document/Edit (DocumentRequestDto z Id)
-    A->>S: EditDocument(documentRequestDto)
-    S->>R: GetByIdAsync(documentRequestDto.Id)
-    R->>D: SELECT Document WHERE Id = @id (z DocumentProducts)
-    D-->>R: Document lub null
-    alt Dokument nie istnieje
-        R-->>S: null
-        S-->>A: throw DocumentNotFoundException
-        A-->>F: 404 Not Found
-    else Dokument istnieje
-        R-->>S: document
-        S->>S: Aktualizuj pola nagłówkowe (ClientFirmId, BankAccountId, DueDate, StatusId, ...)
-        S->>R: Usuń wszystkie DocumentProducts WHERE DocumentId = @id
-        R->>D: DELETE FROM DocumentProduct WHERE DocumentId = @id
-        D-->>R: OK
-        S->>R: Dodaj nowe DocumentProduct[] z DTO
-        R->>D: INSERT INTO DocumentProduct[] (nowe pozycje)
-        D-->>R: OK
-        S->>S: Przelicz TotalPrice = Σ(Price * Quantity * (1 + VatRate/100))
-        S->>R: CompleteAsync()
-        R->>D: UPDATE Document + COMMIT
-        D-->>R: OK
-        S-->>A: 200 OK
-        A-->>F: 200 OK
-    end
-```
+→ Przeniesiony do: [BP-DOC-01 Wystawienie faktury zwykłej](../../../09_procesy_biznesowe/dokumenty/BP-DOC-01_wystawienie_faktury.md#diagram-sekwencji)
 
 ## Kroki
 
