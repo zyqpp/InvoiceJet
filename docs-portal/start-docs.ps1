@@ -2,6 +2,9 @@
 # start-docs.ps1 — uruchamia oba portale MkDocs InvoiceJet
 # doc_AI   → http://127.0.0.1:8001
 # doc_user → http://127.0.0.1:8002
+#
+# UWAGA: live-reload działa tylko dla doc_AI/ i doc_user/ (pliki .md)
+# Zmiany w overrides/ wymagają RESTARTU tego skryptu!
 
 $MKDOCS    = "C:\Users\kamil\AppData\Roaming\Python\Python314\Scripts\mkdocs.exe"
 $ROOT      = Split-Path -Parent $MyInvocation.MyCommand.Path
