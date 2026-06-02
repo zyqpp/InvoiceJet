@@ -75,9 +75,9 @@ Brak (ekran listowy).
 
 | ID operacji | Etykieta przycisku | Link do dokumentu |
 |---|---|---|
-| OP-SerieDokumentow-DodajSerie | Dodaj serię | — |
-| OP-SerieDokumentow-EdytujSerie | Edytuj (przy wierszu) | — |
-| OP-SerieDokumentow-UsunZaznaczone | Usuń zaznaczone | — |
+| OP-SerieDokumentow-DodajSerie | Dodaj serię | [ALG-GEN Generowanie numeru dokumentu](../../../03_algorytmy/dedykowane/generowanie_numeru_dokumentu.md) |
+| OP-SerieDokumentow-EdytujSerie | Edytuj (przy wierszu) | [ALG-GEN Generowanie numeru dokumentu](../../../03_algorytmy/dedykowane/generowanie_numeru_dokumentu.md) |
+| OP-SerieDokumentow-UsunZaznaczone | Usuń zaznaczone | [ALG-IZO Izolacja danych UserFirm](../../../03_algorytmy/dedykowane/izolacja_danych_userfirm.md) |
 
 ### Modale
 
@@ -102,6 +102,16 @@ Brak.
 - Powiązane procesy: [pobierz_serie](../../../02_procesy/serie_dokumentow/pobierz_serie/proces.md), [usun_serie](../../../02_procesy/serie_dokumentow/usun_serie/proces.md)
 - Powiązane API: [GET /api/DocumentSeries/GetAll](../../../04_api_i_integracje/01_api_frontend/document_series/GET_DocumentSeries_GetAll.md)
 - Powiązane UC: Brak
+
+### Powiązane algorytmy
+
+| Pole / Operacja | Algorytm | Opis powiązania |
+|---|---|---|
+| OP-SerieDokumentow-DodajSerie | [ALG-GEN Generowanie numeru dokumentu](../../../03_algorytmy/dedykowane/generowanie_numeru_dokumentu.md) | Dodanie serii definiuje prefiks (SeriesName) i licznik startowy (CurrentNumber) używane do generowania numeru dokumentu w formacie SeriesName + CurrentNumber.D4 (np. FV0001) |
+| OP-SerieDokumentow-EdytujSerie | [ALG-GEN Generowanie numeru dokumentu](../../../03_algorytmy/dedykowane/generowanie_numeru_dokumentu.md) | Edycja serii zmienia parametry (prefiks, bieżący numer) wpływające bezpośrednio na format kolejnych generowanych numerów dokumentów |
+| Kolumna `seriesName` / `currentNumber` | [ALG-GEN Generowanie numeru dokumentu](../../../03_algorytmy/dedykowane/generowanie_numeru_dokumentu.md) | Pola widoczne w tabeli prezentują dane wejściowe algorytmu generowania numeru: prefiks serii i bieżący licznik |
+| Domyślne serie FV / PRF / STN | [ALG-INI Inicjalizacja serii dokumentów](../../../03_algorytmy/dedykowane/inicjalizacja_serii_dokumentow.md) | Serie tworzone automatycznie podczas inicjalizacji konta użytkownika — ekran umożliwia ich przegląd i modyfikację |
+| OP-SerieDokumentow-UsunZaznaczone | [ALG-IZO Izolacja danych UserFirm](../../../03_algorytmy/dedykowane/izolacja_danych_userfirm.md) | Usunięcie działa tylko na seriach należących do UserFirm aktualnie zalogowanego użytkownika |
 
 ## Powiązania z kodem
 

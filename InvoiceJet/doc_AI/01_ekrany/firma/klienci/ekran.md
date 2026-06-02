@@ -79,9 +79,9 @@ Brak (ekran listowy — bez pól formularza bezpośrednio na ekranie).
 
 | ID operacji | Etykieta przycisku | Link do dokumentu |
 |---|---|---|
-| OP-Klienci-DodajKlienta | Dodaj klienta | — |
+| OP-Klienci-DodajKlienta | Dodaj klienta | [ALG-10 Izolacja danych](../../../../03_algorytmy/dedykowane/izolacja_danych_userfirm.md) |
 | OP-Klienci-EdytujKlienta | Edytuj (przy wierszu) | — |
-| OP-Klienci-UsunZaznaczone | Usuń zaznaczone | — |
+| OP-Klienci-UsunZaznaczone | Usuń zaznaczone | [ALG-10 Izolacja danych](../../../../03_algorytmy/dedykowane/izolacja_danych_userfirm.md) |
 
 ### Modale
 
@@ -106,6 +106,14 @@ Brak (anomalia: brak komunikatów sukcesu/błędu dla użytkownika).
 - Powiązane procesy: `../../../02_procesy/firma/pobierz_firmy_klientow/proces.md`
 - Powiązane API: `../../../04_api_i_integracje/01_api_frontend/firm/`
 - Powiązane UC: Brak
+
+### Powiązane algorytmy
+
+| Pole / Operacja | Algorytm | Opis powiązania |
+|---|---|---|
+| OP-Klienci-DodajKlienta | [ALG-10 Izolacja danych](../../../../03_algorytmy/dedykowane/izolacja_danych_userfirm.md) | Filtr po UserFirm — klienci tylko bieżącej firmy |
+| OP-Klienci-UsunZaznaczone | [ALG-10 Izolacja danych](../../../../03_algorytmy/dedykowane/izolacja_danych_userfirm.md) | Izolacja danych — usunięcie tylko klientów bieżącej firmy |
+| FILTR-Klienci-Szukaj | — (filtr kliencki MatTable) | Brak algorytmu backendowego — filtrowanie po stronie klienta |
 
 ## Powiązania z kodem
 

@@ -50,13 +50,13 @@ Brak.
 
 | ID pola | Nazwa w UI | Wymagalność | Link do dokumentu |
 |---|---|---|---|
-| POLE-Navbar-userName | Imię i nazwisko użytkownika (wyświetlane) | — (tylko odczyt) | — |
+| POLE-Navbar-userName | Imię i nazwisko użytkownika (wyświetlane) | — (tylko odczyt) | [ALG-JWT Weryfikacja tokenu JWT](../../../../03_algorytmy/autoryzacyjne/weryfikacja_tokenu_jwt.md) |
 
 ### Operacje
 
 | ID operacji | Etykieta przycisku | Link do dokumentu |
 |---|---|---|
-| OP-Navbar-Wyloguj | Wyloguj (ikona / przycisk) | — |
+| OP-Navbar-Wyloguj | Wyloguj (ikona / przycisk) | [ALG-JWT Weryfikacja tokenu JWT](../../../../03_algorytmy/autoryzacyjne/weryfikacja_tokenu_jwt.md) |
 
 ### Modale
 
@@ -98,6 +98,13 @@ this.userName = decoded.firstName + " " + decoded.lastName;
 - Powiązane procesy: `../../02_procesy/autentykacja/logowanie/proces.md`
 - Powiązane API: Brak bezpośrednich wywołań API
 - Powiązane UC: Brak
+
+### Powiązane algorytmy
+
+| Pole / Operacja | Algorytm | Opis powiązania |
+|---|---|---|
+| POLE-Navbar-userName | [ALG-JWT Weryfikacja tokenu JWT](../../../../03_algorytmy/autoryzacyjne/weryfikacja_tokenu_jwt.md) | Imię i nazwisko użytkownika odczytywane z claims tokenu JWT (firstName + lastName) przez JwtHelperService — token musi być ważny, aby dane były dostępne |
+| OP-Navbar-Wyloguj | [ALG-JWT Weryfikacja tokenu JWT](../../../../03_algorytmy/autoryzacyjne/weryfikacja_tokenu_jwt.md) | Wylogowanie usuwa token z localStorage; AuthInterceptor i TokenExpiredDialog powiązane z cyklem życia tokenu JWT (token bezstanowy — wygasa po 10 minutach od wystawienia) |
 
 ## Powiązania z kodem
 

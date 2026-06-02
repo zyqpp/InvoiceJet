@@ -74,7 +74,7 @@ Brak (ekran tylko do odczytu — selektory jako filtry).
 | ID operacji | Etykieta przycisku | Link do dokumentu |
 |---|---|---|
 | OP-Dashboard-ZmianaRoku | Zmiana roku (mat-select) | — |
-| OP-Dashboard-ZmianaTypu | Zmiana typu dokumentu (mat-select) | — |
+| OP-Dashboard-ZmianaTypu | Zmiana typu dokumentu (mat-select) | [ALG-IZO Izolacja danych UserFirm](../../../03_algorytmy/dedykowane/izolacja_danych_userfirm.md) |
 
 ### Modale
 
@@ -127,6 +127,14 @@ Brak.
 - Powiązane procesy: `../../02_procesy/dokumenty/dashboard_statystyki/proces.md`
 - Powiązane API: `../../04_api_i_integracje/01_api_frontend/document/`
 - Powiązane UC: Brak
+
+### Powiązane algorytmy
+
+| Pole / Operacja | Algorytm | Opis powiązania |
+|---|---|---|
+| Liczniki (TotalDocuments, TotalClients, TotalProducts, TotalBankAccounts) | [ALG-IZO Izolacja danych UserFirm](../../../03_algorytmy/dedykowane/izolacja_danych_userfirm.md) | Statystyki zwracane przez API (GET /api/Document/GetDashboardStats) dotyczą wyłącznie danych przypisanych do UserFirm aktualnie zalogowanego użytkownika |
+| Wykres liniowy (invoiceAmount, incomeAmount) | [ALG-IZO Izolacja danych UserFirm](../../../03_algorytmy/dedykowane/izolacja_danych_userfirm.md) | Miesięczne przychody obliczane po stronie API wyłącznie dla dokumentów UserFirm zalogowanego użytkownika |
+| OP-Dashboard-ZmianaTypu | [ALG-IZO Izolacja danych UserFirm](../../../03_algorytmy/dedykowane/izolacja_danych_userfirm.md) | Filtrowanie po typie dokumentu nadal zwraca dane izolowane do UserFirm — zmiana parametru nie przełamuje izolacji |
 
 ## Powiązania z kodem
 

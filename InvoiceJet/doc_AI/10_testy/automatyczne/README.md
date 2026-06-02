@@ -10,9 +10,23 @@
 
 ## Stan obecny
 
-Projekt InvoiceJet **nie zawiera zaimplementowanych testów automatycznych** — ani po stronie backendu (ASP.NET Core 8), ani po stronie frontendu (Angular 16). Wszystkie testy są wykonywane manualnie zgodnie ze scenariuszami zawartymi w katalogu `../manualne/`.
+Projekt InvoiceJet **nie zawiera zaimplementowanego kodu** testów automatycznych — ani po stronie backendu (ASP.NET Core 8), ani po stronie frontendu (Angular 16).
 
-Brak testów automatycznych jest świadomą decyzją na etapie MVP projektu. Poniżej przedstawiono propozycję zakresu i priorytetów dla przyszłej implementacji.
+W tym katalogu znajdują się **szczegółowe scenariusze E2E gotowe do implementacji** w Playwright/Cypress lub do wrzucenia do Claude w celu wygenerowania kodu testów:
+
+| Plik | Scenariusze | Priorytet |
+|---|---|---|
+| [e2e_autentykacja.md](e2e_autentykacja.md) | TC-AUTO-001 do 004 — rejestracja, logowanie, wygaśnięcie tokenu, walidacja hasła | KRYTYCZNY |
+| [e2e_faktury.md](e2e_faktury.md) | TC-AUTO-010 do 014 — wystawienie faktury z weryfikacją algorytmów, storno, PDF | KRYTYCZNY |
+| [e2e_konfiguracja.md](e2e_konfiguracja.md) | TC-AUTO-020 do 022 — ANAF, serie dokumentów, izolacja danych | WYSOKI |
+
+Każdy scenariusz zawiera:
+- CSS selektory Angular Material
+- Dokładne wartości danych testowych
+- Weryfikację wyników algorytmów (obliczenia, generowanie numerów, transformacje)
+- Prereq w DB
+
+Testy manualne (do ręcznego wykonania): `../manualne/`
 
 ## Proponowany zakres testów automatycznych
 

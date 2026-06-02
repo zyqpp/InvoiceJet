@@ -7,7 +7,18 @@
 
 ## Stan testów w projekcie
 
-**Aktualny stan:** Brak testów automatycznych — zarówno po stronie backendu jak i frontendu. Wszystkie testy są manualne.
+**Aktualny stan:**
+- Testy manualne: scenariusze w `manualne/` (TC-100…TC-157) — wersja 0.2 (06.2026) z selektorami CSS i weryfikacją algorytmów
+- Testy automatyczne E2E: **scenariusze gotowe do implementacji** w `automatyczne/` — TC-AUTO-001…022
+- Kod testów automatycznych: **brak** — brak xUnit/Playwright w repozytoriach
+
+### Nowe scenariusze E2E (2026-06-02)
+
+| Plik | Scenariusze | Pokrycie algorytmów |
+|---|---|---|
+| [automatyczne/e2e_autentykacja.md](automatyczne/e2e_autentykacja.md) | TC-AUTO-001 do 004 | ALG-01, ALG-03, ALG-04 |
+| [automatyczne/e2e_faktury.md](automatyczne/e2e_faktury.md) | TC-AUTO-010 do 014 | ALG-02, ALG-05, ALG-07, ALG-08, obliczanie_ceny_pozycji |
+| [automatyczne/e2e_konfiguracja.md](automatyczne/e2e_konfiguracja.md) | TC-AUTO-020 do 022 | ALG-06, ALG-02, ALG-10 |
 
 ## Priorytetowe scenariusze testowe
 

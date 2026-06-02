@@ -130,7 +130,12 @@ Ekran tworzenia i edycji faktury zwykłej (`DocumentTypeId = 1`). Logika pochodz
 | DTO | [DTO-10 DocumentAutofillInfoDto](../../../05_model_danych/02_dto/DTO-10_DocumentAutofillInfoDto.md) |
 | Model DB | [dbo.Document](../../../05_model_danych/01_db/dbo/dbo.Document.md) |
 | Model DB | [dbo.DocumentProduct](../../../05_model_danych/01_db/dbo/dbo.DocumentProduct.md) |
-| Algorytm | [ALG-Wyliczeniowe-ObliczanieCenyPozycji](../../../03_algorytmy/wyliczeniowe/obliczanie_ceny_pozycji.md) |
+| Algorytm | [obliczanie_ceny_pozycji](../../../03_algorytmy/wyliczeniowe/obliczanie_ceny_pozycji.md) — `UnitPrice × Qty × (1 + VAT/100)` → `totalPrice` wiersza |
+| Algorytm | [ALG-05 obliczanie_wartosci_dokumentu](../../../03_algorytmy/wyliczeniowe/obliczanie_wartosci_dokumentu.md) — `calculateTotals()` reaktywnie aktualizuje sumy netto/VAT/brutto |
+| Algorytm | [ALG-02 generowanie_numeru_dokumentu](../../../03_algorytmy/dedykowane/generowanie_numeru_dokumentu.md) — numer nadawany przy zapisie: `SeriesName + CurrentNumber.D4` |
+| Algorytm | [aktualizacja_produktow_dokumentu](../../../03_algorytmy/wyliczeniowe/aktualizacja_produktow_dokumentu.md) — backend `UpdateDocumentProducts`: zapis pozycji i sum do DB |
+| Algorytm | [ALG-07 generuj_pdf_stream](../../../03_algorytmy/generowania_pdf/generuj_pdf_stream.md) — Preview PDF: poprawna fabryka szablonów |
+| Algorytm | [ALG-07 generuj_pdf_na_dysk](../../../03_algorytmy/generowania_pdf/generuj_pdf_na_dysk.md) — Generate PDF: ⚠️ BUG hardcoded `InvoiceDocument` |
 
 ## Powiązania z kodem
 

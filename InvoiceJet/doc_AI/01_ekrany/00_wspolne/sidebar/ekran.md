@@ -78,15 +78,15 @@ Brak.
 
 | ID operacji | Etykieta przycisku | Link do dokumentu |
 |---|---|---|
-| OP-Sidebar-Dashboard | Dashboard | — |
-| OP-Sidebar-DaneFirmy | Dane firmy | — |
-| OP-Sidebar-Klienci | Klienci | — |
-| OP-Sidebar-KontaBankowe | Konta bankowe | — |
-| OP-Sidebar-Produkty | Produkty | — |
-| OP-Sidebar-SerieDokumentow | Serie dokumentów | — |
-| OP-Sidebar-Faktury | Faktury | — |
-| OP-Sidebar-Proformy | Proformy | — |
-| OP-Sidebar-Storna | Storna | — |
+| OP-Sidebar-Dashboard | Dashboard | [ALG-IZO Izolacja danych UserFirm](../../../../03_algorytmy/dedykowane/izolacja_danych_userfirm.md) |
+| OP-Sidebar-DaneFirmy | Dane firmy | [ALG-IZO Izolacja danych UserFirm](../../../../03_algorytmy/dedykowane/izolacja_danych_userfirm.md) |
+| OP-Sidebar-Klienci | Klienci | [ALG-IZO Izolacja danych UserFirm](../../../../03_algorytmy/dedykowane/izolacja_danych_userfirm.md) |
+| OP-Sidebar-KontaBankowe | Konta bankowe | [ALG-IZO Izolacja danych UserFirm](../../../../03_algorytmy/dedykowane/izolacja_danych_userfirm.md) |
+| OP-Sidebar-Produkty | Produkty | [ALG-IZO Izolacja danych UserFirm](../../../../03_algorytmy/dedykowane/izolacja_danych_userfirm.md) |
+| OP-Sidebar-SerieDokumentow | Serie dokumentów | [ALG-IZO Izolacja danych UserFirm](../../../../03_algorytmy/dedykowane/izolacja_danych_userfirm.md) |
+| OP-Sidebar-Faktury | Faktury | [ALG-IZO Izolacja danych UserFirm](../../../../03_algorytmy/dedykowane/izolacja_danych_userfirm.md) |
+| OP-Sidebar-Proformy | Proformy | [ALG-IZO Izolacja danych UserFirm](../../../../03_algorytmy/dedykowane/izolacja_danych_userfirm.md) |
+| OP-Sidebar-Storna | Storna | [ALG-IZO Izolacja danych UserFirm](../../../../03_algorytmy/dedykowane/izolacja_danych_userfirm.md) |
 
 ### Modale
 
@@ -121,6 +121,12 @@ Brak.
 - Powiązane procesy: Brak bezpośrednich
 - Powiązane API: Brak bezpośrednich wywołań API
 - Powiązane UC: Brak
+
+### Powiązane algorytmy
+
+| Pole / Operacja | Algorytm | Opis powiązania |
+|---|---|---|
+| Wszystkie pozycje menu (OP-Sidebar-*) | [ALG-IZO Izolacja danych UserFirm](../../../../03_algorytmy/dedykowane/izolacja_danych_userfirm.md) | Sidebar nawiguje do sekcji chronionych przez AuthGuard — każda sekcja docelowa prezentuje dane filtrowane per UserFirm zalogowanego użytkownika; sam sidebar nie wywołuje API, ale jest bramą do ekranów stosujących izolację danych |
 
 ## Powiązania z kodem
 

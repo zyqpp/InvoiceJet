@@ -12,6 +12,29 @@
 
 Scenariusze testowe obejmują dodanie i edycję własnej firmy (profil użytkownika) oraz zarządzanie firmami klientów — zarówno ręcznie jak i przez integrację z rumuńskim rejestrem ANAF. Powiązane z endpointami API-03 – API-09.
 
+## Powiązane algorytmy
+
+| Algorytm | Testowane przez |
+|---|---|
+| [ALG-06 Integracja ANAF](../../../03_algorytmy/dedykowane/integracja_anaf.md) | TC-111 — autouzupełnienie przez CUI, TC-116 — klient przez ANAF |
+| [dedykowane/zarzadzanie_relacja_userfirm](../../../03_algorytmy/dedykowane/zarzadzanie_relacja_userfirm.md) | TC-110 — ManageUserFirmRelation przy AddFirm |
+| [ALG-10 Izolacja danych](../../../03_algorytmy/dedykowane/izolacja_danych_userfirm.md) | TC-114/115 — klienci widoczni tylko dla bieżącego użytkownika |
+
+## Selektory CSS / Angular Material
+
+| Element | Selektor |
+|---|---|
+| Pole Nazwa firmy | `input[formControlName="firmName"]` |
+| Pole CUI | `input[formControlName="cuiValue"]` |
+| Ikona chmury ANAF | `button[mat-icon-button][matSuffix]` lub `button` z `mat-icon` `cloud_download` |
+| Pole Reg. Com | `input[formControlName="regCom"]` |
+| Pole Adres | `input[formControlName="address"]` |
+| Pole Okręg | `input[formControlName="county"]` |
+| Pole Miasto | `input[formControlName="city"]` |
+| Przycisk Zapisz | `button[type="submit"]` lub `button` z tekstem „Save" |
+| Dialog Dodaj/Edytuj klienta | `mat-dialog-container` |
+| Input w dialogu (Nazwa klienta) | `mat-dialog-container input[formControlName="firmName"]` |
+
 ---
 
 ## TC-110: Dodanie własnej firmy (happy path)

@@ -12,6 +12,28 @@
 
 Scenariusze testowe obejmują dodawanie, edycję i usuwanie produktów z katalogu użytkownika oraz weryfikację globalnego ograniczenia UNIQUE INDEX na nazwie produktu (anomalia). Powiązane z endpointami API-10 – API-13.
 
+## Powiązane algorytmy
+
+| Algorytm | Testowane przez |
+|---|---|
+| [ALG-10 Izolacja danych](../../../03_algorytmy/dedykowane/izolacja_danych_userfirm.md) | TC-120 — produkty widoczne tylko dla bieżącej firmy |
+| [wyliczeniowe/obliczanie_ceny_pozycji](../../../03_algorytmy/wyliczeniowe/obliczanie_ceny_pozycji.md) | Pośrednio — cena i VAT produktu → autouzupełnianie w formularzu faktury |
+
+## Selektory CSS / Angular Material
+
+| Element | Selektor |
+|---|---|
+| Przycisk Dodaj produkt | `button[mat-raised-button]` z tekstem „Add Product" |
+| Dialog | `mat-dialog-container` |
+| Pole Nazwa produktu | `mat-dialog-container input[formControlName="name"]` |
+| Pole Cena | `mat-dialog-container input[formControlName="price"]` lub `unitPrice` |
+| Select Stawka VAT | `mat-dialog-container mat-select[formControlName="vatRate"]` lub `tvaValue` |
+| Pole Jednostka miary | `mat-dialog-container input[formControlName="unitOfMeasurement"]` |
+| Filter / Szukaj | `input[matInput]` z placeholder „Search" |
+| Przycisk Save | `mat-dialog-container button[type="submit"]` |
+
+> ⚠️ **ANOMALIA A-03:** Globalny UNIQUE INDEX na nazwie produktu — dwóch użytkowników nie może mieć produktu o tej samej nazwie!
+
 ---
 
 ## TC-120: Dodanie produktu (happy path)

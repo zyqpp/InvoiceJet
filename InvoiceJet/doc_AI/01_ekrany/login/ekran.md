@@ -60,13 +60,13 @@ Brak.
 | ID pola | Nazwa w UI | Wymagalność | Link do dokumentu |
 |---|---|---|---|
 | POLE-Login-email | Email | wymagane | — |
-| POLE-Login-password | Hasło | wymagane | — |
+| POLE-Login-password | Hasło | wymagane | [ALG-03 Walidacja hasła](../../../03_algorytmy/walidacji/walidacja_hasla.md) |
 
 ### Operacje
 
 | ID operacji | Etykieta przycisku | Link do dokumentu |
 |---|---|---|
-| OP-Login-Submit | Zaloguj się | — |
+| OP-Login-Submit | Zaloguj się | [ALG-01 JWT Auth](../../../03_algorytmy/autoryzacyjne/weryfikacja_tokenu_jwt.md) · [ALG-04 JWT Creation](../../../03_algorytmy/autoryzacyjne/tworzenie_tokenu_jwt.md) |
 | OP-Login-TogglePassword | Pokaż/ukryj hasło (ikona 👁) | — |
 
 ### Modale
@@ -111,6 +111,15 @@ Brak.
 - Powiązane procesy: `../../02_procesy/autentykacja/logowanie/proces.md`
 - Powiązane API: `../../04_api_i_integracje/01_api_frontend/auth/`
 - Powiązane UC: Brak
+- Bezpieczeństwo sesji: [ALG-10 Izolacja danych](../../../03_algorytmy/dedykowane/izolacja_danych_userfirm.md)
+
+### Powiązane algorytmy
+
+| Pole / Operacja | Algorytm | Opis powiązania |
+|---|---|---|
+| POLE-Login-password | [ALG-03 Walidacja hasła](../../../03_algorytmy/walidacji/walidacja_hasla.md) | BCrypt verify na serwerze przy logowaniu |
+| OP-Login-Submit | [ALG-01 JWT Auth](../../../03_algorytmy/autoryzacyjne/weryfikacja_tokenu_jwt.md) | Pipeline JWT: backend + Angular interceptor |
+| OP-Login-Submit | [ALG-04 JWT Creation](../../../03_algorytmy/autoryzacyjne/tworzenie_tokenu_jwt.md) | Tworzenie tokenu JWT po poprawnym logowaniu |
 
 ## Powiązania z kodem
 

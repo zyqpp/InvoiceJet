@@ -12,21 +12,52 @@
 
 Scenariusze testowe obejmują rejestrację nowego konta, logowanie, walidację siły hasła oraz zachowanie systemu po wygaśnięciu tokenu JWT. Powiązane z UC-Globalny-Autentykacja i endpointami API-01, API-02.
 
+## Powiązane algorytmy
+
+| Algorytm | Testowane przez |
+|---|---|
+| [ALG-03 Walidacja hasła](../../../03_algorytmy/walidacji/walidacja_hasla.md) | TC-101, TC-102 — regex: min 8 znaków, 1 wielka, 1 cyfra, 1 specjalny z `@$!%*?&` |
+| [ALG-04 Tworzenie JWT](../../../03_algorytmy/autoryzacyjne/tworzenie_tokenu_jwt.md) | TC-100, TC-104 — token w `localStorage.authToken`, TTL=10min |
+| [ALG-01 Weryfikacja JWT](../../../03_algorytmy/autoryzacyjne/weryfikacja_tokenu_jwt.md) | TC-106 — wygaśnięcie tokenu, TokenExpiredDialog |
+
+## Selektory CSS / Angular Material (przydatne przy automatyzacji)
+
+| Element | Selektor |
+|---|---|
+| Email input (login/rejestracja) | `mat-form-field input[formControlName="email"]` |
+| Password input | `mat-form-field input[formControlName="password"]` |
+| Confirm password input | `mat-form-field input[formControlName="passwordConfirmation"]` |
+| First name input | `mat-form-field input[formControlName="firstName"]` |
+| Last name input | `mat-form-field input[formControlName="lastName"]` |
+| Submit button (login) | `button[type="submit"]` lub `button` z tekstem „Zaloguj się" |
+| Submit button (register) | `button[type="submit"]` lub `button` z tekstem „Zarejestruj się" |
+| Error message (inline) | `.error-message`, `mat-error`, lub element z `errorMessage` binding |
+| Token Expired Dialog | `mat-dialog-container` z tekstem „session" lub „expired" |
+| localStorage token | `window.localStorage.getItem("authToken")` |
+
 ---
 
 ## TC-100: Rejestracja z poprawnymi danymi (happy path)
 
 **Typ:** Happy path
 **Priorytet:** Wysoki
-**Powiązane:** UC-Globalny-Autentykacja, API-01
+**Powiązane:** UC-Globalny-Autentykacja, API-01 (`POST /api/Auth/register`)
+**Algorytm:** [ALG-03 Walidacja hasła](../../../03_algorytmy/walidacji/walidacja_hasla.md), [ALG-04 Tworzenie JWT](../../../03_algorytmy/autoryzacyjne/tworzenie_tokenu_jwt.md), [dedykowane/inicjalizacja_serii_dokumentow](../../../03_algorytmy/dedykowane/inicjalizacja_serii_dokumentow.md)
 
-| # | Akcja | Dane testowe | Oczekiwany wynik |
-|---|---|---|---|
-| 1 | Otwórz stronę `/register` | — | Formularz rejestracji widoczny z polami: imię, nazwisko, e-mail, hasło, powtórz hasło |
-| 2 | Wypełnij formularz poprawnymi danymi | Imię: `Jan`, Nazwisko: `Kowalski`, e-mail: `test@example.com`, hasło: `Test@123`, powtórz: `Test@123` | Wszystkie pola wypełnione, przycisk „Zarejestruj się" aktywny |
-| 3 | Kliknij „Zarejestruj się" | — | Wywołanie `POST /api/Auth/register` — status 200 OK |
-| 4 | Sprawdź odpowiedź API | — | Response zawiera token JWT; token zapisany w `localStorage` pod kluczem `authToken` |
-| 5 | Sprawdź przekierowanie | — | Użytkownik zostaje przekierowany na `/dashboard` |
+**Prereq:** Konto `test@example.com` NIE istnieje w DB.
+
+| # | Akcja | Element UI (selektor) | Wartość/Dane | Oczekiwany wynik |
+|---|---|---|---|---|
+| 1 | Nawiguj | URL | `/register` | Ekran rejestracji załadowany; widoczne pola: imię, nazwisko, e-mail, hasło, powtórz hasło |
+| 2 | Wpisz imię | `input[formControlName="firstName"]` | `Jan` | Pole wypełnione |
+| 3 | Wpisz nazwisko | `input[formControlName="lastName"]` | `Kowalski` | Pole wypełnione |
+| 4 | Wpisz e-mail | `input[formControlName="email"]` | `test@example.com` | Pole wypełnione |
+| 5 | Wpisz hasło | `input[formControlName="password"]` | `Test@123` | Pole wypełnione; hasło spełnia wymagania ALG-03: ≥8 znaków, 1 wielka, 1 cyfra, znak `@` |
+| 6 | Wpisz potwierdzenie hasła | `input[formControlName="passwordConfirmation"]` | `Test@123` | Pole wypełnione; hasła zgodne |
+| 7 | Kliknij „Zarejestruj się" | `button[type="submit"]` | — | Wywołanie `POST /api/Auth/register` — status 200 OK |
+| 8 | Sprawdź localStorage | DevTools → Application → localStorage | Klucz `authToken` | **Weryfikacja ALG-04:** Token JWT istnieje; zdekoduj (jwt.io) — claims: `userId`, `firstName`, `email`, `exp` (10 min) |
+| 9 | Sprawdź przekierowanie | URL | — | Użytkownik przekierowany na `/dashboard` |
+| 10 | Sprawdź serie dokumentów | `/dashboard/document-series` | — | **Weryfikacja ALG-inicjalizacja_serii:** widoczne domyślne serie: `FV` (currentNumber=1), `PRF` (currentNumber=1), `STN` (currentNumber=1) |
 
 **Wynik rzeczywisty:** [Do wypełnienia przez testera]
 **Status:** [Nie przetestowany]
@@ -95,16 +126,19 @@ Scenariusze testowe obejmują rejestrację nowego konta, logowanie, walidację s
 
 **Typ:** Happy path
 **Priorytet:** Wysoki
-**Powiązane:** UC-Globalny-Autentykacja, API-02
+**Powiązane:** UC-Globalny-Autentykacja, API-02 (`POST /api/Auth/login`)
+**Algorytm:** [ALG-01 Weryfikacja JWT](../../../03_algorytmy/autoryzacyjne/weryfikacja_tokenu_jwt.md), [ALG-03 Walidacja hasła](../../../03_algorytmy/walidacji/walidacja_hasla.md), [ALG-04 Tworzenie JWT](../../../03_algorytmy/autoryzacyjne/tworzenie_tokenu_jwt.md)
 
-| # | Akcja | Dane testowe | Oczekiwany wynik |
-|---|---|---|---|
-| 1 | Otwórz stronę `/login` | — | Formularz logowania widoczny z polami: e-mail, hasło |
-| 2 | Wypełnij formularz | e-mail: `test@example.com`, hasło: `Test@123` | Pola wypełnione |
-| 3 | Kliknij „Zaloguj się" | — | Wywołanie `POST /api/Auth/login` — status 200 OK |
-| 4 | Sprawdź odpowiedź | — | Response zawiera token JWT z claimami: `userId`, `firstName`, `email` |
-| 5 | Sprawdź localStorage | — | Klucz `authToken` zawiera token JWT |
-| 6 | Sprawdź przekierowanie | — | Użytkownik przekierowany na `/dashboard` |
+**Prereq:** Konto `test@example.com` / `Test@123` istnieje w DB (po TC-100).
+
+| # | Akcja | Element UI (selektor) | Wartość/Dane | Oczekiwany wynik |
+|---|---|---|---|---|
+| 1 | Nawiguj | URL | `/login` | Ekran logowania załadowany; widoczne pola e-mail i hasło |
+| 2 | Wpisz e-mail | `input[formControlName="email"]` | `test@example.com` | Pole wypełnione |
+| 3 | Wpisz hasło | `input[formControlName="password"]` | `Test@123` | Pole wypełnione |
+| 4 | Kliknij „Zaloguj się" | `button[type="submit"]` | — | Wywołanie `POST /api/Auth/login` — status 200 OK; **Weryfikacja ALG-03:** backend weryfikuje BCrypt hash |
+| 5 | Sprawdź localStorage | DevTools → Application → localStorage | Klucz `authToken` | **Weryfikacja ALG-04:** token JWT istnieje; dekoduj na jwt.io — claims: `userId`, `firstName`, `email`, exp=+600s |
+| 6 | Sprawdź przekierowanie | URL | — | Użytkownik przekierowany na `/dashboard` |
 
 **Wynik rzeczywisty:** [Do wypełnienia przez testera]
 **Status:** [Nie przetestowany]

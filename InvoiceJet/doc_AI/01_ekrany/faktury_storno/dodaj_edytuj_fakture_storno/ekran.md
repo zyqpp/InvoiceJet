@@ -62,10 +62,10 @@ Identyczne pola jak `EKRAN-FormularzFaktury` — patrz `../../00_wspolne/base_in
 
 | ID operacji | Etykieta przycisku | Link do dokumentu |
 |---|---|---|
-| OP-FormularzStorna-Zapisz | Zapisz | — |
+| OP-FormularzStorna-Zapisz | Zapisz | [ALG-02 Generowanie numeru](../../../03_algorytmy/dedykowane/generowanie_numeru_dokumentu.md) · [wyliczeniowe/aktualizacja_produktow_dokumentu](../../../03_algorytmy/wyliczeniowe/aktualizacja_produktow_dokumentu.md) |
 | OP-FormularzStorna-Anuluj | Anuluj | — |
-| OP-FormularzStorna-GenerujPdf | Generuj PDF | — |
-| OP-FormularzStorna-PodgladPdf | Podgląd PDF | — |
+| OP-FormularzStorna-GenerujPdf | Generuj PDF | [ALG-07 Generuj PDF na dysk](../../../03_algorytmy/generowania_pdf/generuj_pdf_na_dysk.md) |
+| OP-FormularzStorna-PodgladPdf | Podgląd PDF | [ALG-07 Generuj PDF stream](../../../03_algorytmy/generowania_pdf/generuj_pdf_stream.md) |
 
 ### Modale
 
@@ -105,6 +105,18 @@ Identyczne jak `EKRAN-FormularzFaktury`, ale `GetDocumentAutofillInfo/3` (Docume
 - Powiązane procesy: [dodaj_dokument](../../../02_procesy/dokumenty/dodaj_dokument/proces.md), [edytuj_dokument](../../../02_procesy/dokumenty/edytuj_dokument/proces.md), [transformuj_na_storno](../../../02_procesy/dokumenty/transformuj_na_storno/proces.md)
 - Powiązane API: [POST /api/Document/Add](../../../04_api_i_integracje/01_api_frontend/document/POST_Document_Add.md)
 - Powiązane UC: Brak
+
+### Powiązane algorytmy
+
+| Pole / Operacja | Algorytm | Opis powiązania |
+|---|---|---|
+| Pola i tabela pozycji | [wyliczeniowe/obliczanie_ceny_pozycji](../../../03_algorytmy/wyliczeniowe/obliczanie_ceny_pozycji.md) | Identyczne jak faktura: wyliczenie brutto pozycji na frontendzie |
+| Podsumowanie sum | [ALG-05 Obliczanie wartości dokumentu](../../../03_algorytmy/wyliczeniowe/obliczanie_wartosci_dokumentu.md) | `calculateTotals()` z BaseInvoiceComponent |
+| OP-FormularzStorna-Zapisz | [ALG-02 Generowanie numeru dokumentu](../../../03_algorytmy/dedykowane/generowanie_numeru_dokumentu.md) | DocumentTypeId=3 → seria STN; numer STN0001… |
+| OP-FormularzStorna-Zapisz | [wyliczeniowe/aktualizacja_produktow_dokumentu](../../../03_algorytmy/wyliczeniowe/aktualizacja_produktow_dokumentu.md) | Backend: zapis pozycji i sum do DB |
+| OP-FormularzStorna-GenerujPdf | [ALG-07 Generuj PDF na dysk](../../../03_algorytmy/generowania_pdf/generuj_pdf_na_dysk.md) | Generowanie PDF i zapis na dysk |
+| OP-FormularzStorna-PodgladPdf | [ALG-07 Generuj PDF stream](../../../03_algorytmy/generowania_pdf/generuj_pdf_stream.md) | Podgląd PDF przez stream |
+| Automatyczne storno (TransformToStorno) | [ALG-08 Transformacja na storno](../../../03_algorytmy/dedykowane/transformacja_na_storno.md) | Storno tworzone z listy faktur — formularz nie używany w tym ścieżce |
 
 ## Powiązania z kodem
 

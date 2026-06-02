@@ -77,9 +77,9 @@ Brak (ekran listowy).
 
 | ID operacji | Etykieta przycisku | Link do dokumentu |
 |---|---|---|
-| OP-Produkty-DodajProdukt | Dodaj produkt | — |
-| OP-Produkty-EdytujProdukt | Edytuj (przy wierszu) | — |
-| OP-Produkty-UsunZaznaczone | Usuń zaznaczone | — |
+| OP-Produkty-DodajProdukt | Dodaj produkt | [ALG-IZO Izolacja danych UserFirm](../../../03_algorytmy/dedykowane/izolacja_danych_userfirm.md) |
+| OP-Produkty-EdytujProdukt | Edytuj (przy wierszu) | [ALG-IZO Izolacja danych UserFirm](../../../03_algorytmy/dedykowane/izolacja_danych_userfirm.md) |
+| OP-Produkty-UsunZaznaczone | Usuń zaznaczone | [ALG-IZO Izolacja danych UserFirm](../../../03_algorytmy/dedykowane/izolacja_danych_userfirm.md) |
 
 ### Modale
 
@@ -104,6 +104,14 @@ Brak.
 - Powiązane procesy: [pobierz_produkty](../../../02_procesy/produkty/pobierz_produkty/proces.md), [usun_produkty](../../../02_procesy/produkty/usun_produkty/proces.md)
 - Powiązane API: [GET /api/Product/GetAll](../../../04_api_i_integracje/01_api_frontend/product/GET_Product_GetAll.md)
 - Powiązane UC: Brak
+
+### Powiązane algorytmy
+
+| Pole / Operacja | Algorytm | Opis powiązania |
+|---|---|---|
+| OP-Produkty-DodajProdukt | [ALG-IZO Izolacja danych UserFirm](../../../03_algorytmy/dedykowane/izolacja_danych_userfirm.md) | Produkt tworzony jest w kontekście UserFirm zalogowanego użytkownika — izolacja zapewnia przypisanie do właściwej firmy |
+| OP-Produkty-EdytujProdukt | [ALG-IZO Izolacja danych UserFirm](../../../03_algorytmy/dedykowane/izolacja_danych_userfirm.md) | Edycja możliwa wyłącznie dla produktów należących do UserFirm aktualnie zalogowanego użytkownika |
+| OP-Produkty-UsunZaznaczone | [ALG-IZO Izolacja danych UserFirm](../../../03_algorytmy/dedykowane/izolacja_danych_userfirm.md) | Usunięcie batch działa tylko na produktach należących do UserFirm aktualnie zalogowanego użytkownika |
 
 ## Powiązania z kodem
 

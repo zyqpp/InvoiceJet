@@ -65,14 +65,14 @@ Brak.
 | POLE-Register-firstName | Imię | wymagane | — |
 | POLE-Register-lastName | Nazwisko | wymagane | — |
 | POLE-Register-email | Email | wymagane | — |
-| POLE-Register-password | Hasło | wymagane | — |
-| POLE-Register-passwordConfirmation | Potwierdzenie hasła | wymagane | — |
+| POLE-Register-password | Hasło | wymagane | [ALG-03 Walidacja hasła](../../../03_algorytmy/walidacji/walidacja_hasla.md) |
+| POLE-Register-passwordConfirmation | Potwierdzenie hasła | wymagane | [ALG-03 Walidacja hasła](../../../03_algorytmy/walidacji/walidacja_hasla.md) |
 
 ### Operacje
 
 | ID operacji | Etykieta przycisku | Link do dokumentu |
 |---|---|---|
-| OP-Register-Submit | Zarejestruj się | — |
+| OP-Register-Submit | Zarejestruj się | [ALG-04 JWT Creation](../../../03_algorytmy/autoryzacyjne/tworzenie_tokenu_jwt.md) · [ALG-07 UserFirm](../../../03_algorytmy/dedykowane/zarzadzanie_relacja_userfirm.md) · [ALG-08 Serie dokumentów](../../../03_algorytmy/dedykowane/inicjalizacja_serii_dokumentow.md) |
 
 ### Modale
 
@@ -111,6 +111,16 @@ Brak.
 - Powiązane procesy: `../../02_procesy/autentykacja/rejestracja/proces.md`
 - Powiązane API: `../../04_api_i_integracje/01_api_frontend/auth/`
 - Powiązane UC: Brak
+
+### Powiązane algorytmy
+
+| Pole / Operacja | Algorytm | Opis powiązania |
+|---|---|---|
+| POLE-Register-password | [ALG-03 Walidacja hasła](../../../03_algorytmy/walidacji/walidacja_hasla.md) | Walidacja siły hasła (regex) + BCrypt hash przy zapisie |
+| POLE-Register-passwordConfirmation | [ALG-03 Walidacja hasła](../../../03_algorytmy/walidacji/walidacja_hasla.md) | Walidacja zgodności haseł |
+| OP-Register-Submit | [ALG-04 JWT Creation](../../../03_algorytmy/autoryzacyjne/tworzenie_tokenu_jwt.md) | Tworzenie tokenu JWT po pomyślnej rejestracji |
+| OP-Register-Submit | [ALG-07 UserFirm](../../../03_algorytmy/dedykowane/zarzadzanie_relacja_userfirm.md) | ManageUserFirmRelation — powiązanie użytkownika z firmą |
+| OP-Register-Submit | [ALG-08 Serie dokumentów](../../../03_algorytmy/dedykowane/inicjalizacja_serii_dokumentow.md) | Tworzenie domyślnych serii FV/PRF/STN po pierwszej firmie |
 
 ## Powiązania z kodem
 

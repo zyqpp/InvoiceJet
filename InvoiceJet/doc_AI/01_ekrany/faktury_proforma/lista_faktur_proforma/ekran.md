@@ -61,15 +61,15 @@ Ekran listy faktur proforma (DocumentTypeId=2). Identyczna struktura jak `Invoic
 
 Identyczne jak `lista_faktur/ekran.md` — patrz `IDocumentTableRecord`.
 
-| Kolumna | Źródło danych | Opis |
-|---|---|---|
-| Checkbox (select) | `selection` | Zaznaczanie do operacji batch |
-| `documentNumber` | `IDocumentTableRecord.documentNumber` | Numer proformy |
-| `clientName` | `IDocumentTableRecord.clientName` | Nazwa klienta |
-| `issueDate` | `IDocumentTableRecord.issueDate` | Data wystawienia |
-| `dueDate` | `IDocumentTableRecord.dueDate` | Termin płatności |
-| `totalValue` | `IDocumentTableRecord.totalValue` | Wartość brutto |
-| `documentStatus` | `IDocumentTableRecord.documentStatus.status` | Status (Unpaid/Paid) |
+| Kolumna | Źródło danych | Opis | Algorytm |
+|---|---|---|---|
+| Checkbox (select) | `selection` | Zaznaczanie do operacji batch | — |
+| `documentNumber` | `IDocumentTableRecord.documentNumber` | Numer proformy | [ALG-02 Generowanie numeru dokumentu](../../../03_algorytmy/dedykowane/generowanie_numeru_dokumentu.md) — seria PRF; format PRF0001 |
+| `clientName` | `IDocumentTableRecord.clientName` | Nazwa klienta | — |
+| `issueDate` | `IDocumentTableRecord.issueDate` | Data wystawienia | — |
+| `dueDate` | `IDocumentTableRecord.dueDate` | Termin płatności | — |
+| `totalValue` | `IDocumentTableRecord.totalValue` | Wartość brutto | [ALG-05 Obliczanie wartości dokumentu](../../../03_algorytmy/wyliczeniowe/obliczanie_wartosci_dokumentu.md) — suma wszystkich pozycji brutto |
+| `documentStatus` | `IDocumentTableRecord.documentStatus.status` | Status (Unpaid/Paid) | — |
 
 ### Pola
 
@@ -81,7 +81,7 @@ Brak (ekran listowy).
 |---|---|---|
 | OP-ListaProform-DodajProferme | Dodaj proformę | — |
 | OP-ListaProform-EdytujProferme | Edytuj (klik wiersza) | — |
-| OP-ListaProform-UsunZaznaczone | Usuń zaznaczone | — |
+| OP-ListaProform-UsunZaznaczone | Usuń zaznaczone | [ALG-10 Izolacja danych](../../../03_algorytmy/dedykowane/izolacja_danych_userfirm.md) — soft-delete, tylko proformy bieżącej firmy |
 
 ### Modale
 
@@ -103,6 +103,15 @@ Brak.
 - Powiązane procesy: [pobierz_dokumenty](../../../02_procesy/dokumenty/pobierz_dokumenty/proces.md), [usun_dokumenty](../../../02_procesy/dokumenty/usun_dokumenty/proces.md)
 - Powiązane API: [GET /api/Document/GetTableRecords](../../../04_api_i_integracje/01_api_frontend/document/GET_Document_GetTableRecords.md)
 - Powiązane UC: Brak
+
+### Powiązane algorytmy
+
+| Pole / Operacja | Algorytm | Opis powiązania |
+|---|---|---|
+| Kolumna `documentNumber` | [ALG-02 Generowanie numeru dokumentu](../../../03_algorytmy/dedykowane/generowanie_numeru_dokumentu.md) | Numer serii PRF nadany przy zapisie proformy |
+| Kolumna `totalValue` | [ALG-05 Obliczanie wartości dokumentu](../../../03_algorytmy/wyliczeniowe/obliczanie_wartosci_dokumentu.md) | Suma brutto `Document.TotalPrice` z backend |
+| Ładowanie listy (ngOnInit) | [ALG-10 Izolacja danych](../../../03_algorytmy/dedykowane/izolacja_danych_userfirm.md) | `GetTableRecords` filtruje proformy per UserFirm |
+| OP-ListaProform-UsunZaznaczone | [ALG-10 Izolacja danych](../../../03_algorytmy/dedykowane/izolacja_danych_userfirm.md) | Soft-delete; backend weryfikuje przynależność |
 
 ## Powiązania z kodem
 

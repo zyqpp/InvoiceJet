@@ -60,7 +60,7 @@ Brak.
 | ID pola | Nazwa w UI | Wymagalność | Link do dokumentu |
 |---|---|---|---|
 | POLE-DaneFirmy-firmName | Nazwa firmy | wymagane | — |
-| POLE-DaneFirmy-cuiValue | CUI (NIP rumuński) | opcjonalne | — |
+| POLE-DaneFirmy-cuiValue | CUI (NIP rumuński) | opcjonalne | [ALG-09 Integracja ANAF](../../../../03_algorytmy/dedykowane/integracja_anaf.md) |
 | POLE-DaneFirmy-regCom | Numer rejestracji handlowej | opcjonalne | — |
 | POLE-DaneFirmy-address | Adres | opcjonalne | — |
 | POLE-DaneFirmy-county | Okręg | opcjonalne | — |
@@ -70,8 +70,8 @@ Brak.
 
 | ID operacji | Etykieta przycisku | Link do dokumentu |
 |---|---|---|
-| OP-DaneFirmy-Zapisz | Zapisz | — |
-| OP-DaneFirmy-ANAF | Ikona chmury (☁) — pobierz z ANAF | — |
+| OP-DaneFirmy-Zapisz | Zapisz | [ALG-07 UserFirm](../../../../03_algorytmy/dedykowane/zarzadzanie_relacja_userfirm.md) |
+| OP-DaneFirmy-ANAF | Ikona chmury (☁) — pobierz z ANAF | [ALG-09 Integracja ANAF](../../../../03_algorytmy/dedykowane/integracja_anaf.md) |
 
 ### Modale
 
@@ -115,6 +115,14 @@ Brak (komunikaty błędów niejawne — anomalia).
 - Powiązane procesy: `../../../02_procesy/firma/edytuj_firme/proces.md`, `../../../02_procesy/firma/dodaj_firme/proces.md`, `../../../02_procesy/firma/pobierz_z_anaf/proces.md`
 - Powiązane API: `../../../04_api_i_integracje/01_api_frontend/firm/`
 - Powiązane UC: Brak
+
+### Powiązane algorytmy
+
+| Pole / Operacja | Algorytm | Opis powiązania |
+|---|---|---|
+| POLE-DaneFirmy-cuiValue | [ALG-09 Integracja ANAF](../../../../03_algorytmy/dedykowane/integracja_anaf.md) | ANAF API: po CUI zwraca dane firmy do autouzupełnienia |
+| OP-DaneFirmy-ANAF | [ALG-09 Integracja ANAF](../../../../03_algorytmy/dedykowane/integracja_anaf.md) | Wywołanie POST ANAF API, autouzupełnienie pól formularza |
+| OP-DaneFirmy-Zapisz | [ALG-07 UserFirm](../../../../03_algorytmy/dedykowane/zarzadzanie_relacja_userfirm.md) | UserFirm relation przy AddFirm — powiązanie firmy z użytkownikiem |
 
 ## Powiązania z kodem
 

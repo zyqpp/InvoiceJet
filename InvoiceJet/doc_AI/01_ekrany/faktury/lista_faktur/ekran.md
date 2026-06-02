@@ -61,15 +61,15 @@ Ekran listy faktur zwykłych (DocumentTypeId=1). Prezentuje tabelę z sortowanie
 
 ### Kolumny tabeli
 
-| Kolumna | Źródło danych | Opis |
-|---|---|---|
-| Checkbox (select) | `selection` | Zaznaczanie do operacji batch |
-| `documentNumber` | `IDocumentTableRecord.documentNumber` | Numer faktury |
-| `clientName` | `IDocumentTableRecord.clientName` | Nazwa klienta |
-| `issueDate` | `IDocumentTableRecord.issueDate` | Data wystawienia |
-| `dueDate` | `IDocumentTableRecord.dueDate` | Termin płatności |
-| `totalValue` | `IDocumentTableRecord.totalValue` | Wartość brutto |
-| `documentStatus` | `IDocumentTableRecord.documentStatus.status` | Status (Unpaid/Paid) |
+| Kolumna | Źródło danych | Opis | Algorytm |
+|---|---|---|---|
+| Checkbox (select) | `selection` | Zaznaczanie do operacji batch | — |
+| `documentNumber` | `IDocumentTableRecord.documentNumber` | Numer faktury | [ALG-02 Generowanie numeru](../../../03_algorytmy/dedykowane/generowanie_numeru_dokumentu.md) — format: SeriesName + CurrentNumber.D4 |
+| `clientName` | `IDocumentTableRecord.clientName` | Nazwa klienta | — |
+| `issueDate` | `IDocumentTableRecord.issueDate` | Data wystawienia | — |
+| `dueDate` | `IDocumentTableRecord.dueDate` | Termin płatności | — |
+| `totalValue` | `IDocumentTableRecord.totalValue` | Wartość brutto | [ALG-05 Obliczanie wartości dokumentu](../../../03_algorytmy/wyliczeniowe/obliczanie_wartosci_dokumentu.md) — suma wszystkich pozycji brutto |
+| `documentStatus` | `IDocumentTableRecord.documentStatus.status` | Status (Unpaid/Paid) | — |
 
 ### Pola
 
@@ -81,8 +81,8 @@ Brak (ekran listowy).
 |---|---|---|
 | OP-ListaFaktur-DodajFakture | Dodaj fakturę | — |
 | OP-ListaFaktur-EdytujFakture | Edytuj (klik wiersza) | — |
-| OP-ListaFaktur-UsunZaznaczone | Usuń zaznaczone | — |
-| OP-ListaFaktur-TransformujNaStorno | Przekształć w storno | — |
+| OP-ListaFaktur-UsunZaznaczone | Usuń zaznaczone | [ALG-10 Izolacja danych](../../../03_algorytmy/dedykowane/izolacja_danych_userfirm.md) — soft-delete, działa tylko na dokumenty bieżącej firmy |
+| OP-ListaFaktur-TransformujNaStorno | Przekształć w storno | [ALG-08 Transformacja na storno](../../../03_algorytmy/dedykowane/transformacja_na_storno.md) — zmiana DocumentTypeId=3, wartości ujemne |
 
 ### Modale
 
@@ -105,6 +105,16 @@ Brak.
 - Powiązane procesy: [pobierz_dokumenty](../../../02_procesy/dokumenty/pobierz_dokumenty/proces.md), [usun_dokumenty](../../../02_procesy/dokumenty/usun_dokumenty/proces.md), [transformuj_na_storno](../../../02_procesy/dokumenty/transformuj_na_storno/proces.md)
 - Powiązane API: [GET /api/Document/GetTableRecords](../../../04_api_i_integracje/01_api_frontend/document/GET_Document_GetTableRecords.md)
 - Powiązane UC: Brak
+
+### Powiązane algorytmy
+
+| Pole / Operacja | Algorytm | Opis powiązania |
+|---|---|---|
+| Kolumna `documentNumber` | [ALG-02 Generowanie numeru dokumentu](../../../03_algorytmy/dedykowane/generowanie_numeru_dokumentu.md) | Numer wyświetlony w liście jest wynikiem algorytmu nadania numeru przy zapisie faktury |
+| Kolumna `totalValue` | [ALG-05 Obliczanie wartości dokumentu](../../../03_algorytmy/wyliczeniowe/obliczanie_wartosci_dokumentu.md) | Suma brutto wyliczona przez backend (`UpdateDocumentProducts`) i przechowana w `Document.TotalPrice` |
+| OP-ListaFaktur-TransformujNaStorno | [ALG-08 Transformacja na storno](../../../03_algorytmy/dedykowane/transformacja_na_storno.md) | Zmiana DocumentTypeId → 3, odwrócenie wartości; ⚠️ brak atomowości (race condition) |
+| OP-ListaFaktur-UsunZaznaczone | [ALG-10 Izolacja danych](../../../03_algorytmy/dedykowane/izolacja_danych_userfirm.md) | Soft-delete (IsDeleted=true); backend weryfikuje przynależność do UserFirm |
+| Ładowanie listy (ngOnInit) | [ALG-10 Izolacja danych](../../../03_algorytmy/dedykowane/izolacja_danych_userfirm.md) | `GetTableRecords` filtruje dokumenty per UserFirm automatycznie |
 
 ## Powiązania z kodem
 

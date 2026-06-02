@@ -12,6 +12,25 @@
 
 Scenariusze testowe obejmują zarządzanie seriami numeracji dokumentów: dodawanie, edycję, usuwanie oraz weryfikację automatycznego generowania kolejnych numerów dokumentów. Serie są wymagane do wystawienia faktur i proform. Powiązane z endpointami API-18 – API-21.
 
+## Powiązane algorytmy
+
+| Algorytm | Testowane przez |
+|---|---|
+| [ALG-02 Generowanie numeru dokumentu](../../../03_algorytmy/dedykowane/generowanie_numeru_dokumentu.md) | TC-141 — weryfikacja formatu "FV" + currentNumber.D4 = "FV0001"; inkrementacja |
+| [dedykowane/inicjalizacja_serii_dokumentow](../../../03_algorytmy/dedykowane/inicjalizacja_serii_dokumentow.md) | TC-140 krok 7 — domyślne serie FV/PRF/STN tworzone po rejestracji |
+
+## Selektory CSS / Angular Material
+
+| Element | Selektor |
+|---|---|
+| Przycisk Dodaj serię | `button[mat-raised-button]` z tekstem „Add Series" |
+| Dialog Dodaj/Edytuj serię | `mat-dialog-container` |
+| Pole Nazwa serii | `mat-dialog-container input[formControlName="seriesName"]` |
+| Select Typ dokumentu | `mat-dialog-container mat-select[formControlName="documentType"]` |
+| Pole Numer startowy | `mat-dialog-container input[formControlName="firstNumber"]` lub `currentNumber` |
+| Przycisk Save w dialogu | `mat-dialog-container button[type="submit"]` |
+| Wiersze tabeli | `mat-row` lub `tr` z danymi serii |
+
 ---
 
 ## TC-140: Dodanie serii dokumentów (happy path)

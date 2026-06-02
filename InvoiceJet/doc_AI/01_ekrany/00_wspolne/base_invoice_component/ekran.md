@@ -64,14 +64,14 @@ Brak.
 
 | ID pola | Nazwa w UI | Wymagalność | Link do dokumentu |
 |---|---|---|---|
-| POLE-BaseInvoice-documentSeriesId | Seria dokumentu | wymagane | — |
-| POLE-BaseInvoice-clientId | Klient | wymagane | — |
-| POLE-BaseInvoice-bankAccountId | Konto bankowe | wymagane | — |
+| POLE-BaseInvoice-documentSeriesId | Seria dokumentu | wymagane | [ALG-02 Generowanie numeru dokumentu](../../../03_algorytmy/dedykowane/generowanie_numeru_dokumentu.md) — wybrana seria determinuje format numeru |
+| POLE-BaseInvoice-clientId | Klient | wymagane | [ALG-10 Izolacja danych](../../../03_algorytmy/dedykowane/izolacja_danych_userfirm.md) — autocomplete filtruje klientów bieżącej firmy |
+| POLE-BaseInvoice-bankAccountId | Konto bankowe | wymagane | [ALG-10 Izolacja danych](../../../03_algorytmy/dedykowane/izolacja_danych_userfirm.md) — autocomplete filtruje konta bieżącej firmy |
 | POLE-BaseInvoice-issueDate | Data wystawienia | wymagane | — |
 | POLE-BaseInvoice-dueDate | Termin płatności | wymagane | — |
 | POLE-BaseInvoice-currency | Waluta | wymagane | — |
 | POLE-BaseInvoice-documentStatus | Status dokumentu | wymagane | — |
-| POLE-BaseInvoice-products | Tabela pozycji (FormArray) | wymagane (min. 1) | — |
+| POLE-BaseInvoice-products | Tabela pozycji (FormArray) | wymagane (min. 1) | [wyliczeniowe/obliczanie_ceny_pozycji](../../../03_algorytmy/wyliczeniowe/obliczanie_ceny_pozycji.md) · [ALG-05 Obliczanie wartości dokumentu](../../../03_algorytmy/wyliczeniowe/obliczanie_wartosci_dokumentu.md) |
 
 ### Pola w tabeli pozycji (FormArray)
 
@@ -88,11 +88,11 @@ Brak.
 
 | ID operacji | Etykieta przycisku | Link do dokumentu |
 |---|---|---|
-| OP-BaseInvoice-Zapisz | Zapisz / Submit | — |
-| OP-BaseInvoice-GenerujPdf | Generuj PDF | — |
-| OP-BaseInvoice-PodgladPdf | Podgląd PDF | — |
-| OP-BaseInvoice-DodajPozycje | Dodaj pozycję (do tabeli) | — |
-| OP-BaseInvoice-UsunPozycje | Usuń pozycję (z tabeli) | — |
+| OP-BaseInvoice-Zapisz | Zapisz / Submit | [ALG-02 Generowanie numeru dokumentu](../../../03_algorytmy/dedykowane/generowanie_numeru_dokumentu.md) · [wyliczeniowe/aktualizacja_produktow_dokumentu](../../../03_algorytmy/wyliczeniowe/aktualizacja_produktow_dokumentu.md) |
+| OP-BaseInvoice-GenerujPdf | Generuj PDF | [ALG-07 Generuj PDF na dysk](../../../03_algorytmy/generowania_pdf/generuj_pdf_na_dysk.md) ⚠️ BUG: hardcoded InvoiceDocument |
+| OP-BaseInvoice-PodgladPdf | Podgląd PDF | [ALG-07 Generuj PDF stream](../../../03_algorytmy/generowania_pdf/generuj_pdf_stream.md) (poprawna fabryka) |
+| OP-BaseInvoice-DodajPozycje | Dodaj pozycję (do tabeli) | [wyliczeniowe/obliczanie_ceny_pozycji](../../../03_algorytmy/wyliczeniowe/obliczanie_ceny_pozycji.md) · [ALG-05 Obliczanie wartości](../../../03_algorytmy/wyliczeniowe/obliczanie_wartosci_dokumentu.md) |
+| OP-BaseInvoice-UsunPozycje | Usuń pozycję (z tabeli) | [ALG-05 Obliczanie wartości](../../../03_algorytmy/wyliczeniowe/obliczanie_wartosci_dokumentu.md) — sumy przeliczane po usunięciu |
 
 ### Modale
 
@@ -160,6 +160,18 @@ Brak (komunikaty błędów inline lub przez `console.log` — anomalia).
 - Powiązane procesy: `../../../02_procesy/dokumenty/dodaj_dokument/proces.md`, `../../../02_procesy/dokumenty/edytuj_dokument/proces.md`
 - Powiązane API: `../../../04_api_i_integracje/01_api_frontend/document/`
 - Powiązane UC: Brak
+
+### Powiązane algorytmy
+
+| Pole / Operacja | Algorytm | Opis powiązania |
+|---|---|---|
+| POLE-BaseInvoice-documentSeriesId | [ALG-02 Generowanie numeru dokumentu](../../../03_algorytmy/dedykowane/generowanie_numeru_dokumentu.md) | Wybrana seria → format numeru: `SeriesName + CurrentNumber.PadLeft(4,'0')`; licznik rośnie przy każdym zapisie |
+| Pola pozycji: `quantity`, `price`, `vatRate` | [wyliczeniowe/obliczanie_ceny_pozycji](../../../03_algorytmy/wyliczeniowe/obliczanie_ceny_pozycji.md) | `price × quantity × (1 + vatRate/100)` — wylicza `totalPrice` wiersza w czasie rzeczywistym |
+| Stan: `totalNetAmount`, `totalVatAmount`, `totalGrossAmount` | [ALG-05 Obliczanie wartości dokumentu](../../../03_algorytmy/wyliczeniowe/obliczanie_wartosci_dokumentu.md) | `calculateTotals()` — reaktywna subskrypcja na `valueChanges` FormArray; aktualizacja przy każdej zmianie |
+| OP-BaseInvoice-Zapisz (backend) | [wyliczeniowe/aktualizacja_produktow_dokumentu](../../../03_algorytmy/wyliczeniowe/aktualizacja_produktow_dokumentu.md) | Backend: `UpdateDocumentProducts` — iteracja po pozycjach DTO, obliczenie sum netto i brutto, zapis do `Document.UnitPrice` + `TotalPrice` |
+| OP-BaseInvoice-GenerujPdf | [ALG-07 Generuj PDF na dysk](../../../03_algorytmy/generowania_pdf/generuj_pdf_na_dysk.md) | ⚠️ **BUG:** hardcoded template `InvoiceDocument` — dla proformy (TypeId=2) generuje szablon faktury |
+| OP-BaseInvoice-PodgladPdf | [ALG-07 Generuj PDF stream](../../../03_algorytmy/generowania_pdf/generuj_pdf_stream.md) | Poprawna implementacja — fabryka szablonów wybiera szablon na podstawie `DocumentTypeId` |
+| POLE-BaseInvoice-clientId / bankAccountId | [ALG-10 Izolacja danych](../../../03_algorytmy/dedykowane/izolacja_danych_userfirm.md) | Autofill ładuje tylko dane bieżącego UserFirm przez `GetAutofillInfo` |
 
 ## Powiązania z kodem
 

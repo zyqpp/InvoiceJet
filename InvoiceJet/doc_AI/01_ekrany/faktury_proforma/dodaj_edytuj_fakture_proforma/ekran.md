@@ -62,10 +62,10 @@ Identyczne pola jak `EKRAN-FormularzFaktury` — patrz `../../00_wspolne/base_in
 
 | ID operacji | Etykieta przycisku | Link do dokumentu |
 |---|---|---|
-| OP-FormularzProformy-Zapisz | Zapisz | — |
+| OP-FormularzProformy-Zapisz | Zapisz | [ALG-02 Generowanie numeru](../../../03_algorytmy/dedykowane/generowanie_numeru_dokumentu.md) · [wyliczeniowe/aktualizacja_produktow_dokumentu](../../../03_algorytmy/wyliczeniowe/aktualizacja_produktow_dokumentu.md) |
 | OP-FormularzProformy-Anuluj | Anuluj | — |
-| OP-FormularzProformy-GenerujPdf | Generuj PDF | — |
-| OP-FormularzProformy-PodgladPdf | Podgląd PDF | — |
+| OP-FormularzProformy-GenerujPdf | Generuj PDF | [ALG-07 Generuj PDF na dysk](../../../03_algorytmy/generowania_pdf/generuj_pdf_na_dysk.md) ⚠️ BUG A-KRIT-04: hardcoded InvoiceDocument — zamiast ProformaDocument |
+| OP-FormularzProformy-PodgladPdf | Podgląd PDF | [ALG-07 Generuj PDF stream](../../../03_algorytmy/generowania_pdf/generuj_pdf_stream.md) (poprawna fabryka) |
 
 ### Modale
 
@@ -99,6 +99,17 @@ Identyczne jak `EKRAN-FormularzFaktury`, ale `GetDocumentAutofillInfo/2` (Docume
 - Powiązane procesy: [dodaj_dokument](../../../02_procesy/dokumenty/dodaj_dokument/proces.md), [edytuj_dokument](../../../02_procesy/dokumenty/edytuj_dokument/proces.md)
 - Powiązane API: [POST /api/Document/Add](../../../04_api_i_integracje/01_api_frontend/document/POST_Document_Add.md)
 - Powiązane UC: Brak
+
+### Powiązane algorytmy
+
+| Pole / Operacja | Algorytm | Opis powiązania |
+|---|---|---|
+| Pola formularza (pozycje) | [wyliczeniowe/obliczanie_ceny_pozycji](../../../03_algorytmy/wyliczeniowe/obliczanie_ceny_pozycji.md) | Identyczne jak faktura: `UnitPrice × Qty × (1 + VAT/100)` — wyliczenie brutto pozycji |
+| Podsumowanie sum | [ALG-05 Obliczanie wartości dokumentu](../../../03_algorytmy/wyliczeniowe/obliczanie_wartosci_dokumentu.md) | `calculateTotals()` z BaseInvoiceComponent — netto / VAT / brutto |
+| OP-FormularzProformy-Zapisz | [ALG-02 Generowanie numeru dokumentu](../../../03_algorytmy/dedykowane/generowanie_numeru_dokumentu.md) | DocumentTypeId=2 → seria PRF; numer PRF0001, PRF0002… |
+| OP-FormularzProformy-Zapisz | [wyliczeniowe/aktualizacja_produktow_dokumentu](../../../03_algorytmy/wyliczeniowe/aktualizacja_produktow_dokumentu.md) | Backend: zapis pozycji i sum do DB |
+| OP-FormularzProformy-GenerujPdf | [ALG-07 Generuj PDF na dysk](../../../03_algorytmy/generowania_pdf/generuj_pdf_na_dysk.md) | ⚠️ **BUG A-KRIT-04:** hardcoded `InvoiceDocument` — dla proformy generuje szablon faktury zamiast proformy |
+| OP-FormularzProformy-PodgladPdf | [ALG-07 Generuj PDF stream](../../../03_algorytmy/generowania_pdf/generuj_pdf_stream.md) | Poprawna implementacja — fabryka wybiera `ProformaDocument` dla DocumentTypeId=2 |
 
 ## Powiązania z kodem
 

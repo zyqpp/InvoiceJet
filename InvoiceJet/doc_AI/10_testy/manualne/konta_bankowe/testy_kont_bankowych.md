@@ -12,6 +12,26 @@
 
 Scenariusze testowe obejmują dodawanie, edycję oraz usuwanie kont bankowych firmy. Szczególnie istotny jest TC-132, który weryfikuje krytyczną anomalię kaskadowego usuwania faktur powiązanych z usuwanym kontem bankowym. Powiązane z endpointami API-14 – API-17.
 
+## Powiązane algorytmy
+
+| Algorytm | Testowane przez |
+|---|---|
+| [ALG-10 Izolacja danych](../../../03_algorytmy/dedykowane/izolacja_danych_userfirm.md) | TC-130 — konta widoczne tylko dla bieżącej firmy |
+
+## Selektory CSS / Angular Material
+
+| Element | Selektor |
+|---|---|
+| Przycisk Dodaj konto | `button[mat-raised-button]` z tekstem „Add Account" |
+| Dialog | `mat-dialog-container` |
+| Pole IBAN | `mat-dialog-container input[formControlName="iban"]` lub `accountNumber` |
+| Select Waluta | `mat-dialog-container mat-select[formControlName="currency"]` |
+| Przycisk Save | `mat-dialog-container button[type="submit"]` |
+| Checkbox wiersza | `mat-checkbox` w wierszu |
+| Przycisk Usuń | `button` z tekstem „Delete selected" lub ikoną `delete` |
+
+> ⚠️ **ANOMALIA KRYTYCZNA A-KRIT-01:** Usunięcie konta bankowego kaskadowo usuwa faktury! TC-132 weryfikuje ten bug.
+
 ---
 
 ## TC-130: Dodanie konta bankowego (happy path)

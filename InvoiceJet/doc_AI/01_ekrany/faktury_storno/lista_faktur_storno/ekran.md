@@ -60,15 +60,15 @@ Ekran listy faktur storno (DocumentTypeId=3). Storna nie mogą być tworzone bez
 
 Identyczne jak `lista_faktur/ekran.md` — patrz `IDocumentTableRecord`.
 
-| Kolumna | Źródło danych | Opis |
-|---|---|---|
-| Checkbox (select) | `selection` | Zaznaczanie do operacji batch |
-| `documentNumber` | `IDocumentTableRecord.documentNumber` | Numer storna |
-| `clientName` | `IDocumentTableRecord.clientName` | Nazwa klienta |
-| `issueDate` | `IDocumentTableRecord.issueDate` | Data wystawienia |
-| `dueDate` | `IDocumentTableRecord.dueDate` | Termin płatności |
-| `totalValue` | `IDocumentTableRecord.totalValue` | Wartość brutto |
-| `documentStatus` | `IDocumentTableRecord.documentStatus.status` | Status |
+| Kolumna | Źródło danych | Opis | Algorytm |
+|---|---|---|---|
+| Checkbox (select) | `selection` | Zaznaczanie do operacji batch | — |
+| `documentNumber` | `IDocumentTableRecord.documentNumber` | Numer storna | [ALG-02 Generowanie numeru dokumentu](../../../03_algorytmy/dedykowane/generowanie_numeru_dokumentu.md) — seria STN lub seria faktury + suffix |
+| `clientName` | `IDocumentTableRecord.clientName` | Nazwa klienta | — |
+| `issueDate` | `IDocumentTableRecord.issueDate` | Data wystawienia | — |
+| `dueDate` | `IDocumentTableRecord.dueDate` | Termin płatności | — |
+| `totalValue` | `IDocumentTableRecord.totalValue` | Wartość brutto (ujemna dla storn z TransformToStorno) | [ALG-08 Transformacja na storno](../../../03_algorytmy/dedykowane/transformacja_na_storno.md) · [ALG-05 Obliczanie wartości dokumentu](../../../03_algorytmy/wyliczeniowe/obliczanie_wartosci_dokumentu.md) |
+| `documentStatus` | `IDocumentTableRecord.documentStatus.status` | Status | — |
 
 ### Pola
 
@@ -79,7 +79,7 @@ Brak (ekran listowy).
 | ID operacji | Etykieta przycisku | Link do dokumentu |
 |---|---|---|
 | OP-ListaStorn-EdytujStorno | Edytuj (klik wiersza) | — |
-| OP-ListaStorn-UsunZaznaczone | Usuń zaznaczone | — |
+| OP-ListaStorn-UsunZaznaczone | Usuń zaznaczone | [ALG-10 Izolacja danych](../../../03_algorytmy/dedykowane/izolacja_danych_userfirm.md) — soft-delete, tylko dokumenty bieżącej firmy |
 
 ### Modale
 
@@ -101,6 +101,16 @@ Brak.
 - Powiązane procesy: [pobierz_dokumenty](../../../02_procesy/dokumenty/pobierz_dokumenty/proces.md), [usun_dokumenty](../../../02_procesy/dokumenty/usun_dokumenty/proces.md), [transformuj_na_storno](../../../02_procesy/dokumenty/transformuj_na_storno/proces.md)
 - Powiązane API: [GET /api/Document/GetTableRecords](../../../04_api_i_integracje/01_api_frontend/document/GET_Document_GetTableRecords.md)
 - Powiązane UC: Brak
+
+### Powiązane algorytmy
+
+| Pole / Operacja | Algorytm | Opis powiązania |
+|---|---|---|
+| Kolumna `documentNumber` | [ALG-02 Generowanie numeru dokumentu](../../../03_algorytmy/dedykowane/generowanie_numeru_dokumentu.md) | Numer nadany przy tworzeniu storna |
+| Kolumna `totalValue` (ujemna) | [ALG-08 Transformacja na storno](../../../03_algorytmy/dedykowane/transformacja_na_storno.md) | Wartości ujemne dla storn stworzonych przez TransformToStorno |
+| Kolumna `totalValue` | [ALG-05 Obliczanie wartości dokumentu](../../../03_algorytmy/wyliczeniowe/obliczanie_wartosci_dokumentu.md) | Suma brutto przechowana w `Document.TotalPrice` |
+| Ładowanie listy (ngOnInit) | [ALG-10 Izolacja danych](../../../03_algorytmy/dedykowane/izolacja_danych_userfirm.md) | `GetTableRecords` filtruje storna per UserFirm |
+| OP-ListaStorn-UsunZaznaczone | [ALG-10 Izolacja danych](../../../03_algorytmy/dedykowane/izolacja_danych_userfirm.md) | Soft-delete; backend weryfikuje przynależność |
 
 ## Powiązania z kodem
 

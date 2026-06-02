@@ -73,9 +73,9 @@ Brak (ekran listowy — bez pól formularza bezpośrednio na ekranie).
 
 | ID operacji | Etykieta przycisku | Link do dokumentu |
 |---|---|---|
-| OP-KontaBankowe-DodajKonto | Dodaj konto bankowe | — |
-| OP-KontaBankowe-EdytujKonto | Edytuj (przy wierszu) | — |
-| OP-KontaBankowe-UsunZaznaczone | Usuń zaznaczone | — |
+| OP-KontaBankowe-DodajKonto | Dodaj konto bankowe | [ALG-IZO Izolacja danych UserFirm](../../../../03_algorytmy/dedykowane/izolacja_danych_userfirm.md) |
+| OP-KontaBankowe-EdytujKonto | Edytuj (przy wierszu) | [ALG-IZO Izolacja danych UserFirm](../../../../03_algorytmy/dedykowane/izolacja_danych_userfirm.md) |
+| OP-KontaBankowe-UsunZaznaczone | Usuń zaznaczone | [ALG-IZO Izolacja danych UserFirm](../../../../03_algorytmy/dedykowane/izolacja_danych_userfirm.md) |
 
 ### Modale
 
@@ -100,6 +100,14 @@ Brak.
 - Powiązane procesy: `../../../02_procesy/konta_bankowe/pobierz_konta/proces.md`, `../../../02_procesy/konta_bankowe/usun_konta/proces.md`
 - Powiązane API: `../../../04_api_i_integracje/01_api_frontend/bank_account/`
 - Powiązane UC: Brak
+
+### Powiązane algorytmy
+
+| Pole / Operacja | Algorytm | Opis powiązania |
+|---|---|---|
+| OP-KontaBankowe-DodajKonto | [ALG-IZO Izolacja danych UserFirm](../../../../03_algorytmy/dedykowane/izolacja_danych_userfirm.md) | Konto bankowe tworzone jest w kontekście UserFirm zalogowanego użytkownika — izolacja zapewnia przypisanie do właściwej firmy |
+| OP-KontaBankowe-EdytujKonto | [ALG-IZO Izolacja danych UserFirm](../../../../03_algorytmy/dedykowane/izolacja_danych_userfirm.md) | Edycja możliwa wyłącznie dla kont należących do UserFirm aktualnie zalogowanego użytkownika |
+| OP-KontaBankowe-UsunZaznaczone | [ALG-IZO Izolacja danych UserFirm](../../../../03_algorytmy/dedykowane/izolacja_danych_userfirm.md) | Usunięcie batch działa tylko na kontach należących do UserFirm aktualnie zalogowanego użytkownika |
 
 ## Powiązania z kodem
 
