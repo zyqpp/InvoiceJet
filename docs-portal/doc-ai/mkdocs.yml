@@ -53,15 +53,15 @@ plugins:
       separator: '[\s\-\.]+'
   - awesome-pages
   - kroki:
-      ServerURL: https://kroki.io
-      EnableBlockDiag: true
-      Enablebpmn: false
-      EnableExcalidraw: false
-      EnableMermaid: false      # Mermaid obsługujemy przez CDN
-      EnablePlantuml: true      # PlantUML renderowany przez kroki.io
-      ExtraFormats:
-        plantuml:
-          Format: svg
+      server_url: https://kroki.io
+      enable_mermaid: false     # Mermaid przez CDN
+      enable_block_diag: false
+      enable_bpmn: false
+      enable_excalidraw: false
+      fence_prefix: ""          # KLUCZOWE: pusty prefix → ```plantuml działa (nie ```kroki-plantuml)
+      http_method: POST
+      tag_format: svg           # inline SVG zamiast <img>
+      request_timeout: 30
 
 markdown_extensions:
   - toc:
