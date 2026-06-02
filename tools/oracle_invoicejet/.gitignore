@@ -1,0 +1,13 @@
+.venv/
+__pycache__/
+*.pyc
+.env
+chroma_data/
+index_manifest.json
+index_manifest.json.tmp
+models/
+.streamlit/
+docker-data/
+oracle_invoicejet.egg-info/
+build/
+dist/
