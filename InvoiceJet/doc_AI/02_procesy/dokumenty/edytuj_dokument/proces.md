@@ -57,6 +57,7 @@ Zaktualizować dane istniejącego dokumentu (np. poprawić dane klienta, zmieni�
 - Wywołany z ekranu: [Dodaj/edytuj fakturę](../../../01_ekrany/faktury/dodaj_edytuj_fakture/ekran.md), [Dodaj/edytuj proformę](../../../01_ekrany/faktury_proforma/dodaj_edytuj_fakture_proforma/ekran.md)
 - Powiązane API: [PUT /api/Document/Edit](../../../04_api_i_integracje/01_api_frontend/document/PUT_Document_Edit.md)
 - Powiązany algorytm: [obliczanie_wartosci_dokumentu](../../../03_algorytmy/wyliczeniowe/obliczanie_wartosci_dokumentu.md)
+- Powiązane algorytmy (uzupełnienie): [Obliczanie ceny pozycji (frontend)](../../../03_algorytmy/wyliczeniowe/obliczanie_ceny_pozycji.md), [UpdateDocumentProducts](../../../03_algorytmy/wyliczeniowe/aktualizacja_produktow_dokumentu.md), [ALG-05 Document Total Calculation](../../../03_algorytmy/ALG-05_DocumentTotalCalculation.md)
 
 ## Powiązania z kodem
 

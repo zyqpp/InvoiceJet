@@ -53,7 +53,7 @@ Dodać dane konta bankowego firmy (nazwa banku, IBAN, waluta), aby można je by�
 
 - Wywołany z ekranu: [Konta bankowe](../../../01_ekrany/firma/konta_bankowe/ekran.md)
 - Powiązane API: [POST /api/BankAccount/Add](../../../04_api_i_integracje/01_api_frontend/bank_account/POST_BankAccount_Add.md)
-- Powiązany algorytm: Nie dotyczy
+- Powiązane algorytmy: [ALG-10 Data Isolation Pattern](../../../03_algorytmy/ALG-10_DataIsolationPattern.md)
 
 ## Powiązania z kodem
 

@@ -71,7 +71,7 @@ sequenceDiagram
 
 - Wywołany z ekranu: [Dane firmy](../../../01_ekrany/firma/dane_firmy/ekran.md)
 - Powiązane API: [GET /api/Firm/GetUserActiveFirm](../../../04_api_i_integracje/01_api_frontend/firm/GET_Firm_GetUserActiveFirm.md)
-- Powiązany algorytm: Nie dotyczy
+- Powiązane algorytmy: [ALG-10 Data Isolation Pattern](../../../03_algorytmy/ALG-10_DataIsolationPattern.md)
 
 ## Powiązania z kodem
 

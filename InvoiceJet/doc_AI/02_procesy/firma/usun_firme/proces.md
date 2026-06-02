@@ -82,7 +82,7 @@ sequenceDiagram
 
 - Wywołany z ekranu: [Klienci](../../../01_ekrany/firma/klienci/ekran.md)
 - Powiązane API: [PUT /api/Firm/DeleteFirms](../../../04_api_i_integracje/01_api_frontend/firm/PUT_Firm_DeleteFirms.md)
-- Powiązany algorytm: Nie dotyczy
+- Powiązane algorytmy: [ALG-10 Data Isolation Pattern](../../../03_algorytmy/ALG-10_DataIsolationPattern.md)
 
 ## Powiązania z kodem
 

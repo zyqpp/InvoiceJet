@@ -76,6 +76,7 @@ sequenceDiagram
 - Wywołany z ekranu: [Serie dokumentów](../../../01_ekrany/serie_dokumentow/ekran.md)
 - Powiązane API: [GET /api/DocumentSeries/GetAll](../../../04_api_i_integracje/01_api_frontend/document_series/GET_DocumentSeries_GetAll.md)
 - Powiązany algorytm: [generowanie_numeru_dokumentu](../../../03_algorytmy/dedykowane/generowanie_numeru_dokumentu.md)
+- Powiązane algorytmy (uzupełnienie): [ALG-10 Data Isolation Pattern](../../../03_algorytmy/ALG-10_DataIsolationPattern.md)
 
 ## Powiązania z kodem
 

@@ -54,7 +54,7 @@ Dodać nową pozycję (produkt lub usługę) do katalogu firmy, aby można ją b
 
 - Wywołany z ekranu: [Produkty](../../../01_ekrany/produkty/ekran.md)
 - Powiązane API: [POST /api/Product/Add](../../../04_api_i_integracje/01_api_frontend/product/POST_Product_Add.md)
-- Powiązany algorytm: Nie dotyczy
+- Powiązane algorytmy: [ALG-10 Data Isolation Pattern](../../../03_algorytmy/ALG-10_DataIsolationPattern.md)
 
 ## Powiązania z kodem
 

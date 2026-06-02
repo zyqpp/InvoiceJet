@@ -81,7 +81,7 @@ sequenceDiagram
 
 - Wywołany z ekranu: [Serie dokumentów](../../../01_ekrany/serie_dokumentow/ekran.md)
 - Powiązane API: [PUT /api/DocumentSeries/Delete](../../../04_api_i_integracje/01_api_frontend/document_series/PUT_DocumentSeries_Delete.md)
-- Powiązany algorytm: Nie dotyczy
+- Powiązane algorytmy: [ALG-10 Data Isolation Pattern](../../../03_algorytmy/ALG-10_DataIsolationPattern.md)
 
 ## Powiązania z kodem
 

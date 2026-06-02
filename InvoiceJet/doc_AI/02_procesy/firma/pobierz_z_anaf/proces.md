@@ -63,6 +63,7 @@ Skrócić czas wprowadzania danych firmy przez automatyczne pobranie informacji 
 - Wywołany z ekranu: [Dane firmy](../../../01_ekrany/firma/dane_firmy/ekran.md), [Klienci](../../../01_ekrany/firma/klienci/ekran.md)
 - Powiązane API: [GET /api/Firm/fromAnaf](../../../04_api_i_integracje/01_api_frontend/firm/GET_Firm_fromAnaf.md)
 - Powiązany algorytm: [integracja_anaf](../../../03_algorytmy/dedykowane/integracja_anaf.md)
+- Powiązane algorytmy (uzupełnienie): [ALG-06 ANAF Integration](../../../03_algorytmy/ALG-06_AnafIntegration.md)
 
 ## Powiązania z kodem
 

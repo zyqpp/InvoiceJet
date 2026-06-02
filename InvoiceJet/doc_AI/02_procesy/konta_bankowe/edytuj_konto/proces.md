@@ -78,7 +78,7 @@ sequenceDiagram
 
 - Wywołany z ekranu: [Konta bankowe](../../../01_ekrany/firma/konta_bankowe/ekran.md)
 - Powiązane API: [PUT /api/BankAccount/Edit](../../../04_api_i_integracje/01_api_frontend/bank_account/PUT_BankAccount_Edit.md)
-- Powiązany algorytm: Nie dotyczy
+- Powiązane algorytmy: [ALG-10 Data Isolation Pattern](../../../03_algorytmy/ALG-10_DataIsolationPattern.md)
 
 ## Powiązania z kodem
 

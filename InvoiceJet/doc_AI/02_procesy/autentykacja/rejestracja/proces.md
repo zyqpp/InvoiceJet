@@ -58,6 +58,7 @@ Umożliwić nowej osobie utworzenie konta i uzyskanie dostępu do aplikacji w je
 - Wywołany przez operację: formularz rejestracji (submit)
 - Powiązane API: [POST /api/Auth/register](../../../04_api_i_integracje/01_api_frontend/auth/POST_Auth_register.md)
 - Powiązany algorytm: [tworzenie_tokenu_jwt](../../../03_algorytmy/autoryzacyjne/tworzenie_tokenu_jwt.md), [walidacja_hasla](../../../03_algorytmy/walidacji/walidacja_hasla.md)
+- Powiązane algorytmy (uzupełnienie): [ALG-03 Weryfikacja hasła (BCrypt + regex)](../../../03_algorytmy/ALG-03_PasswordHashingVerification.md), [ALG-04 Tworzenie tokenu JWT](../../../03_algorytmy/ALG-04_JwtTokenCreation.md), [ManageUserFirmRelation](../../../03_algorytmy/dedykowane/zarzadzanie_relacja_userfirm.md), [AddInitialDocumentSeries](../../../03_algorytmy/dedykowane/inicjalizacja_serii_dokumentow.md)
 
 ## Powiązania z kodem
 

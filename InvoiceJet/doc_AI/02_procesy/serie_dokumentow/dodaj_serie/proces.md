@@ -54,6 +54,7 @@ Zdefiniować nową serię numeracji, której będzie można używać przy wystaw
 - Wywołany z ekranu: [Serie dokumentów](../../../01_ekrany/serie_dokumentow/ekran.md)
 - Powiązane API: [POST /api/DocumentSeries/Add](../../../04_api_i_integracje/01_api_frontend/document_series/POST_DocumentSeries_Add.md)
 - Powiązany algorytm: [generowanie_numeru_dokumentu](../../../03_algorytmy/dedykowane/generowanie_numeru_dokumentu.md)
+- Powiązane algorytmy (uzupełnienie): [ALG-02 Generowanie numeru dokumentu](../../../03_algorytmy/ALG-02_DocumentNumberGeneration.md), [AddInitialDocumentSeries (powiązana)](../../../03_algorytmy/dedykowane/inicjalizacja_serii_dokumentow.md)
 
 ## Powiązania z kodem
 

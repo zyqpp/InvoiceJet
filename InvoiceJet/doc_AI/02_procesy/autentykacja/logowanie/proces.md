@@ -55,6 +55,7 @@ Wydać zalogowanemu użytkownikowi token JWT umożliwiający dostęp do wszystki
 - Wywołany przez operację: formularz logowania (submit)
 - Powiązane API: [POST /api/Auth/login](../../../04_api_i_integracje/01_api_frontend/auth/POST_Auth_login.md)
 - Powiązany algorytm: [tworzenie_tokenu_jwt](../../../03_algorytmy/autoryzacyjne/tworzenie_tokenu_jwt.md), [weryfikacja_tokenu_jwt](../../../03_algorytmy/autoryzacyjne/weryfikacja_tokenu_jwt.md)
+- Powiązane algorytmy (uzupełnienie): [ALG-01 JWT Authentication](../../../03_algorytmy/ALG-01_JwtAuthentication.md), [ALG-04 Tworzenie tokenu JWT](../../../03_algorytmy/ALG-04_JwtTokenCreation.md)
 
 ## Powiązania z kodem
 

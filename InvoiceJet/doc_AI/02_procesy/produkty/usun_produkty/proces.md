@@ -82,7 +82,7 @@ sequenceDiagram
 
 - Wywołany z ekranu: [Produkty](../../../01_ekrany/produkty/ekran.md)
 - Powiązane API: [PUT /api/Product/Delete](../../../04_api_i_integracje/01_api_frontend/product/PUT_Product_Delete.md)
-- Powiązany algorytm: Nie dotyczy
+- Powiązane algorytmy: [ALG-10 Data Isolation Pattern](../../../03_algorytmy/ALG-10_DataIsolationPattern.md)
 
 ## Powiązania z kodem
 

@@ -69,6 +69,7 @@ Wygenerować plik PDF dokumentu handlowego (faktura, proforma lub storno) w form
 - Wywołany z ekranu: [Lista faktur](../../../01_ekrany/faktury/lista_faktur/ekran.md) (pobierz PDF), [PDF Viewer (modal)](../../../01_ekrany/00_wspolne/modale_wspolne/pdf_viewer/modal.md) (podgląd)
 - Powiązane API: [POST /api/Document/GeneratePdf](../../../04_api_i_integracje/01_api_frontend/document/POST_Document_GeneratePdf.md), [POST /api/Document/GetPdfStream](../../../04_api_i_integracje/01_api_frontend/document/POST_Document_GetPdfStream.md)
 - Powiązany algorytm: [generuj_pdf_na_dysk](../../../03_algorytmy/generowania_pdf/generuj_pdf_na_dysk.md), [generuj_pdf_stream](../../../03_algorytmy/generowania_pdf/generuj_pdf_stream.md)
+- Powiązane algorytmy (uzupełnienie): [ALG-07 PDF Generation (QuestPDF)](../../../03_algorytmy/ALG-07_PdfGeneration.md), [Szablon PDF — wspólna struktura](../../../09_procesy_biznesowe/dokumenty/pdf/wspolna_struktura.md), [Szablon PDF — faktura](../../../09_procesy_biznesowe/dokumenty/pdf/faktura.md)
 
 ## Powiązania z kodem
 
