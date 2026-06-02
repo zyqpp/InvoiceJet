@@ -19,23 +19,36 @@
 ```plantuml
 @startuml
 left to right direction
+skinparam packageStyle rectangle
 actor "Użytkownik" as U
 
-rectangle "Wystawienie faktury" {
-    usecase "Otwórz formularz faktury" as UC_OPEN
-    usecase "Wybierz serię / klienta / konto" as UC_SEL
-    usecase "Dodaj pozycje" as UC_PROD
-    usecase "Zapisz fakturę" as UC_SAVE
-    usecase "Generuj PDF" as UC_PDF
-    usecase "Pobierz PDF" as UC_DL
+rectangle "InvoiceJet — Wystawienie faktury" {
+  usecase "Otwórz formularz faktury" as UC1
+  usecase "Wybierz klienta" as UC2
+  usecase "Wybierz serię numeracji" as UC3
+  usecase "Dodaj pozycje faktury" as UC4
+  usecase "Zapisz fakturę" as UC5
+  usecase "Generuj PDF" as UC6
+  usecase "Podgląd PDF" as UC7
+  usecase "Skonfiguruj serię i konto" as UC_CFG
 }
 
-U --> UC_OPEN
-UC_OPEN --> UC_SEL : autouzupełnienie
-UC_SEL --> UC_PROD
-UC_PROD --> UC_SAVE
-UC_SAVE --> UC_PDF : opcjonalnie
-UC_PDF --> UC_DL : opcjonalnie
+U --> UC1
+U --> UC2
+U --> UC3
+U --> UC4
+U --> UC5
+U --> UC6
+U --> UC7
+
+UC1 ..> UC_CFG : <<include>>
+UC6 ..> UC5 : <<extend>>
+UC7 ..> UC5 : <<extend>>
+
+note right of UC_CFG
+  Wymagane przed pierwszą fakturą:
+  serie dokumentów + konto bankowe
+end note
 @enduml
 ```
 

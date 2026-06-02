@@ -7,6 +7,41 @@
 | Ostatnia walidacja | 2026-05-31 |
 | Autor | Agent Claudiusz Sonte 4.6 max |
 
+## Diagram (PlantUML)
+
+```plantuml
+@startuml
+left to right direction
+skinparam packageStyle rectangle
+actor "Użytkownik" as U
+
+rectangle "InvoiceJet — Konwersja na storno" {
+  usecase "Zaznacz dokumenty do anulowania" as UC1
+  usecase "Przekształć fakturę w storno" as UC2
+  usecase "Przekształć proformę w storno" as UC3
+  usecase "Wyświetl listę storn" as UC4
+  usecase "Edytuj storno" as UC5
+  usecase "Generuj PDF storna" as UC6
+}
+
+U --> UC1
+U --> UC2
+U --> UC3
+U --> UC4
+U --> UC5
+U --> UC6
+UC2 ..> UC1 : <<include>>
+UC3 ..> UC1 : <<include>>
+
+note right of UC2
+  PUT /api/Document/TransformToStorno
+  Zmienia DocumentTypeId=3
+  UWAGA: brak atomowości przy batch
+  Operacja nieodwracalna przez UI
+end note
+@enduml
+```
+
 ## Opis
 
 Użytkownik może przekształcić istniejące dokumenty (faktury, proformy) w faktury storno bez ręcznego tworzenia nowego dokumentu.

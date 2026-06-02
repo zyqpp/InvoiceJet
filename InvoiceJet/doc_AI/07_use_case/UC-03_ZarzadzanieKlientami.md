@@ -7,6 +7,44 @@
 | Ostatnia walidacja | 2026-05-31 |
 | Autor | Agent Claudiusz Sonte 4.6 max |
 
+## Diagram (PlantUML)
+
+```plantuml
+@startuml
+left to right direction
+skinparam packageStyle rectangle
+actor "Użytkownik" as U
+actor "ANAF (rejestr)" as ANAF <<external>>
+
+rectangle "InvoiceJet — Zarządzanie klientami" {
+  usecase "Wyświetl listę klientów" as UC1
+  usecase "Dodaj klienta" as UC2
+  usecase "Edytuj klienta" as UC3
+  usecase "Usuń klienta" as UC4
+  usecase "Pobierz dane klienta z ANAF" as UC5
+}
+
+U --> UC1
+U --> UC2
+U --> UC3
+U --> UC4
+ANAF --> UC5
+UC5 ..> UC2 : <<extend>>
+UC5 ..> UC3 : <<extend>>
+
+note right of UC5
+  GET /api/Firm/fromAnaf/{cui}
+  Autouzupełnia pola formularza
+end note
+
+note right of UC4
+  PUT /api/Firm/DeleteFirms
+  Hard delete — blokada gdy
+  klient ma powiązane faktury
+end note
+@enduml
+```
+
 ## Scenariusze
 
 ### Dodanie klienta
