@@ -83,7 +83,7 @@ builder.Services.AddAuthentication(
 builder.Services.AddCors(options => options.AddPolicy(name: "NgOrigins", 
     policy =>
     {
-        policy.WithOrigins("http://localhost:4200", "https://localhost:4200").AllowAnyMethod().AllowAnyHeader();
+        policy.WithOrigins("http://localhost:8101", "https://localhost:8101").AllowAnyMethod().AllowAnyHeader();
     }));
 
 var app = builder.Build();
