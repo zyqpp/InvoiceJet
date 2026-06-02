@@ -1,4 +1,4 @@
-﻿site_name: "InvoiceJet — Dokumentacja Techniczna (AOS)"
+site_name: "InvoiceJet — Dokumentacja Techniczna (AOS)"
 site_description: "Agent-Oriented Specification — pełna dokumentacja techniczna"
 site_url: "http://127.0.0.1:8001/"
 docs_dir: "G:\\Projekty informatyczne\\Gotowe aplikacje\\InvoiceJet\\InvoiceJet\\doc_AI"
@@ -26,8 +26,8 @@ theme:
     text: Inter
     code: Roboto Mono
   features:
-    - navigation.tabs          # ← KLUCZOWE: zwęża sidebar do aktywnej sekcji
-    - navigation.tabs.sticky   # pasek zawsze widoczny przy scrollu
+    - navigation.tabs
+    - navigation.tabs.sticky
     - navigation.sections
     - navigation.expand
     - navigation.indexes
@@ -39,7 +39,8 @@ theme:
     - search.suggest
     - search.highlight
     - search.share
-    - content.action.edit
+    # content.action.edit USUNIĘTE — powodowało "edycja" w TOC
+    # Własny przycisk ✏️ jest w overrides/main.html
     - content.code.copy
     - content.code.annotate
     - content.tabs.link
@@ -51,6 +52,16 @@ plugins:
       lang: pl
       separator: '[\s\-\.]+'
   - awesome-pages
+  - kroki:
+      ServerURL: https://kroki.io
+      EnableBlockDiag: true
+      Enablebpmn: false
+      EnableExcalidraw: false
+      EnableMermaid: false      # Mermaid obsługujemy przez CDN
+      EnablePlantuml: true      # PlantUML renderowany przez kroki.io
+      ExtraFormats:
+        plantuml:
+          Format: svg
 
 markdown_extensions:
   - toc:
@@ -63,9 +74,7 @@ markdown_extensions:
         - name: mermaid
           class: mermaid
           format: !!python/name:pymdownx.superfences.fence_code_format
-        - name: plantuml
-          class: plantuml
-          format: !!python/name:pymdownx.superfences.fence_code_format
+        # plantuml obsługiwane przez plugin kroki (nie custom_fence)
   - pymdownx.highlight:
       anchor_linenums: true
       line_spans: __span
