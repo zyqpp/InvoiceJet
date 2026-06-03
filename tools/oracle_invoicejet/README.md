@@ -4,6 +4,19 @@ Lokalny portal RAG dla dokumentacji InvoiceJet. Dziala na Markdownach z repo, uz
 
 Portal Streamlit dziala na porcie `8502` i jest jedynym aktualnym PoC dla Oracle InvoiceJet.
 
+## Dokumentacja projektu Oracle RAG
+
+Pelna dokumentacja szkoleniowa projektu RAG i warstwy agentowej jest w:
+
+- [docs/README.md](docs/README.md) - mapa dokumentacji,
+- [docs/01_architektura_i_pipeline.md](docs/01_architektura_i_pipeline.md) - architektura, pipeline ingest/query/streaming/eval,
+- [docs/02_zalozenia_stos_i_konfiguracja.md](docs/02_zalozenia_stos_i_konfiguracja.md) - zalozenia, stos technologiczny i konfiguracja,
+- [docs/03_funkcje_i_obsluga.md](docs/03_funkcje_i_obsluga.md) - funkcje portalu, CLI i typowe scenariusze pracy,
+- [docs/04_pojecia_techniczne_rag_llm.md](docs/04_pojecia_techniczne_rag_llm.md) - wyjasnienie chunkow, embeddingow, modeli, promptow i metryk,
+- [docs/05_rozwoj_i_roadmapa.md](docs/05_rozwoj_i_roadmapa.md) - dalsze mozliwosci rozwoju.
+
+Ta dokumentacja opisuje narzedzie Oracle InvoiceJet, czyli projekt RAG + agent. Nie zastepuje dokumentacji biznesowej samego InvoiceJet.
+
 ## Co jest zrodlem odpowiedzi
 
 Domyslna baza odpowiedzi obejmuje tylko:
