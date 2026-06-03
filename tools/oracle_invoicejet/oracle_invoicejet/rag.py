@@ -92,6 +92,52 @@ def pack_context(hits: List[SearchHit], max_chars: int = 18000) -> PackedContext
     return PackedContext(text="\n\n".join(blocks), citations=citations)
 
 
+# ---------------------------------------------------------------------------
+# RAG v2.0 — prompty dla lekkich agentów pomocniczych
+# ---------------------------------------------------------------------------
+
+def build_classifier_prompt(question: str) -> str:
+    """Ultra-krótki prompt dla małego modelu (qwen2.5:1.5b). Klasyfikuje intencję pytania."""
+    return (
+        "/no_think\n"
+        "Jesteś klasyfikatorem pytań InvoiceJet. Odpowiedz JEDNYM słowem z listy:\n"
+        "user_help | technical | sql | algorithm | greeting | unknown\n"
+        "user_help = funkcje aplikacji, jak wystawić/dodać/edytować\n"
+        "technical = API, Angular, backend, architektura, endpointy\n"
+        "sql = tabele, relacje, SELECT, model danych, baza\n"
+        "algorithm = VAT, wyliczenia kwot, PDF, zaokrąglenia\n"
+        "greeting = powitanie, kim jesteś, co umiesz\n"
+        "unknown = niejasne lub niezwiązane z InvoiceJet\n"
+        f"Pytanie: {question}\n"
+        "Klasa:"
+    )
+
+
+def build_decomposer_prompt(question: str) -> str:
+    """Prompt dla małego modelu. Rozbija złożone pytanie na pod-pytania."""
+    return (
+        "/no_think\n"
+        "Czy pytanie zawiera wiele NIEZALEŻNYCH pytań? "
+        "Jeśli TAK: rozłóż na max 3 osobne pytania, jedno na linię, bez numeracji. "
+        "Jeśli NIE: zwróć oryginalne pytanie dokładnie bez zmian.\n"
+        f"Pytanie: {question}\n"
+        "Wynik:"
+    )
+
+
+def build_fact_check_prompt(answer: str, context_excerpt: str) -> str:
+    """Ultra-krótki prompt dla małego modelu. Wykrywa potencjalne halucynacje."""
+    return (
+        "/no_think\n"
+        "Przeczytaj KONTEKST i ODPOWIEDŹ. "
+        "Czy odpowiedź zawiera fakty których NIE MA w kontekście? "
+        "Odpowiedz TYLKO słowem TAK lub NIE.\n"
+        f"KONTEKST:\n{context_excerpt}\n\n"
+        f"ODPOWIEDŹ:\n{answer[:800]}\n\n"
+        "Ocena (TAK lub NIE):"
+    )
+
+
 def source_path_to_portal_url(source_path: str, doc_user_base: str, doc_ai_base: str) -> str | None:
     """Convert an indexed documentation path to a full MkDocs portal URL."""
     normalized_path = source_path.replace("\\", "/").lstrip("/")

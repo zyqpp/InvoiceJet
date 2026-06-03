@@ -67,6 +67,13 @@ class AppConfig:
     strip_thinking: bool = True
     docs_portal_doc_user: str = "http://127.0.0.1:8002"
     docs_portal_doc_ai: str = "http://127.0.0.1:8001"
+    # RAG v2.0 — multi-model routing + pipeline feature flags
+    light_llm_model: str = "qwen2.5:1.5b"
+    enable_query_classifier: bool = True
+    enable_query_decomposer: bool = False
+    enable_context_hygiene: bool = True
+    enable_missing_link: bool = True
+    enable_fact_checker: bool = False
 
 
 PRESETS: Dict[str, ModelPreset] = {
@@ -163,13 +170,20 @@ def load_config() -> AppConfig:
     ))]
     allowed_models = _as_list(_read_var(
         "ALLOWED_MODELS",
-        "gemma3:12b,gemma3:4b,gemma3:1b,deepseek-r1:8b,qwen3:4b,qwen3-vl:4b,qwen3:1.7b,bge-m3,nomic-embed-text",
+        "gemma3:12b,gemma3:4b,gemma3:1b,deepseek-r1:8b,qwen3:7b,qwen3:4b,qwen3-vl:4b,qwen3:1.7b,qwen2.5:1.5b,llama3.2:1b,bge-m3,qwen3-embedding:0.6b,nomic-embed-text",
         dotenv_values,
     ))
     think = _parse_think(_read_var("THINK", _format_think(preset.think), dotenv_values))
     strip_thinking = _as_bool(_read_var("STRIP_THINKING", str(preset.strip_thinking), dotenv_values))
     docs_portal_doc_user = _read_var("DOCS_PORTAL_DOC_USER", "http://127.0.0.1:8002", dotenv_values).rstrip("/")
     docs_portal_doc_ai   = _read_var("DOCS_PORTAL_DOC_AI",   "http://127.0.0.1:8001", dotenv_values).rstrip("/")
+    # RAG v2.0
+    light_llm_model       = _read_var("LIGHT_LLM_MODEL",        "qwen2.5:1.5b", dotenv_values)
+    enable_query_classifier = _as_bool(_read_var("ENABLE_QUERY_CLASSIFIER", "true",  dotenv_values))
+    enable_query_decomposer = _as_bool(_read_var("ENABLE_QUERY_DECOMPOSER", "false", dotenv_values))
+    enable_context_hygiene  = _as_bool(_read_var("ENABLE_CONTEXT_HYGIENE",  "true",  dotenv_values))
+    enable_missing_link     = _as_bool(_read_var("ENABLE_MISSING_LINK",     "true",  dotenv_values))
+    enable_fact_checker     = _as_bool(_read_var("ENABLE_FACT_CHECKER",     "false", dotenv_values))
 
     if chunk_overlap >= chunk_size:
         raise ValueError("ORACLE_CHUNK_OVERLAP must be smaller than ORACLE_CHUNK_SIZE.")
@@ -209,6 +223,12 @@ def load_config() -> AppConfig:
         strip_thinking=strip_thinking,
         docs_portal_doc_user=docs_portal_doc_user,
         docs_portal_doc_ai=docs_portal_doc_ai,
+        light_llm_model=light_llm_model,
+        enable_query_classifier=enable_query_classifier,
+        enable_query_decomposer=enable_query_decomposer,
+        enable_context_hygiene=enable_context_hygiene,
+        enable_missing_link=enable_missing_link,
+        enable_fact_checker=enable_fact_checker,
     )
 
 

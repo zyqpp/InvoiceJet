@@ -245,6 +245,14 @@ def render_sidebar_status(
     st.markdown("**Portale dokumentacji**")
     st.markdown(f"- [doc_user]({config.docs_portal_doc_user})")
     st.markdown(f"- [doc_AI]({config.docs_portal_doc_ai})")
+    st.markdown("**Pipeline v2 — agenty**")
+    st.caption(f"Light LLM: `{config.light_llm_model}`")
+    with st.expander("Status agentów v2"):
+        st.caption(f"Klasyfikator: {'✅ włączony' if config.enable_query_classifier else '❌ wyłączony'}")
+        st.caption(f"Dekompozycja: {'✅ włączona' if config.enable_query_decomposer else '❌ wyłączona'}")
+        st.caption(f"Hygiene: {'✅ włączony' if config.enable_context_hygiene else '❌ wyłączony'}")
+        st.caption(f"MissingLink: {'✅ włączony' if config.enable_missing_link else '❌ wyłączony'}")
+        st.caption(f"FactChecker: {'✅ włączony' if config.enable_fact_checker else '❌ wyłączony (domyślnie)'}")
 
     client = OllamaClient(config.ollama_base_url)
     online, message = client.is_online()

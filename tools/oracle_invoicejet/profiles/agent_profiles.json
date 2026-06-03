@@ -63,15 +63,56 @@
     "key": "zosia",
     "name": "Zosia",
     "role": "Eksperyment",
-    "description": "Profil do porownywania zachowania innego modelu. Nie jest domyslny.",
+    "description": "Profil do porownywania Qwen po wylaczeniu thinkingu. Nie jest domyslny.",
     "default_scope": "full",
-    "model_profile": "balanced",
+    "model_profile": "qwen3_no_think",
     "prompt_profile": "oracle_rag_default",
     "rag_profile": "full_app_qa",
-    "llm_model": "qwen3:4b",
+    "min_hits": 1,
+    "tooltip": "Profil testowy Qwen. Ma ustawione think=false i czyszczenie sekcji thinking; uzywaj do porownan, nie jako glowny profil.",
+    "capabilities": [
+      "Pozwala sprawdzic, czy Qwen odpowiada bez widocznego thinkingu.",
+      "Nadaje sie do porownan w Evaluation Lab z tym samym pytaniem i zrodlami."
+    ],
+    "limitations": [
+      "Nie jest profilem stabilnym ani domyslnym.",
+      "Jesli lokalna wersja Ollamy/modelu ignoruje think=false, odpowiedz moze nadal byc slabsza lub wolniejsza."
+    ],
+    "examples": [
+      "Porownaj odpowiedz Qwen dla pytania o wyliczanie sumy dokumentu."
+    ],
+    "notes": "Eksperymentalnie: Qwen uzywa think=false na poziomie API Ollama."
+  },
+  {
+    "key": "klara",
+    "name": "Klara",
+    "role": "Algorytmy i wyliczenia",
+    "description": "Agent do trudnych pytan o algorytmy, kwoty, sumy dokumentow, frontend/backend, model danych i ryzyka.",
+    "default_scope": "technical",
+    "model_profile": "quality_local_12b",
+    "prompt_profile": "algorithm_explainer",
+    "rag_profile": "algorithm_calculation",
+    "top_k": 12,
     "num_predict": 1024,
     "min_hits": 1,
-    "notes": "Na tej instalacji qwen3:4b moze zuzywac budzet odpowiedzi na thinking."
+    "tooltip": "Uzywaj do pytan typu: jak liczy sie cena pozycji, suma dokumentu, VAT, snapshot ceny, gdzie frontend liczy, a gdzie backend zapisuje.",
+    "capabilities": [
+      "Wyjasnia algorytmy wyliczeniowe krok po kroku na podstawie dokumentacji.",
+      "Rozdziela odpowiedzialnosc frontend, backend, baza danych i PDF/prezentacja.",
+      "Pokazuje wzory dla kwot netto/brutto, sum dokumentu i pozycji.",
+      "Wskazuje anomalie, np. zaufanie backendu do TotalPrice z DTO albo brak zapisu VatRate w DocumentProduct."
+    ],
+    "limitations": [
+      "Nie wykonuje kodu aplikacji ani nie liczy na realnych danych produkcyjnych.",
+      "Nie zgaduje brakujacych walidacji, jesli nie ma ich w dokumentacji.",
+      "Profil quality_local_12b jest wolniejszy od gemma3:4b."
+    ],
+    "examples": [
+      "Opisz jak dziala wyliczanie kwoty/ceny dla produktu na pozycji dokumentu i suma calego dokumentu.",
+      "Kto liczy TotalPrice pozycji: frontend czy backend?",
+      "Jakie ryzyka sa w algorytmie UpdateDocumentProducts?"
+    ],
+    "notes": "Profil jakosciowy na gemma3:12b. Jesli jest zbyt wolno, porownaj z modelem strict/gemma3:4b w Evaluation Lab."
   },
   {
     "key": "db_sql",
@@ -104,5 +145,44 @@
       "Jakie tabele lacza dokument z klientem i statusem?"
     ],
     "notes": "Tryb read-only. SQL traktuj jako propozycje na podstawie dokumentacji, przed uzyciem sprawdz w realnej bazie."
+  },
+  {
+    "key": "blazej",
+    "name": "Błażej",
+    "role": "Główny agent RAG v2 (RTX 4060)",
+    "description": "deepseek-r1:8b z pełnym pipeline v2: klasyfikator intencji, hygiene kontekstu, detekcja luk, auto-switch profilu. Optymalny dla RTX 4060 8GB.",
+    "default_scope": "full",
+    "model_profile": "rtx4060_deepseek",
+    "prompt_profile": "cross_reference",
+    "rag_profile": "full_app_qa",
+    "top_k": 10,
+    "num_predict": 1664,
+    "num_ctx": 16384,
+    "min_hits": 1,
+    "tooltip": "Najlepszy agent dla RTX 4060. Używa deepseek-r1:8b z pipeline v2: ClassifierAgent → HygieneAgent → MissingLinkAgent → CodeSynthAgent. Light LLM (qwen2.5:1.5b) do klasyfikacji.",
+    "capabilities": [
+      "Klasyfikuje intencję pytania przed wyszukiwaniem (user_help/technical/sql/algorithm).",
+      "Automatycznie wymusza odpowiedni profil RAG na podstawie klasyfikacji.",
+      "Filtruje i deduplikuje chunki kontekstu przed wysłaniem do głównego modelu.",
+      "Wykrywa luki w wiedzy i ostrzega gdy brakuje wymaganych typów dokumentów.",
+      "Automatycznie przełącza prompt na database_sql_assistant lub algorithm_explainer gdy wykryje kod/SQL."
+    ],
+    "notes": "Wymaga zainstalowanego modelu qwen2.5:1.5b (light LLM) oraz deepseek-r1:8b (main LLM). Uruchom: ollama pull qwen2.5:1.5b"
+  },
+  {
+    "key": "czeslaw",
+    "name": "Czesław",
+    "role": "Szybki agent RAG v2 (RTX 4060)",
+    "description": "qwen3:4b z hygiene kontekstu i detekcją luk. Szybsze odpowiedzi, mniejsze zużycie VRAM. Idealny do codziennych pytań użytkownika.",
+    "default_scope": "user",
+    "model_profile": "rtx4060_qwen3",
+    "prompt_profile": "oracle_rag_default",
+    "rag_profile": "user_help",
+    "top_k": 10,
+    "num_predict": 1024,
+    "num_ctx": 12288,
+    "min_hits": 1,
+    "tooltip": "Szybki profil v2 dla RTX 4060. qwen3:4b z hygiene i MissingLink. Dobry do instrukcji użytkownika i prostych pytań o funkcje aplikacji.",
+    "notes": "Wymaga zainstalowanego modelu qwen3:4b oraz qwen2.5:1.5b. Uruchom: ollama pull qwen3:4b && ollama pull qwen2.5:1.5b"
   }
 ]
