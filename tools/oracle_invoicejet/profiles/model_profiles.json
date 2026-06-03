@@ -1,0 +1,50 @@
+[
+  {
+    "key": "balanced",
+    "name": "Balanced",
+    "description": "Domyslny profil jakosci dla lokalnego RAG na RTX 2060 6GB.",
+    "llm_model": "gemma3:4b",
+    "embedding_model": "bge-m3",
+    "top_k": 6,
+    "num_ctx": 8192,
+    "temperature": 0.1,
+    "num_predict": 640,
+    "top_p": 0.9,
+    "llm_top_k": 40,
+    "repeat_penalty": 1.1,
+    "seed": null,
+    "timeout_sec": 900
+  },
+  {
+    "key": "strict",
+    "name": "Strict documentation",
+    "description": "Niska temperatura i wiecej kontekstu dla odpowiedzi opartych na zrodlach.",
+    "llm_model": "gemma3:4b",
+    "embedding_model": "bge-m3",
+    "top_k": 8,
+    "num_ctx": 8192,
+    "temperature": 0.0,
+    "num_predict": 768,
+    "top_p": 0.85,
+    "llm_top_k": 30,
+    "repeat_penalty": 1.15,
+    "seed": 7,
+    "timeout_sec": 900
+  },
+  {
+    "key": "fast",
+    "name": "Fast local",
+    "description": "Lzejszy model do szybkich testow portalu i indeksu.",
+    "llm_model": "gemma3:1b",
+    "embedding_model": "bge-m3",
+    "top_k": 4,
+    "num_ctx": 4096,
+    "temperature": 0.1,
+    "num_predict": 384,
+    "top_p": 0.9,
+    "llm_top_k": 40,
+    "repeat_penalty": 1.1,
+    "seed": null,
+    "timeout_sec": 600
+  }
+]

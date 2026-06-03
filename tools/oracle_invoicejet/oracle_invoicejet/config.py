@@ -1,0 +1,237 @@
+from __future__ import annotations
+
+from dataclasses import dataclass
+import os
+from pathlib import Path
+from typing import Dict, List
+
+
+ENV_PREFIX = "ORACLE_"
+MANIFEST_SCHEMA_VERSION = 2
+
+
+@dataclass(frozen=True)
+class ModelPreset:
+    name: str
+    label: str
+    llm_model: str
+    embedding_model: str
+    top_k: int
+    num_ctx: int
+    temperature: float
+    num_predict: int
+    top_p: float = 0.9
+    llm_top_k: int = 40
+    repeat_penalty: float = 1.1
+    seed: int | None = None
+    timeout_sec: int = 900
+    think: bool | str | None = None
+    strip_thinking: bool = True
+
+
+@dataclass(frozen=True)
+class SourceConfig:
+    source_group: str
+    audience: str
+    priority: int
+    relative_path: str
+
+
+@dataclass(frozen=True)
+class AppConfig:
+    tool_root: Path
+    repo_root: Path
+    chroma_path: Path
+    manifest_path: Path
+    collection_name: str
+    ollama_base_url: str
+    llm_model: str
+    embedding_model: str
+    top_k: int
+    num_ctx: int
+    temperature: float
+    num_predict: int
+    top_p: float
+    llm_top_k: int
+    repeat_penalty: float
+    seed: int | None
+    timeout_sec: int
+    chunk_size: int
+    chunk_overlap: int
+    batch_size: int
+    min_hits: int
+    sources: List[SourceConfig]
+    exclude_dirs: List[str]
+    allowed_models: List[str]
+    think: bool | str | None = None
+    strip_thinking: bool = True
+    docs_portal_doc_user: str = "http://127.0.0.1:8002"
+    docs_portal_doc_ai: str = "http://127.0.0.1:8001"
+
+
+PRESETS: Dict[str, ModelPreset] = {
+    "rtx2060": ModelPreset(
+        name="rtx2060",
+        label="RTX 2060 6GB",
+        llm_model="gemma3:4b",
+        embedding_model="bge-m3",
+        top_k=6,
+        num_ctx=8192,
+        temperature=0.1,
+        num_predict=512,
+    ),
+    "light": ModelPreset(
+        name="light",
+        label="Tryb lekki",
+        llm_model="gemma3:1b",
+        embedding_model="bge-m3",
+        top_k=4,
+        num_ctx=4096,
+        temperature=0.1,
+        num_predict=384,
+    ),
+}
+
+
+DEFAULT_SOURCES: List[SourceConfig] = [
+    SourceConfig("doc_ai", "technical", 100, "InvoiceJet/doc_AI"),
+    SourceConfig("doc_user", "user", 70, "InvoiceJet/doc_user"),
+]
+
+
+def _load_dotenv(dotenv_path: Path) -> Dict[str, str]:
+    values: Dict[str, str] = {}
+    if not dotenv_path.exists():
+        return values
+    for raw_line in dotenv_path.read_text(encoding="utf-8").splitlines():
+        line = raw_line.strip()
+        if not line or line.startswith("#") or "=" not in line:
+            continue
+        key, value = line.split("=", 1)
+        values[key.strip()] = value.strip().strip("'").strip('"')
+    return values
+
+
+def _as_list(value: str) -> List[str]:
+    return [item.strip() for item in value.split(",") if item.strip()]
+
+
+def _read_var(name: str, default: str, dotenv_values: Dict[str, str]) -> str:
+    env_name = f"{ENV_PREFIX}{name}"
+    if env_name in os.environ:
+        return os.environ[env_name]
+    if env_name in dotenv_values:
+        return dotenv_values[env_name]
+    return default
+
+
+def load_config() -> AppConfig:
+    tool_root = Path(__file__).resolve().parents[1]
+    repo_root_default = tool_root.parents[1]
+    dotenv_values = _load_dotenv(tool_root / ".env")
+    preset_name = _read_var("MODEL_PRESET", "rtx2060", dotenv_values).lower()
+    preset = PRESETS.get(preset_name, PRESETS["rtx2060"])
+
+    repo_root_value = Path(_read_var("REPO_ROOT", str(repo_root_default), dotenv_values))
+    repo_root = (repo_root_value if repo_root_value.is_absolute() else tool_root / repo_root_value).resolve()
+    chroma_path = (tool_root / _read_var("CHROMA_PATH", "./chroma_data", dotenv_values)).resolve()
+    manifest_path = (tool_root / _read_var("MANIFEST_PATH", "./index_manifest.json", dotenv_values)).resolve()
+    collection_name = _read_var("COLLECTION_NAME", "oracle_invoicejet_docs", dotenv_values)
+    ollama_base_url = _read_var("OLLAMA_BASE_URL", "http://127.0.0.1:11434", dotenv_values).rstrip("/")
+
+    llm_model = _read_var("LLM_MODEL", preset.llm_model, dotenv_values)
+    embedding_model = _read_var("EMBEDDING_MODEL", preset.embedding_model, dotenv_values)
+    top_k = int(_read_var("TOP_K", str(preset.top_k), dotenv_values))
+    num_ctx = int(_read_var("NUM_CTX", str(preset.num_ctx), dotenv_values))
+    temperature = float(_read_var("TEMPERATURE", str(preset.temperature), dotenv_values))
+    num_predict = int(_read_var("NUM_PREDICT", str(preset.num_predict), dotenv_values))
+    top_p = float(_read_var("TOP_P", str(preset.top_p), dotenv_values))
+    llm_top_k = int(_read_var("LLM_TOP_K", str(preset.llm_top_k), dotenv_values))
+    repeat_penalty = float(_read_var("REPEAT_PENALTY", str(preset.repeat_penalty), dotenv_values))
+    seed_value = _read_var("SEED", "" if preset.seed is None else str(preset.seed), dotenv_values)
+    seed = int(seed_value) if seed_value.strip() else None
+    timeout_sec = int(_read_var("TIMEOUT_SEC", str(preset.timeout_sec), dotenv_values))
+
+    chunk_size = int(_read_var("CHUNK_SIZE", "1800", dotenv_values))
+    chunk_overlap = int(_read_var("CHUNK_OVERLAP", "250", dotenv_values))
+    batch_size = int(_read_var("BATCH_SIZE", "24", dotenv_values))
+    min_hits = int(_read_var("MIN_HITS", "1", dotenv_values))
+    exclude_dirs = [item.lower() for item in _as_list(_read_var(
+        "EXCLUDE_DIRS",
+        ".git,node_modules,bin,obj,.venv,venv,chroma_data,.tmp,archiwum,_site,models,__pycache__",
+        dotenv_values,
+    ))]
+    allowed_models = _as_list(_read_var(
+        "ALLOWED_MODELS",
+        "gemma3:12b,gemma3:4b,gemma3:1b,deepseek-r1:8b,qwen3:4b,qwen3-vl:4b,qwen3:1.7b,bge-m3,nomic-embed-text",
+        dotenv_values,
+    ))
+    think = _parse_think(_read_var("THINK", _format_think(preset.think), dotenv_values))
+    strip_thinking = _as_bool(_read_var("STRIP_THINKING", str(preset.strip_thinking), dotenv_values))
+    docs_portal_doc_user = _read_var("DOCS_PORTAL_DOC_USER", "http://127.0.0.1:8002", dotenv_values).rstrip("/")
+    docs_portal_doc_ai   = _read_var("DOCS_PORTAL_DOC_AI",   "http://127.0.0.1:8001", dotenv_values).rstrip("/")
+
+    if chunk_overlap >= chunk_size:
+        raise ValueError("ORACLE_CHUNK_OVERLAP must be smaller than ORACLE_CHUNK_SIZE.")
+    if not repo_root.exists():
+        raise ValueError(f"Repo root does not exist: {repo_root}")
+    if top_k <= 0 or batch_size <= 0 or min_hits <= 0 or llm_top_k <= 0 or timeout_sec <= 0:
+        raise ValueError("ORACLE_TOP_K, ORACLE_BATCH_SIZE, ORACLE_MIN_HITS, ORACLE_LLM_TOP_K and ORACLE_TIMEOUT_SEC must be positive.")
+    if not 0.0 <= temperature <= 2.0 or not 0.0 < top_p <= 1.0 or repeat_penalty <= 0:
+        raise ValueError("ORACLE_TEMPERATURE, ORACLE_TOP_P and ORACLE_REPEAT_PENALTY are outside supported ranges.")
+
+    return AppConfig(
+        tool_root=tool_root,
+        repo_root=repo_root,
+        chroma_path=chroma_path,
+        manifest_path=manifest_path,
+        collection_name=collection_name,
+        ollama_base_url=ollama_base_url,
+        llm_model=llm_model,
+        embedding_model=embedding_model,
+        top_k=top_k,
+        num_ctx=num_ctx,
+        temperature=temperature,
+        num_predict=num_predict,
+        top_p=top_p,
+        llm_top_k=llm_top_k,
+        repeat_penalty=repeat_penalty,
+        seed=seed,
+        timeout_sec=timeout_sec,
+        chunk_size=chunk_size,
+        chunk_overlap=chunk_overlap,
+        batch_size=batch_size,
+        min_hits=min_hits,
+        sources=DEFAULT_SOURCES,
+        exclude_dirs=exclude_dirs,
+        allowed_models=allowed_models,
+        think=think,
+        strip_thinking=strip_thinking,
+        docs_portal_doc_user=docs_portal_doc_user,
+        docs_portal_doc_ai=docs_portal_doc_ai,
+    )
+
+
+def _parse_think(value: str) -> bool | str | None:
+    text = value.strip().lower()
+    if not text or text == "auto":
+        return None
+    if text in {"true", "on", "yes", "1"}:
+        return True
+    if text in {"false", "off", "no", "0"}:
+        return False
+    if text in {"low", "medium", "high"}:
+        return text
+    raise ValueError("ORACLE_THINK must be auto, true, false, low, medium or high.")
+
+
+def _format_think(value: bool | str | None) -> str:
+    if value is None:
+        return ""
+    if isinstance(value, bool):
+        return "true" if value else "false"
+    return value
+
+
+def _as_bool(value: str) -> bool:
+    return value.strip().lower() in {"true", "on", "yes", "1"}

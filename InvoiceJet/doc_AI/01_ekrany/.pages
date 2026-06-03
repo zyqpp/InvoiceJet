@@ -1,0 +1,14 @@
+nav:
+  - README.md
+  - E-09_InvoicesComponent
+  - E-10_AddOrEditInvoiceComponent
+  - faktury
+  - faktury_proforma
+  - faktury_storno
+  - firma
+  - produkty
+  - serie_dokumentow
+  - login
+  - register
+  - dashboard
+  - 00_wspolne

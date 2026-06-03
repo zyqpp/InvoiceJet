@@ -1,0 +1,101 @@
+site_name: "InvoiceJet — Dokumentacja Techniczna (AOS)"
+site_description: "Agent-Oriented Specification — pełna dokumentacja techniczna"
+site_url: "http://127.0.0.1:8001/"
+docs_dir: "G:\\Projekty informatyczne\\Gotowe aplikacje\\InvoiceJet\\InvoiceJet\\doc_AI"
+site_dir: "_site"
+use_directory_urls: false
+
+theme:
+  name: material
+  language: pl
+  custom_dir: overrides
+  palette:
+    - scheme: default
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-7
+        name: Tryb ciemny
+    - scheme: slate
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-4
+        name: Tryb jasny
+  font:
+    text: Inter
+    code: Roboto Mono
+  features:
+    - navigation.tabs
+    - navigation.tabs.sticky
+    - navigation.sections
+    - navigation.expand
+    - navigation.indexes
+    - navigation.prune
+    - navigation.top
+    - navigation.footer
+    - navigation.path
+    - toc.follow
+    - search.suggest
+    - search.highlight
+    - search.share
+    # content.action.edit USUNIĘTE — powodowało "edycja" w TOC
+    # Własny przycisk ✏️ jest w overrides/main.html
+    - content.code.copy
+    - content.code.annotate
+    - content.tabs.link
+
+edit_uri: ""
+
+plugins:
+  - search:
+      lang: pl
+      separator: '[\s\-\.]+'
+  - awesome-pages
+  - kroki:
+      server_url: https://kroki.io
+      enable_mermaid: false     # Mermaid przez CDN
+      enable_block_diag: false
+      enable_bpmn: false
+      enable_excalidraw: false
+      fence_prefix: ""          # KLUCZOWE: pusty prefix → ```plantuml działa (nie ```kroki-plantuml)
+      http_method: POST
+      tag_format: svg           # inline SVG zamiast <img>
+      request_timeout: 30
+
+markdown_extensions:
+  - toc:
+      permalink: true
+      toc_depth: 4
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+        # plantuml obsługiwane przez plugin kroki (nie custom_fence)
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.tasklist:
+      custom_checkbox: true
+  - tables
+  - attr_list
+  - md_in_html
+  - def_list
+  - footnotes
+  - abbr
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+
+extra:
+  generator: false
+
+extra_javascript:
+  - https://unpkg.com/mermaid@10/dist/mermaid.min.js

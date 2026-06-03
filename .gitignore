@@ -480,3 +480,6 @@ $RECYCLE.BIN/
 
 # Windows shortcuts
 *.lnk
+
+# MkDocs build outputs
+docs-portal/**/_site/

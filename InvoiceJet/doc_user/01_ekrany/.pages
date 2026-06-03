@@ -1,0 +1,16 @@
+nav:
+  - README.md
+  - 01_logowanie.md
+  - 02_rejestracja.md
+  - 03_nawigacja.md
+  - 04_dashboard.md
+  - 05_dane_firmy.md
+  - 06_klienci.md
+  - 07_konta_bankowe.md
+  - 08_produkty.md
+  - 09_serie_dokumentow.md
+  - 10_faktury.md
+  - 10b_formularz_faktury.md
+  - 11_proformy.md
+  - 12_storna.md
+  - 13_dokument_pdf.md

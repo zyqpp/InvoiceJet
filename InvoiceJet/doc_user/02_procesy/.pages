@@ -1,0 +1,13 @@
+nav:
+  - README.md
+  - P-01_rejestracja.md
+  - P-02_logowanie.md
+  - P-03_konfiguracja_firmy.md
+  - P-04_dodawanie_konta_bankowego.md
+  - P-05_zarzadzanie_produktami.md
+  - P-05b_konfiguracja_serii.md
+  - P-06_wystawianie_faktury.md
+  - P-07_faktura_korygujaca.md
+  - P-08_dodawanie_kontrahenta.md
+  - P-09_wystawianie_proformy.md
+  - P-10_generowanie_pdf.md

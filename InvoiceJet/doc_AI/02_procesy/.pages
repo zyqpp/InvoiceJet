@@ -1,0 +1,23 @@
+nav:
+  - README.md
+  - autentykacja
+  - firma
+  - dokumenty
+  - konta_bankowe
+  - produkty
+  - serie_dokumentow
+  - P-01_RegisterUser.md
+  - P-02_LoginUser.md
+  - P-03_ManageFirm.md
+  - P-04_GetFirmFromAnaf.md
+  - P-05_ManageBankAccounts.md
+  - P-06_ManageProducts.md
+  - P-07_ManageDocumentSeries.md
+  - P-08_AddDocument.md
+  - P-09_EditDocument.md
+  - P-10_GetDocuments.md
+  - P-11_DeleteDocument.md
+  - P-12_GeneratePdf.md
+  - P-13_GetDocumentAutofillInfo.md
+  - P-14_GetDashboardStats.md
+  - P-15_TransformToStorno.md

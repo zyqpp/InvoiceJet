@@ -1,0 +1,140 @@
+[
+  {
+    "id": "screen-login-fields",
+    "question": "Jakie pola i walidacje ma ekran logowania?",
+    "rag_profile": "cross_reference",
+    "expected_sources": [
+      "InvoiceJet/doc_AI/01_ekrany/E-01_LoginComponent/E-01_ekran.md"
+    ],
+    "expected_source_types": ["screen"]
+  },
+  {
+    "id": "login-api-dto",
+    "question": "Z jakiego endpointu i DTO korzysta ekran logowania?",
+    "rag_profile": "cross_reference",
+    "expected_sources": [
+      "InvoiceJet/doc_AI/04_api_i_integracje/01_api_frontend/auth/POST_Auth_login.md",
+      "InvoiceJet/doc_AI/05_model_danych/02_dto/DTO-02_LoginUserDto.md"
+    ],
+    "expected_source_types": ["api", "data_model"]
+  },
+  {
+    "id": "register-process",
+    "question": "Jak przebiega proces rejestracji uzytkownika i jakie zrodla go opisuja?",
+    "rag_profile": "full_app_qa",
+    "expected_sources": [
+      "InvoiceJet/doc_AI/01_ekrany/register/ekran.md",
+      "InvoiceJet/doc_AI/04_api_i_integracje/01_api_frontend/auth/POST_Auth_register.md"
+    ],
+    "expected_source_types": ["screen", "api"]
+  },
+  {
+    "id": "document-series-screen-db",
+    "question": "Na ekranie serii dokumentow skad pobierane sa informacje i jaka tabela je przechowuje?",
+    "rag_profile": "cross_reference",
+    "expected_sources": [
+      "InvoiceJet/doc_AI/01_ekrany/document_series",
+      "InvoiceJet/doc_AI/04_api_i_integracje/01_api_frontend/document_series/GET_DocumentSeries_GetAll.md",
+      "InvoiceJet/doc_AI/05_model_danych/01_db/dbo/dbo.DocumentSeries.md"
+    ],
+    "expected_source_types": ["screen", "api", "data_model"]
+  },
+  {
+    "id": "bank-account-screen-api-db",
+    "question": "Na ekranie kont bankowych jakie API i tabela obsluguja liste kont?",
+    "rag_profile": "cross_reference",
+    "expected_sources": [
+      "InvoiceJet/doc_AI/01_ekrany/E-06_BankAccountsComponent",
+      "InvoiceJet/doc_AI/04_api_i_integracje/01_api_frontend/bank_account/GET_BankAccount_GetAll.md",
+      "InvoiceJet/doc_AI/05_model_danych/01_db/dbo/dbo.BankAccount.md"
+    ],
+    "expected_source_types": ["screen", "api", "data_model"]
+  },
+  {
+    "id": "products-screen-api-db",
+    "question": "Jak ekran produktow laczy sie z API i modelem danych?",
+    "rag_profile": "cross_reference",
+    "expected_sources": [
+      "InvoiceJet/doc_AI/01_ekrany/E-07_ProductsComponent",
+      "InvoiceJet/doc_AI/04_api_i_integracje/01_api_frontend/product/GET_Product_GetAll.md"
+    ],
+    "expected_source_types": ["screen", "api", "data_model"]
+  },
+  {
+    "id": "invoice-pdf-process",
+    "question": "Jak generowany jest PDF dokumentu i ktore endpointy sa za to odpowiedzialne?",
+    "rag_profile": "technical_deep_dive",
+    "expected_sources": [
+      "InvoiceJet/doc_AI/04_api_i_integracje/01_api_frontend/document/POST_Document_GeneratePdf.md",
+      "InvoiceJet/doc_AI/04_api_i_integracje/01_api_frontend/document/POST_Document_GetPdfStream.md"
+    ],
+    "expected_source_types": ["api"]
+  },
+  {
+    "id": "dashboard-stats",
+    "question": "Skad dashboard pobiera statystyki i jaki DTO opisuje dane?",
+    "rag_profile": "cross_reference",
+    "expected_sources": [
+      "InvoiceJet/doc_AI/01_ekrany/E-03_DashboardComponent",
+      "InvoiceJet/doc_AI/04_api_i_integracje/01_api_frontend/document/GET_Document_GetDashboardStats.md",
+      "InvoiceJet/doc_AI/05_model_danych/02_dto/DTO-12_DashboardStatsDto.md"
+    ],
+    "expected_source_types": ["screen", "api", "data_model"]
+  },
+  {
+    "id": "roles-permissions-api",
+    "question": "Jak role i uprawnienia wplywaja na dostep do API?",
+    "rag_profile": "technical_deep_dive",
+    "expected_sources": [
+      "InvoiceJet/doc_AI/06_role_i_uprawnienia",
+      "InvoiceJet/doc_AI/_mapowania/mapa_uprawnien_api.md"
+    ],
+    "expected_source_types": ["role", "mapping"]
+  },
+  {
+    "id": "mapping-db-dto-screens",
+    "question": "Gdzie jest mapa laczaca DB, DTO i ekrany?",
+    "rag_profile": "cross_reference",
+    "expected_sources": [
+      "InvoiceJet/doc_AI/_mapowania/mapa_db_dto_ekrany.md"
+    ],
+    "expected_source_types": ["mapping"]
+  },
+  {
+    "id": "sql-documents-by-client",
+    "question": "Przygotuj SELECT, ktory wyciagnie dokumenty dla kontrahenta o nazwie Abacki i wyjasnij tabele oraz JOIN.",
+    "rag_profile": "database_sql",
+    "expected_sources": [
+      "InvoiceJet/doc_AI/05_model_danych/01_db/dbo/dbo.Document.md",
+      "InvoiceJet/doc_AI/05_model_danych/01_db/dbo/dbo.Firm.md"
+    ],
+    "expected_source_types": ["data_model"]
+  },
+  {
+    "id": "sql-documents-by-status-columns",
+    "question": "Zrob SQL, ktory wyswietli dokumenty w statusie Paid i tylko kolumny Id, numer dokumentu, data wystawienia oraz status.",
+    "rag_profile": "database_sql",
+    "expected_sources": [
+      "InvoiceJet/doc_AI/05_model_danych/01_db/dbo/dbo.Document.md",
+      "InvoiceJet/doc_AI/05_model_danych/01_db/dbo/dbo.DocumentStatus.md"
+    ],
+    "expected_source_types": ["data_model"]
+  },
+  {
+    "id": "user-help-invoice",
+    "question": "Jak uzytkownik ma wystawic fakture?",
+    "rag_profile": "user_help",
+    "expected_sources": [
+      "InvoiceJet/doc_user"
+    ],
+    "expected_source_types": ["screen", "process"]
+  },
+  {
+    "id": "fallback-weather",
+    "question": "Jaka bedzie jutro pogoda w Warszawie?",
+    "rag_profile": "full_app_qa",
+    "expected_sources": [],
+    "expected_source_types": [],
+    "expect_fallback": true
+  }
+]

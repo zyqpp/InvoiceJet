@@ -1,0 +1,4 @@
+chromadb>=0.5,<2
+requests>=2.32
+streamlit>=1.49
+

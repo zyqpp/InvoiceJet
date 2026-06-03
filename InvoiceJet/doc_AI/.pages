@@ -1,0 +1,15 @@
+nav:
+  - 00_meta
+  - 01_ekrany
+  - 02_procesy
+  - 03_algorytmy
+  - 04_api_i_integracje
+  - 05_model_danych
+  - 06_role_i_uprawnienia
+  - 07_use_case
+  - 08_model_biznesowy
+  - 09_procesy_biznesowe
+  - 10_testy
+  - _mapowania
+  - _slowniki
+  # README.md, INDEX.md pomijamy w nav — byłyby oddzielnymi "zakładkami"

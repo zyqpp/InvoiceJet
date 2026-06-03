@@ -1,0 +1,73 @@
+# Dodaj konto bankowe — proces techniczny
+
+| Pole | Wartość |
+|---|---|
+| ID dokumentu | PROC-AddBankAccount |
+| Typ dokumentu | proces |
+| Wersja | 0.1 |
+| Status | szkic |
+| Autor (ostatnia modyfikacja) | Agent Claudiusz Sonte 4.6 max |
+| Data ostatniej modyfikacji | 2026-05-31 |
+
+## Streszczenie
+
+Proces tworzy nowe konto bankowe i przypisuje je do firmy zalogowanego użytkownika przez `UserFirmId`. Konto bankowe będzie wyświetlane na fakturach jako dane do przelewu. Nie ma walidacji formatu IBAN po stronie backendu — odpowiedzialność leży po stronie frontendu.
+
+## Cel procesu
+
+Dodać dane konta bankowego firmy (nazwa banku, IBAN, waluta), aby można je było umieszczać na wystawianych dokumentach.
+
+## Charakterystyka
+
+| Atrybut | Wartość |
+|---|---|
+| ID procesu | PROC-AddBankAccount |
+| Typ | główny |
+| Inicjator | Ekran „Konta bankowe" + dialog „Dodaj konto" + operacja zapisu |
+| Warunki startu | Użytkownik zalogowany (JWT); formularz konta bankowego wypełniony |
+| Warunki zakończenia (sukces) | Rekord `BankAccount` zapisany w DB; HTTP 201 |
+| Warunki zakończenia (błąd) | Błąd DB (nieoczekiwany) |
+| Uczestnicy | Frontend (Angular), API (BankAccountController), Service (BankAccountService), Repository (BankAccountRepository), Database (dbo.BankAccount) |
+
+## Diagram sekwencji
+
+→ Przeniesiony do: [BP-CFG-02 Zarządzanie kontami bankowymi](../../../09_procesy_biznesowe/konfiguracja/BP-CFG-02_konta_bankowe.md#diagram-sekwencji)
+
+## Kroki
+
+1. **Odbiór żądania** — `BankAccountController` odbiera `BankAccountRequestDto` z POST `/api/BankAccount/Add`.
+2. **Ekstrakcja userId** — serwis pobiera `userId` z claims JWT.
+3. **Pobranie UserFirmId** — zapytanie przez repozytorium.
+4. **Mapowanie i przypisanie** — `AutoMapper` mapuje DTO → `BankAccount`; serwis ustawia `UserFirmId`.
+5. **Zapis** — `BankAccountRepository.AddAsync(bankAccount)` + `UnitOfWork.CompleteAsync()`.
+6. **Odpowiedź** — HTTP 201 Created.
+
+## Obsługa błędów
+
+| Błąd | Miejsce wystąpienia | Reakcja |
+|---|---|---|
+| Nieautoryzowany dostęp | AuthMiddleware | HTTP 401 Unauthorized |
+| Błąd DB (nieoczekiwany) | BankAccountRepository | HTTP 500 Internal Server Error (ExceptionMiddleware) |
+
+## Powiązania
+
+- Wywołany z ekranu: [Konta bankowe](../../../01_ekrany/firma/konta_bankowe/ekran.md)
+- Powiązane API: [POST /api/BankAccount/Add](../../../04_api_i_integracje/01_api_frontend/bank_account/POST_BankAccount_Add.md)
+- Powiązane algorytmy: [ALG-10 Data Isolation Pattern](../../../03_algorytmy/ALG-10_DataIsolationPattern.md)
+
+## Powiązania z kodem
+
+- Kontroler: `InvoiceJetAPI/Controllers/BankAccountController.cs`
+- Serwis: `InvoiceJetAPI/Services/BankAccountService.cs`
+- Repozytorium: `InvoiceJetAPI/Repositories/BankAccountRepository.cs`
+
+## Wątpliwości i braki
+
+- Brak walidacji formatu IBAN po stronie backendu.
+- Brak limitu liczby kont bankowych per firma.
+
+## Rejestr zmian
+
+| Wersja | Data | Autor | Opis zmiany |
+|---|---|---|---|
+| 0.1 | 2026-05-31 | Agent Claudiusz Sonte 4.6 max | Pierwsza wersja — wyodrębniona z P-05_ManageBankAccounts.md (operacja Add). |

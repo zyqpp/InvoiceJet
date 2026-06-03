@@ -1,0 +1,10 @@
+nav:
+  - README.md
+  - mapa_procesow.md
+  - autentykacja
+  - dokumenty
+  - firma
+  - konfiguracja
+  - produkty
+  - BPMN-01_WystawienieFaktury.md
+  - BPMN-02_Rejestracja_i_OnBoarding.md
