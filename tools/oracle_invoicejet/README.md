@@ -1,50 +1,108 @@
 # Oracle InvoiceJet
 
-Lokalny portal RAG dla dokumentacji InvoiceJet. Działa na Markdownach z repo, używa ChromaDB jako lokalnego indeksu i Ollamy jako źródła modeli LLM oraz embeddingów.
+Lokalny portal RAG dla dokumentacji InvoiceJet. Dziala na Markdownach z repo, uzywa ChromaDB jako lokalnego indeksu i Ollamy jako zrodla modeli LLM oraz embeddingow.
 
-## Co jest źródłem odpowiedzi
+Portal Streamlit dziala na porcie `8502` i jest jedynym aktualnym PoC dla Oracle InvoiceJet.
 
-Domyślna baza odpowiedzi obejmuje tylko:
+## Co jest zrodlem odpowiedzi
+
+Domyslna baza odpowiedzi obejmuje tylko:
 
 - `InvoiceJet/doc_AI`
 - `InvoiceJet/doc_user`
 
-`archiwum/`, `InvoiceJetAPI/docs`, `InvoiceJetUI/docs`, `wytyczne/`, build outputy, `.venv`, `chroma_data`, `models` i katalogi techniczne nie są częścią bazy odpowiedzi.
+Kod aplikacji nie jest jeszcze osobnym zrodlem prawdy. Najpierw stabilizujemy jakosc odpowiedzi na dokumentacji, a dopiero potem mozna dodac tryb code-aware.
 
-## Agenci i modele
+## Taksonomia wiedzy
 
-W portalu „agent” oznacza profil pracy, a nie nazwę modelu. Modele zachowują oryginalne nazwy Ollama.
+Indeks v2 dodaje metadane do kazdego chunka:
 
-Profile:
+- `source_type`: `screen`, `process`, `algorithm`, `api`, `data_model`, `validation`, `role`, `business`, `test`, `mapping`,
+- `area`, `entity`, `screen`, `process`, `table`, `endpoint`,
+- `knowledge_tags`.
 
-- `Mietek` — asystent ogólny, domyślny do codziennego pytania o dokumentację.
-- `Stefan` — techniczny analityk do pytań o architekturę i procesy.
-- `Wojtek` — przewodnik użytkownika do instrukcji krok po kroku.
-- `Albercik` — szybki tryb na lekkim modelu `gemma3:1b`.
-- `Hania` — testerka jakości, więcej źródeł i niska temperatura.
-- `Zosia` — eksperyment z `qwen3:4b`; może wolniej odpowiadać przez tryb `thinking`.
+Metadane sa wyprowadzane ze struktury `doc_AI` i `doc_user`. Dzieki temu portal lepiej odpowiada na pytania przekrojowe, np. ekran -> pole -> API/proces -> tabela.
 
-Domyślny profil sprzętowy RTX 2060 6GB:
+Po aktualizacji do manifestu v2 wykonaj force rebuild:
 
-- LLM: `gemma3:4b`
-- embedding: `bge-m3`
-- `top_k=5`
-- `num_ctx=8192`
-- `temperature=0.1`
-- `num_predict=512`
+```powershell
+cd "G:\Projekty informatyczne\Gotowe aplikacje\InvoiceJet\tools\oracle_invoicejet"
+.\scripts\invoke-refresh-index.ps1 -ForceRebuild
+```
 
-Embedding to liczbowy odcisk tekstu. Oracle zamienia pytanie i fragmenty dokumentacji na wektory, a potem szuka najbardziej podobnych fragmentów. Po zmianie modelu embeddingów trzeba przebudować indeks.
+## Profile RAG
+
+Dostepne profile:
+
+- `full_app_qa` - ogolne pytania o aplikacje,
+- `cross_reference` - pytania przekrojowe ekran/pole/API/tabela,
+- `technical_deep_dive` - backend, API, algorytmy, model danych, role i testy,
+- `user_help` - instrukcje uzytkownika z `doc_user`.
+
+Profil RAG decyduje, jakie typy zrodel sa preferowane przy wyszukiwaniu. `cross_reference` dogrywa kontekst z kilku klas zrodel, zeby nie odpowiadac tylko z jednego najblizszego semantycznie fragmentu.
+
+## Agenci, modele i prompty
+
+Konfiguracje sa w:
+
+- `profiles/agent_profiles.json`,
+- `profiles/model_profiles.json`,
+- `profiles/prompt_profiles.json`.
+
+Agent jest profilem pracy: wybiera profil modelu, prompt i profil RAG. Model profile kontroluje parametry Ollamy, m.in. `temperature`, `top_p`, `top_k`, `repeat_penalty`, `num_ctx`, `num_predict`, `seed` i timeout. Prompt profile opisuje master prompt, polityke zrodel i styl odpowiedzi.
+
+## Streaming odpowiedzi
+
+Czat dziala eventowo:
+
+1. retrieval,
+2. budowanie promptu,
+3. generowanie,
+4. finalna odpowiedz, zrodla i metryki.
+
+Odpowiedz dopisuje sie token po tokenie. Zrodla sa renderowane dopiero po zakonczeniu generacji. Ten kontrakt eventow jest przygotowany pod przyszle SSE/API.
+
+Metryki:
+
+- `retrieval_sec` - czas wyszukiwania kontekstu,
+- `generation_sec` - czas generacji,
+- `total_sec` - caly przebieg,
+- `time_to_first_token_sec` - czas do pierwszego tokenu,
+- `prompt_eval_count`, `eval_count`, `eval_duration_ns` - metryki zwracane przez Ollama, jesli sa dostepne.
+
+## Evaluation Lab
+
+Golden set jest w:
+
+```text
+tools/oracle_invoicejet/eval/golden_set.json
+```
+
+Uruchomienie przez CLI:
+
+```powershell
+.\scripts\invoke-evaluate.ps1 -Mode retrieval
+.\scripts\invoke-evaluate.ps1 -Mode answer -Limit 3
+.\.venv\Scripts\oracle-evaluate.exe --mode retrieval
+.\.venv\Scripts\oracle-evaluate.exe --mode answer --limit 3
+```
+
+Albo przez Python:
+
+```powershell
+python -m oracle_invoicejet.cli_evaluate --mode retrieval
+```
+
+Tryb `retrieval` sprawdza, czy profil RAG znajduje oczekiwane zrodla. Tryb `answer` uruchamia pelny model LLM i jest wolniejszy.
 
 ## Setup lokalny
-
-Uruchom z katalogu repo:
 
 ```powershell
 cd "G:\Projekty informatyczne\Gotowe aplikacje\InvoiceJet\tools\oracle_invoicejet"
 .\scripts\invoke-setup.ps1
 ```
 
-Jeśli PowerShell blokuje skrypty:
+Jesli PowerShell blokuje skrypty:
 
 ```powershell
 powershell -ExecutionPolicy Bypass -File ".\scripts\invoke-setup.ps1"
@@ -52,7 +110,7 @@ powershell -ExecutionPolicy Bypass -File ".\scripts\invoke-setup.ps1"
 
 ## Modele Ollama
 
-Portal pozwala pobierać tylko modele z whitelisty:
+Portal pozwala pobierac tylko modele z whitelisty:
 
 - `gemma3:4b`
 - `gemma3:1b`
@@ -61,7 +119,7 @@ Portal pozwala pobierać tylko modele z whitelisty:
 - `bge-m3`
 - `nomic-embed-text`
 
-Pobranie domyślnego zestawu:
+Pobranie domyslnego zestawu:
 
 ```powershell
 .\scripts\invoke-pull-models.ps1 -Models gemma3:4b,bge-m3
@@ -69,19 +127,19 @@ Pobranie domyślnego zestawu:
 
 ## Indeksacja i refresh bazy
 
-Pierwszy pełny build:
+Pierwszy pelny build albo rebuild po zmianie embeddingu/metadanych:
 
 ```powershell
 .\scripts\invoke-refresh-index.ps1 -ForceRebuild
 ```
 
-Codzienne odświeżenie po zmianach w dokumentacji:
+Codzienne odswiezenie po zmianach w dokumentacji:
 
 ```powershell
 .\scripts\invoke-refresh-index.ps1
 ```
 
-Refresh działa incremental: nowe pliki są dodawane, zmienione pliki są reindeksowane po hashach, usunięte pliki są usuwane z indeksu. Jeśli zmieni się kluczowe zdanie w istniejącym pliku, manifest wykryje zmianę i przebuduje chunki tylko dla tego pliku.
+Refresh dziala incremental: nowe pliki sa dodawane, zmienione pliki sa reindeksowane po hashach, usuniete pliki sa usuwane z indeksu.
 
 ## Portal
 
@@ -95,65 +153,35 @@ Adres:
 http://127.0.0.1:8502
 ```
 
-Zakładki:
+Zakladki:
 
-- `Czat` — pytanie do Oracle z wybranym profilem pracy.
-- `Wyszukiwarka` — test surowego wyszukiwania semantycznego.
-- `Źródła` — lista plików w bazie odpowiedzi.
-- `Indeks` — status manifestu, refresh i force rebuild.
-- `Agenci i modele` — profile pracy, status modeli i pobieranie z whitelisty.
-- `Diagnostyka` — doctor, test embeddingu, test RAG i test fallbacku.
-
-## Plan rozbudowy LLM
-
-Plan dalszego rozwoju sterowania modelami, master promptami, agentami, profilami RAG, narzedziami i ewaluacja jakosci jest w:
-
-```text
-tools/oracle_invoicejet/LLM_EXPANSION_PLAN_PL.md
-```
-
-## Docker
-
-Docker uruchamia portal. Ollama działa poza kontenerem na hoście.
-
-Wymagania:
-
-- Ollama działa lokalnie i odpowiada pod `http://127.0.0.1:11434`.
-- Modele są pobrane na hoście, np. `gemma3:4b` i `bge-m3`.
-
-Start:
-
-```powershell
-cd "G:\Projekty informatyczne\Gotowe aplikacje\InvoiceJet\tools\oracle_invoicejet"
-docker compose up --build
-```
-
-Albo przez launcher:
-
-```powershell
-.\scripts\invoke-docker.ps1 -Build
-```
-
-Portal w kontenerze łączy się z Ollamą przez `http://host.docker.internal:11434`. Indeks kontenerowy zapisuje się w `tools/oracle_invoicejet/docker-data`.
+- `Czat` - streamingowa odpowiedz Oracle z wybranym agentem, profilem RAG, modelem i promptem.
+- `Wyszukiwarka` - test surowego/profilowanego retrievalu.
+- `Zrodla` - lista plikow w bazie odpowiedzi z metadanymi.
+- `Indeks` - status manifestu, refresh i force rebuild.
+- `Ewaluacja` - golden set dla jakosci odpowiedzi przekrojowych.
+- `Agenci i modele` - profile pracy, status modeli, prompt studio preview i profile RAG.
+- `Diagnostyka` - doctor, test embeddingu, test RAG i test fallbacku.
 
 ## Diagnostyka i testy
 
 ```powershell
 .\scripts\invoke-doctor.ps1
 .\scripts\invoke-doctor.ps1 -TestEmbedding
-.\scripts\invoke-query.ps1 -Question "Jak wygląda proces rejestracji i logowania w InvoiceJet?"
-.\scripts\invoke-query.ps1 -Question "Jaka będzie jutro pogoda w Warszawie?"
+.\scripts\invoke-query.ps1 -Question "Na ekranie serii dokumentow skad pobierane sa informacje i jaka tabela je przechowuje?"
+.\scripts\invoke-query.ps1 -Question "Jaka bedzie jutro pogoda w Warszawie?"
 ```
 
-Pytanie spoza dokumentacji ma zwrócić dokładnie:
+Pytanie spoza dokumentacji ma zwrocic:
 
 ```text
 Nie znalazłem tego w dokumentacji.
 ```
 
-## Jakość
+## Jakosc
 
-- Odpowiedzi są po polsku i tylko z kontekstu.
-- Każda odpowiedź ma cytowania albo stały fallback.
-- UI nie zawiera logiki chunkingu, promptowania ani indeksowania poza wywołaniem serwisów.
-- `.env`, `.venv`, `chroma_data`, `docker-data`, manifest i modele nie są commitowane.
+- Odpowiedzi sa po polsku i tylko z kontekstu.
+- Kazda odpowiedz ma cytowania albo staly fallback.
+- Zrodla pojawiaja sie dopiero po zakonczeniu generacji.
+- UI nie zawiera logiki chunkingu, promptowania ani indeksowania poza wywolaniem serwisow.
+- `.env`, `.venv`, `chroma_data`, `docker-data`, manifest i modele nie sa commitowane.

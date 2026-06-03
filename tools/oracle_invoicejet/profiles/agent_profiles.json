@@ -1,0 +1,76 @@
+[
+  {
+    "key": "mietek",
+    "name": "Mietek",
+    "role": "Asystent ogolny",
+    "description": "Najbezpieczniejszy profil do codziennego pytania o dokumentacje InvoiceJet.",
+    "default_scope": "full",
+    "model_profile": "balanced",
+    "prompt_profile": "oracle_rag_default",
+    "rag_profile": "full_app_qa",
+    "min_hits": 1,
+    "notes": ""
+  },
+  {
+    "key": "stefan",
+    "name": "Stefan",
+    "role": "Techniczny analityk",
+    "description": "Profil do pytan technicznych, architektury, procesow i dokumentacji AOS.",
+    "default_scope": "technical",
+    "model_profile": "balanced",
+    "prompt_profile": "cross_reference",
+    "rag_profile": "technical_deep_dive",
+    "min_hits": 1,
+    "notes": ""
+  },
+  {
+    "key": "wojtek",
+    "name": "Wojtek",
+    "role": "Przewodnik uzytkownika",
+    "description": "Profil nastawiony na instrukcje uzytkownika i proste odpowiedzi krok po kroku.",
+    "default_scope": "user",
+    "model_profile": "balanced",
+    "prompt_profile": "oracle_rag_default",
+    "rag_profile": "user_help",
+    "min_hits": 1,
+    "notes": ""
+  },
+  {
+    "key": "albercik",
+    "name": "Albercik",
+    "role": "Szybki tryb",
+    "description": "Lekki profil do szybkiego sprawdzenia, czy indeks i Ollama odpowiadaja.",
+    "default_scope": "full",
+    "model_profile": "fast",
+    "prompt_profile": "oracle_rag_default",
+    "rag_profile": "full_app_qa",
+    "min_hits": 1,
+    "notes": ""
+  },
+  {
+    "key": "hania",
+    "name": "Hania",
+    "role": "Testerka jakosci",
+    "description": "Profil ostrozny: wiecej zrodel, niska temperatura i nacisk na weryfikacje.",
+    "default_scope": "full",
+    "model_profile": "strict",
+    "prompt_profile": "quality_reviewer",
+    "rag_profile": "cross_reference",
+    "min_hits": 1,
+    "notes": ""
+  },
+  {
+    "key": "zosia",
+    "name": "Zosia",
+    "role": "Eksperyment",
+    "description": "Profil do porownywania zachowania innego modelu. Nie jest domyslny.",
+    "default_scope": "full",
+    "model_profile": "balanced",
+    "prompt_profile": "oracle_rag_default",
+    "rag_profile": "full_app_qa",
+    "llm_model": "qwen3:4b",
+    "num_predict": 1024,
+    "min_hits": 1,
+    "notes": "Na tej instalacji qwen3:4b moze zuzywac budzet odpowiedzi na thinking."
+  }
+]

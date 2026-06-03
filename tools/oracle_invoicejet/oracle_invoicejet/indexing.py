@@ -27,6 +27,7 @@ class IngestStats:
     collection_records: int = 0
     elapsed_seconds: float = 0.0
     source_counts: dict[str, int] = field(default_factory=dict)
+    source_type_counts: dict[str, int] = field(default_factory=dict)
     warnings: List[str] = field(default_factory=list)
 
 
@@ -77,6 +78,14 @@ class ChromaIndexRepository:
                 "source_group": document.source_group,
                 "audience": document.audience,
                 "priority": document.priority,
+                "source_type": document.source_type,
+                "area": document.area,
+                "entity": document.entity,
+                "screen": document.screen,
+                "process": document.process,
+                "table": document.table,
+                "endpoint": document.endpoint,
+                "knowledge_tags": document.knowledge_tags,
                 "heading": chunk.heading,
                 "heading_path": chunk.heading_path,
                 "chunk_index": chunk.chunk_index,
@@ -134,6 +143,7 @@ class IndexManager:
 
         for document in documents:
             stats.source_counts[document.source_group] = stats.source_counts.get(document.source_group, 0) + 1
+            stats.source_type_counts[document.source_type] = stats.source_type_counts.get(document.source_type, 0) + 1
             try:
                 text = read_markdown(document.path)
             except UnicodeDecodeError:
@@ -189,4 +199,3 @@ class IndexManager:
         stats.collection_records = repository.count()
         stats.elapsed_seconds = time.perf_counter() - start
         return stats
-

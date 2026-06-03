@@ -1,5 +1,18 @@
 # Plan rozbudowy Agent AI / RAG / LLM Control Center
 
+## Status po iteracji AOS_RAG_POC
+
+Zaimplementowano pierwszy pionowy przekroj planu:
+
+- taksonomie zrodel i manifest indeksu v2,
+- profile RAG: `full_app_qa`, `cross_reference`, `technical_deep_dive`, `user_help`,
+- streaming odpowiedzi w Oracle InvoiceJet z eventami faz, tokenami, finalnymi zrodlami i metrykami,
+- plikowe profile agentow, modeli i promptow w `profiles/*.json`,
+- Evaluation Lab z golden setem w `eval/golden_set.json`,
+- bezpieczne narzedzia tylko do odczytu w `oracle_tools.py`.
+
+Kolejny krok po tej iteracji: przebudowac indeks `-ForceRebuild`, uruchomic Evaluation Lab, poprawic dokumentacje tam, gdzie golden set ujawni brakujace lub zbyt slabe mapowania.
+
 ## 1. Cel
 
 Obecny `Oracle InvoiceJet` ma dzialajacy lokalny RAG: Chroma jako baza wiedzy, Ollama jako zrodlo modeli LLM i embeddingow, Streamlit jako GUI na porcie `8502`, profile agentow, diagnostyke, indeks i wyszukiwarke. Kolejny etap powinien rozbudowac go w narzedzie do kontrolowania pracy LLM:

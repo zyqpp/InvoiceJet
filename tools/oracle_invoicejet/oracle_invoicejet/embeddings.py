@@ -73,20 +73,37 @@ class OllamaClient:
             raise OllamaError("Ollama /api/embeddings did not return embedding.")
         return embedding
 
-    def generate(self, model: str, prompt: str, num_ctx: int, temperature: float, num_predict: int) -> dict[str, Any]:
+    def generate(
+        self,
+        model: str,
+        prompt: str,
+        num_ctx: int,
+        temperature: float,
+        num_predict: int,
+        top_p: float = 0.9,
+        llm_top_k: int = 40,
+        repeat_penalty: float = 1.1,
+        seed: int | None = None,
+        timeout_sec: int = 900,
+    ) -> dict[str, Any]:
+        options = _generate_options(
+            num_ctx=num_ctx,
+            temperature=temperature,
+            num_predict=num_predict,
+            top_p=top_p,
+            llm_top_k=llm_top_k,
+            repeat_penalty=repeat_penalty,
+            seed=seed,
+        )
         response = requests.post(
             f"{self.base_url}/api/generate",
             json={
                 "model": model,
                 "prompt": prompt,
                 "stream": False,
-                "options": {
-                    "num_ctx": num_ctx,
-                    "temperature": temperature,
-                    "num_predict": num_predict,
-                },
+                "options": options,
             },
-            timeout=900,
+            timeout=timeout_sec,
         )
         response.raise_for_status()
         return response.json()
@@ -98,22 +115,31 @@ class OllamaClient:
         num_ctx: int,
         temperature: float,
         num_predict: int,
+        top_p: float = 0.9,
+        llm_top_k: int = 40,
+        repeat_penalty: float = 1.1,
+        seed: int | None = None,
+        timeout_sec: int = 900,
     ) -> Iterable[dict[str, Any]]:
         payload = {
             "model": model,
             "prompt": prompt,
             "stream": True,
-            "options": {
-                "num_ctx": num_ctx,
-                "temperature": temperature,
-                "num_predict": num_predict,
-            },
+            "options": _generate_options(
+                num_ctx=num_ctx,
+                temperature=temperature,
+                num_predict=num_predict,
+                top_p=top_p,
+                llm_top_k=llm_top_k,
+                repeat_penalty=repeat_penalty,
+                seed=seed,
+            ),
         }
         with requests.post(
             f"{self.base_url}/api/generate",
             json=payload,
             stream=True,
-            timeout=(10, 900),
+            timeout=(10, timeout_sec),
         ) as response:
             response.raise_for_status()
             for line in response.iter_lines(decode_unicode=True):
@@ -125,6 +151,28 @@ class OllamaClient:
                     yield json.loads(line)
                 except json.JSONDecodeError:
                     continue
+
+
+def _generate_options(
+    num_ctx: int,
+    temperature: float,
+    num_predict: int,
+    top_p: float,
+    llm_top_k: int,
+    repeat_penalty: float,
+    seed: int | None,
+) -> dict[str, Any]:
+    options: dict[str, Any] = {
+        "num_ctx": num_ctx,
+        "temperature": temperature,
+        "num_predict": num_predict,
+        "top_p": top_p,
+        "top_k": llm_top_k,
+        "repeat_penalty": repeat_penalty,
+    }
+    if seed is not None:
+        options["seed"] = seed
+    return options
 
 
 class OllamaEmbeddingProvider:
@@ -145,4 +193,3 @@ class OllamaEmbeddingProvider:
 
     def dimensions(self) -> int:
         return len(self.embed_query("test"))
-

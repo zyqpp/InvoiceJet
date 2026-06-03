@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import argparse
+import json
 from pathlib import Path
 import subprocess
 import sys
@@ -41,6 +42,8 @@ def ingest_main() -> None:
     print(f"Elapsed seconds    : {stats.elapsed_seconds:.2f}")
     if stats.source_counts:
         print("Source groups      :", ", ".join(f"{key}={value}" for key, value in sorted(stats.source_counts.items())))
+    if stats.source_type_counts:
+        print("Source types       :", ", ".join(f"{key}={value}" for key, value in sorted(stats.source_type_counts.items())))
     for warning in stats.warnings:
         print(f"[WARN] {warning}")
 
@@ -52,8 +55,15 @@ def query_main() -> None:
     parser = argparse.ArgumentParser(description="Zadaje pytanie do Oracle InvoiceJet.")
     parser.add_argument("question", nargs="+", help="Pytanie do dokumentacji.")
     parser.add_argument("--scope", default=None, help="Zakres: full, technical, user, backend, frontend, debt.")
+    parser.add_argument("--rag-profile", default=None, help="Profil RAG: full_app_qa, cross_reference, technical_deep_dive, user_help.")
+    parser.add_argument("--prompt-profile", default=None, help="Profil promptu z katalogu profiles.")
     args = parser.parse_args()
-    result = OracleOrchestrator(load_config()).answer(" ".join(args.question), requested_scope=args.scope)
+    result = OracleOrchestrator(load_config()).answer(
+        " ".join(args.question),
+        requested_scope=args.scope,
+        requested_rag_profile=args.rag_profile,
+        prompt_profile_key=args.prompt_profile,
+    )
     print(result.answer)
     if result.answer.strip() == NO_ANSWER and not result.citation_lines and not result.warnings:
         return
@@ -65,30 +75,45 @@ def query_main() -> None:
         print("\nŹródła systemowe:")
         for citation in result.citation_lines:
             print(f"- {citation}")
-    print(f"\nZakres: {result.scope} | verified={result.verified}")
+    print(f"\nZakres: {result.scope} | RAG={result.rag_profile} | prompt={result.prompt_profile} | verified={result.verified}")
+    if result.stats:
+        print("Metryki:")
+        for key, value in result.stats.items():
+            print(f"- {key}: {value}")
 
 
 def evaluate_main() -> None:
-    from .retrieval import RetrievalService
+    from .evaluation import result_to_row, run_eval_set, summarize_results
 
-    parser = argparse.ArgumentParser(description="Uruchamia podstawowe pytania kontrolne retrievalu.")
-    parser.add_argument("--top-k", type=int, default=None)
+    parser = argparse.ArgumentParser(description="Uruchamia golden set Oracle InvoiceJet.")
+    parser.add_argument("--mode", choices=["retrieval", "answer"], default="retrieval")
+    parser.add_argument("--limit", type=int, default=None)
+    parser.add_argument("--json", action="store_true", help="Wypisz raport jako JSON.")
     args = parser.parse_args()
     config = load_config()
-    service = RetrievalService(config)
-    questions = [
-        "Jak działa logowanie użytkownika?",
-        "Jak generowany jest PDF dokumentu?",
-        "Jak działa integracja z ANAF?",
-        "Jakie są krytyczne elementy długu technicznego?",
-        "Jaka jest struktura dokumentacji technicznej?",
-    ]
-    for question in questions:
-        hits = service.search(question, top_k=args.top_k or config.top_k)
-        print(f"\n## {question}")
-        print(f"Hits: {len(hits)}")
-        for hit in hits[:3]:
-            print(f"- {hit.source_path} | {hit.metadata.get('heading_path', 'ROOT')} | distance={hit.distance:.6f}")
+    results = run_eval_set(config, mode=args.mode, limit=args.limit)
+    summary = summarize_results(results)
+    rows = [result_to_row(result) for result in results]
+    if args.json:
+        print(json.dumps({"summary": summary, "results": rows}, ensure_ascii=False, indent=2))
+        return
+    print("=== Oracle Evaluation Lab ===")
+    print(f"Mode      : {args.mode}")
+    print(f"Total     : {summary['total']}")
+    print(f"Passed    : {summary['passed']}")
+    print(f"Failed    : {summary['failed']}")
+    print(f"Pass rate : {summary['pass_rate']:.0%}")
+    print(f"Elapsed   : {summary['elapsed_sec']:.2f}s")
+    for row in rows:
+        status = "OK" if row["passed"] else "FAIL"
+        print(f"\n[{status}] {row['id']} | {row['rag_profile']} | {row['elapsed_sec']}s")
+        print(row["question"])
+        if row["missing_sources"]:
+            print(f"Missing sources: {row['missing_sources']}")
+        if row["missing_source_types"]:
+            print(f"Missing source types: {row['missing_source_types']}")
+        if row["error"]:
+            print(f"Error: {row['error']}")
 
 
 def serve_main() -> None:

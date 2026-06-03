@@ -7,7 +7,7 @@ from typing import Dict, List
 
 
 ENV_PREFIX = "ORACLE_"
-MANIFEST_SCHEMA_VERSION = 1
+MANIFEST_SCHEMA_VERSION = 2
 
 
 @dataclass(frozen=True)
@@ -20,6 +20,11 @@ class ModelPreset:
     num_ctx: int
     temperature: float
     num_predict: int
+    top_p: float = 0.9
+    llm_top_k: int = 40
+    repeat_penalty: float = 1.1
+    seed: int | None = None
+    timeout_sec: int = 900
 
 
 @dataclass(frozen=True)
@@ -44,6 +49,11 @@ class AppConfig:
     num_ctx: int
     temperature: float
     num_predict: int
+    top_p: float
+    llm_top_k: int
+    repeat_penalty: float
+    seed: int | None
+    timeout_sec: int
     chunk_size: int
     chunk_overlap: int
     batch_size: int
@@ -59,7 +69,7 @@ PRESETS: Dict[str, ModelPreset] = {
         label="RTX 2060 6GB",
         llm_model="gemma3:4b",
         embedding_model="bge-m3",
-        top_k=5,
+        top_k=6,
         num_ctx=8192,
         temperature=0.1,
         num_predict=512,
@@ -129,6 +139,12 @@ def load_config() -> AppConfig:
     num_ctx = int(_read_var("NUM_CTX", str(preset.num_ctx), dotenv_values))
     temperature = float(_read_var("TEMPERATURE", str(preset.temperature), dotenv_values))
     num_predict = int(_read_var("NUM_PREDICT", str(preset.num_predict), dotenv_values))
+    top_p = float(_read_var("TOP_P", str(preset.top_p), dotenv_values))
+    llm_top_k = int(_read_var("LLM_TOP_K", str(preset.llm_top_k), dotenv_values))
+    repeat_penalty = float(_read_var("REPEAT_PENALTY", str(preset.repeat_penalty), dotenv_values))
+    seed_value = _read_var("SEED", "" if preset.seed is None else str(preset.seed), dotenv_values)
+    seed = int(seed_value) if seed_value.strip() else None
+    timeout_sec = int(_read_var("TIMEOUT_SEC", str(preset.timeout_sec), dotenv_values))
 
     chunk_size = int(_read_var("CHUNK_SIZE", "1800", dotenv_values))
     chunk_overlap = int(_read_var("CHUNK_OVERLAP", "250", dotenv_values))
@@ -149,8 +165,10 @@ def load_config() -> AppConfig:
         raise ValueError("ORACLE_CHUNK_OVERLAP must be smaller than ORACLE_CHUNK_SIZE.")
     if not repo_root.exists():
         raise ValueError(f"Repo root does not exist: {repo_root}")
-    if top_k <= 0 or batch_size <= 0 or min_hits <= 0:
-        raise ValueError("ORACLE_TOP_K, ORACLE_BATCH_SIZE and ORACLE_MIN_HITS must be positive.")
+    if top_k <= 0 or batch_size <= 0 or min_hits <= 0 or llm_top_k <= 0 or timeout_sec <= 0:
+        raise ValueError("ORACLE_TOP_K, ORACLE_BATCH_SIZE, ORACLE_MIN_HITS, ORACLE_LLM_TOP_K and ORACLE_TIMEOUT_SEC must be positive.")
+    if not 0.0 <= temperature <= 2.0 or not 0.0 < top_p <= 1.0 or repeat_penalty <= 0:
+        raise ValueError("ORACLE_TEMPERATURE, ORACLE_TOP_P and ORACLE_REPEAT_PENALTY are outside supported ranges.")
 
     return AppConfig(
         tool_root=tool_root,
@@ -165,6 +183,11 @@ def load_config() -> AppConfig:
         num_ctx=num_ctx,
         temperature=temperature,
         num_predict=num_predict,
+        top_p=top_p,
+        llm_top_k=llm_top_k,
+        repeat_penalty=repeat_penalty,
+        seed=seed,
+        timeout_sec=timeout_sec,
         chunk_size=chunk_size,
         chunk_overlap=chunk_overlap,
         batch_size=batch_size,

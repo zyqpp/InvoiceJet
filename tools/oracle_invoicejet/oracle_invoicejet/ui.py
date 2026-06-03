@@ -12,8 +12,11 @@ from oracle_invoicejet.config import AppConfig, load_config
 from oracle_invoicejet.diagnostics import DoctorService, recommended_models
 from oracle_invoicejet.documents import discover_documents
 from oracle_invoicejet.embeddings import OllamaClient
+from oracle_invoicejet.evaluation import result_to_row, run_eval_set, summarize_results
 from oracle_invoicejet.indexing import IndexManager
+from oracle_invoicejet.profiles import get_model_profile, list_model_profiles, list_prompt_profiles
 from oracle_invoicejet.rag import NO_ANSWER
+from oracle_invoicejet.rag_profiles import get_rag_profile, list_rag_profiles
 from oracle_invoicejet.retrieval import RetrievalService
 
 
@@ -40,27 +43,31 @@ def main() -> None:
     config: AppConfig = runtime["config"]
     profile: AgentProfile = runtime["profile"]
     scope: str = runtime["scope"]
+    rag_profile_key: str = runtime["rag_profile"]
+    prompt_profile_key: str = runtime["prompt_profile"]
     show_trace: bool = runtime["show_trace"]
 
     st.title("Oracle InvoiceJet")
-    st.caption("Lokalny portal RAG nad dokumentacją InvoiceJet. Modele mają oryginalne nazwy Ollama; agenci są profilami pracy.")
+    st.caption("Lokalny portal RAG nad dokumentacją InvoiceJet. Jeden portal, Chroma + Ollama, profile RAG/modeli/promptów.")
 
-    chat_tab, search_tab, sources_tab, index_tab, agents_tab, diagnostics_tab = st.tabs(
-        ["Czat", "Wyszukiwarka", "Źródła", "Indeks", "Agenci i modele", "Diagnostyka"]
+    chat_tab, search_tab, sources_tab, index_tab, eval_tab, agents_tab, diagnostics_tab = st.tabs(
+        ["Czat", "Wyszukiwarka", "Źródła", "Indeks", "Ewaluacja", "Agenci i modele", "Diagnostyka"]
     )
 
     with chat_tab:
-        render_chat_tab(config, profile, scope, show_trace)
+        render_chat_tab(config, profile, scope, rag_profile_key, prompt_profile_key, show_trace)
     with search_tab:
-        render_search_tab(config, scope)
+        render_search_tab(config, rag_profile_key)
     with sources_tab:
         render_sources_tab(config)
     with index_tab:
         render_index_tab(config)
+    with eval_tab:
+        render_evaluation_tab(config)
     with agents_tab:
         render_agents_models_tab(config, profile)
     with diagnostics_tab:
-        render_diagnostics_tab(config, scope)
+        render_diagnostics_tab(config, scope, rag_profile_key, prompt_profile_key)
 
 
 def render_sidebar(base_config: AppConfig) -> dict[str, Any]:
@@ -73,7 +80,7 @@ def render_sidebar(base_config: AppConfig) -> dict[str, Any]:
             "Agent",
             options=profile_labels,
             index=0,
-            help="Agent w portalu to gotowy profil pracy: zakres źródeł, model LLM, embedding i parametry odpowiedzi.",
+            help="Agent to profil pracy: model, prompt, RAG profile, zakres źródeł i limity.",
         )
         profile = get_agent_profile(profiles[profile_labels.index(selected_label)].key)
         st.caption(profile.description)
@@ -86,44 +93,83 @@ def render_sidebar(base_config: AppConfig) -> dict[str, Any]:
             options=scope_options,
             index=scope_options.index(profile.default_scope),
             format_func=lambda value: SCOPE_LABELS.get(value, value),
-            help="Zakres decyduje, które grupy dokumentacji są przeszukiwane.",
+        )
+
+        model_profiles = list_model_profiles(base_config.tool_root)
+        model_keys = [item.key for item in model_profiles]
+        selected_model_key = st.selectbox(
+            "Profil modelu",
+            options=model_keys,
+            index=model_option_index(model_keys, profile.model_profile),
+            format_func=lambda key: get_model_profile(base_config.tool_root, key).name,
+        )
+        model_profile = get_model_profile(base_config.tool_root, selected_model_key)
+        use_agent_overrides = selected_model_key == profile.model_profile
+        default_llm_model = profile.llm_model if use_agent_overrides else model_profile.llm_model
+        default_embedding_model = profile.embedding_model if use_agent_overrides else model_profile.embedding_model
+        default_top_k = profile.top_k if use_agent_overrides else model_profile.top_k
+        default_num_ctx = profile.num_ctx if use_agent_overrides else model_profile.num_ctx
+        default_temperature = profile.temperature if use_agent_overrides else model_profile.temperature
+        default_num_predict = profile.num_predict if use_agent_overrides else model_profile.num_predict
+        default_top_p = profile.top_p if use_agent_overrides else model_profile.top_p
+        default_llm_top_k = profile.llm_top_k if use_agent_overrides else model_profile.llm_top_k
+        default_repeat_penalty = profile.repeat_penalty if use_agent_overrides else model_profile.repeat_penalty
+        default_seed = profile.seed if use_agent_overrides else model_profile.seed
+        default_timeout_sec = profile.timeout_sec if use_agent_overrides else model_profile.timeout_sec
+
+        rag_profiles = list_rag_profiles()
+        rag_keys = [item.key for item in rag_profiles]
+        rag_profile_key = st.selectbox(
+            "Profil RAG",
+            options=rag_keys,
+            index=model_option_index(rag_keys, profile.rag_profile),
+            format_func=lambda key: get_rag_profile(key).label,
+            help="Profil RAG decyduje, jakie typy źródeł mają dostać priorytet.",
+        )
+
+        prompt_profiles = list_prompt_profiles(base_config.tool_root)
+        prompt_keys = [item.key for item in prompt_profiles]
+        prompt_profile_key = st.selectbox(
+            "Master prompt",
+            options=prompt_keys,
+            index=model_option_index(prompt_keys, profile.prompt_profile),
+            format_func=lambda key: next(item.name for item in prompt_profiles if item.key == key),
         )
 
         st.markdown("**Podstawowe**")
-        top_k = st.slider(
-            "Liczba źródeł",
-            min_value=1,
-            max_value=20,
-            value=profile.top_k,
-            help="Ile najlepiej pasujących fragmentów dokumentacji trafi do odpowiedzi.",
-        )
+        top_k = st.slider("Liczba źródeł", min_value=1, max_value=24, value=default_top_k)
         temperature = st.slider(
             "Kreatywność",
             min_value=0.0,
             max_value=1.0,
-            value=float(profile.temperature),
+            value=float(default_temperature),
             step=0.05,
-            help="Niżej = bardziej konsekwentnie i bezpiecznie. Do dokumentacji zwykle 0.0–0.2.",
+            help="Niżej = bardziej konsekwentnie i bezpiecznie. Do dokumentacji zwykle 0.0-0.2.",
         )
 
         with st.expander("Opcje zaawansowane", expanded=False):
             llm_model = st.selectbox(
                 "Model LLM",
-                options=llm_model_options(base_config.allowed_models, profiles),
-                index=model_option_index(llm_model_options(base_config.allowed_models, profiles), profile.llm_model),
-                help="Model Ollama generujący odpowiedź. Nazwa modelu nie jest tłumaczona.",
+                options=llm_model_options(base_config.allowed_models, profiles, model_profiles),
+                index=model_option_index(llm_model_options(base_config.allowed_models, profiles, model_profiles), default_llm_model),
             )
             embedding_model = st.selectbox(
                 "Model embeddingów",
-                options=embedding_model_options(base_config.allowed_models, profiles),
-                index=model_option_index(embedding_model_options(base_config.allowed_models, profiles), profile.embedding_model),
+                options=embedding_model_options(base_config.allowed_models, profiles, model_profiles),
+                index=model_option_index(embedding_model_options(base_config.allowed_models, profiles, model_profiles), default_embedding_model),
                 help=EMBEDDING_HELP,
             )
-            num_ctx = st.number_input("Kontekst modelu", min_value=1024, max_value=32768, value=profile.num_ctx, step=1024)
-            num_predict = st.number_input("Maks. tokeny odpowiedzi", min_value=128, max_value=4096, value=profile.num_predict, step=128)
+            num_ctx = st.number_input("Kontekst modelu", min_value=1024, max_value=32768, value=default_num_ctx, step=1024)
+            num_predict = st.number_input("Maks. tokeny odpowiedzi", min_value=128, max_value=4096, value=default_num_predict, step=128)
+            top_p = st.slider("top_p", min_value=0.05, max_value=1.0, value=float(default_top_p), step=0.05)
+            llm_top_k = st.number_input("top_k modelu", min_value=1, max_value=200, value=default_llm_top_k, step=1)
+            repeat_penalty = st.slider("repeat_penalty", min_value=0.8, max_value=2.0, value=float(default_repeat_penalty), step=0.05)
+            seed_raw = st.text_input("seed", value="" if default_seed is None else str(default_seed))
+            timeout_sec = st.number_input("Timeout generacji [s]", min_value=30, max_value=3600, value=default_timeout_sec, step=30)
             min_hits = st.number_input("Minimalna liczba trafień", min_value=1, max_value=10, value=profile.min_hits)
             show_trace = st.toggle("Pokaż trace agentów", value=False)
 
+        seed = int(seed_raw) if seed_raw.strip() else None
         if embedding_model != base_config.embedding_model:
             st.warning("Zmieniasz embedding względem bieżącej konfiguracji. Po zmianie embeddingu przebuduj indeks.")
 
@@ -135,18 +181,39 @@ def render_sidebar(base_config: AppConfig) -> dict[str, Any]:
             temperature=float(temperature),
             num_ctx=int(num_ctx),
             num_predict=int(num_predict),
+            top_p=float(top_p),
+            llm_top_k=int(llm_top_k),
+            repeat_penalty=float(repeat_penalty),
+            seed=seed,
+            timeout_sec=int(timeout_sec),
             min_hits=int(min_hits),
         )
 
         st.divider()
-        render_sidebar_status(config, profile)
+        render_sidebar_status(config, profile, selected_model_key, rag_profile_key, prompt_profile_key)
 
-    return {"config": config, "profile": profile, "scope": scope, "show_trace": show_trace}
+    return {
+        "config": config,
+        "profile": profile,
+        "scope": scope,
+        "rag_profile": rag_profile_key,
+        "prompt_profile": prompt_profile_key,
+        "show_trace": show_trace,
+    }
 
 
-def render_sidebar_status(config: AppConfig, profile: AgentProfile) -> None:
+def render_sidebar_status(
+    config: AppConfig,
+    profile: AgentProfile,
+    model_profile: str,
+    rag_profile: str,
+    prompt_profile: str,
+) -> None:
     st.markdown("**Aktywna konfiguracja**")
     st.write(f"Agent: `{profile.name}`")
+    st.write(f"Model profile: `{model_profile}`")
+    st.write(f"RAG profile: `{rag_profile}`")
+    st.write(f"Prompt: `{prompt_profile}`")
     st.write(f"LLM: `{config.llm_model}`")
     st.write(f"Embedding: `{config.embedding_model}`")
     st.write(f"Ollama: `{config.ollama_base_url}`")
@@ -160,17 +227,29 @@ def render_sidebar_status(config: AppConfig, profile: AgentProfile) -> None:
         st.error(message)
 
 
-def render_chat_tab(config: AppConfig, profile: AgentProfile, scope: str, show_trace: bool) -> None:
+def render_chat_tab(
+    config: AppConfig,
+    profile: AgentProfile,
+    scope: str,
+    rag_profile: str,
+    prompt_profile: str,
+    show_trace: bool,
+) -> None:
     st.subheader("Czat z dokumentacją")
     st.info(
-        f"Aktywny profil: **{profile.name}** — {profile.role}. "
-        f"Model: `{config.llm_model}`, embedding: `{config.embedding_model}`, zakres: `{SCOPE_LABELS.get(scope, scope)}`."
+        f"Aktywny profil: **{profile.name}** - {profile.role}. "
+        f"Model: `{config.llm_model}`, embedding: `{config.embedding_model}`, "
+        f"RAG: `{rag_profile}`, prompt: `{prompt_profile}`."
     )
-    question = st.text_area("Pytanie", height=120, placeholder="Np. Jak wygląda proces rejestracji i logowania?")
+    question = st.text_area(
+        "Pytanie",
+        height=120,
+        placeholder="Np. Na ekranie serii dokumentów skąd pobierane są informacje i jaka tabela je przechowuje?",
+    )
     col_ask, col_example = st.columns([1, 1])
     ask_clicked = col_ask.button("Zapytaj Oracle", type="primary")
-    if col_example.button("Wstaw pytanie przykładowe"):
-        question = "Jak wygląda proces rejestracji i logowania w InvoiceJet?"
+    if col_example.button("Wstaw pytanie przekrojowe"):
+        question = "Na ekranie serii dokumentów skąd pobierane są informacje i jaka tabela je przechowuje?"
         st.session_state["oracle_example_question"] = question
     question = st.session_state.pop("oracle_example_question", question)
 
@@ -180,50 +259,95 @@ def render_chat_tab(config: AppConfig, profile: AgentProfile, scope: str, show_t
         st.warning("Wpisz pytanie.")
         return
 
-    with st.spinner("Oracle pracuje: Router → Retriever → Answerer → Verifier..."):
-        try:
-            result = OracleOrchestrator(config).answer(question.strip(), requested_scope=scope)
-        except Exception as exc:  # noqa: BLE001
-            st.error(f"Błąd zapytania: {exc}")
-            return
+    answer_placeholder = st.empty()
+    final_event: dict[str, Any] | None = None
+    with st.status("Oracle pracuje...", expanded=True) as status:
+        for event in OracleOrchestrator(config).stream_answer(
+            question.strip(),
+            requested_scope=scope,
+            requested_rag_profile=rag_profile,
+            prompt_profile_key=prompt_profile,
+        ):
+            event_type = event.get("type")
+            if event_type == "phase_started":
+                status.update(label=str(event.get("message", "")), state="running")
+                st.write(f"Start: {event.get('phase')}")
+            elif event_type == "phase_completed":
+                status.update(label=str(event.get("message", "")), state="running")
+                st.write(f"OK: {event.get('phase')}")
+            elif event_type == "token":
+                answer_placeholder.markdown(str(event.get("accumulated_text", "")))
+            elif event_type == "completed":
+                final_event = event
+                status.update(label="Gotowe.", state="complete")
+            elif event_type == "error":
+                status.update(label="Błąd generowania.", state="error")
+                st.error(str(event.get("message", "Błąd.")))
+                with st.expander("Szczegóły techniczne"):
+                    st.code(str(event.get("technical_details", "")))
+                return
 
-    if result.answer.strip() == NO_ANSWER:
-        st.warning(result.answer)
+    if not final_event:
+        st.error("Generator zakończył się bez eventu completed.")
+        return
+    render_completed_answer(final_event, answer_placeholder, show_trace)
+
+
+def render_completed_answer(event: dict[str, Any], answer_placeholder, show_trace: bool) -> None:
+    answer = str(event.get("answer", "")).strip()
+    if answer == NO_ANSWER:
+        answer_placeholder.warning(answer)
     else:
-        st.markdown(result.answer)
-    st.caption(f"Zakres: {SCOPE_LABELS.get(result.scope, result.scope)} | verified={result.verified}")
-
-    if result.warnings:
-        st.warning("\n".join(result.warnings))
-    if result.citation_lines:
-        with st.expander("Źródła systemowe", expanded=True):
-            for citation in result.citation_lines:
-                st.code(citation)
+        answer_placeholder.markdown(answer)
+    st.caption(
+        f"Zakres: {event.get('scope')} | RAG={event.get('rag_profile')} | "
+        f"prompt={event.get('prompt_profile')} | verified={event.get('verified')}"
+    )
+    warnings = list(event.get("warnings", []))
+    if warnings:
+        st.warning("\n".join(str(item) for item in warnings))
+    render_metrics(event.get("stats", {}))
+    sources = list(event.get("sources", []))
+    if sources:
+        st.markdown("**Źródła systemowe**")
+        st.dataframe(sources, width="stretch", height=min(360, 80 + 36 * len(sources)))
     if show_trace:
         with st.expander("Trace agentów", expanded=True):
-            for step in result.trace:
-                st.write(f"**{step.role}:** {step.message}")
+            for step in event.get("trace", []):
+                st.write(f"**{step.get('role')}:** {step.get('message')}")
 
 
-def render_search_tab(config: AppConfig, default_scope: str) -> None:
+def render_metrics(stats: dict[str, Any]) -> None:
+    if not stats:
+        return
+    col_total, col_retrieval, col_generation, col_ttft = st.columns(4)
+    col_total.metric("Total", _format_seconds(stats.get("total_sec")))
+    col_retrieval.metric("Retrieval", _format_seconds(stats.get("retrieval_sec")))
+    col_generation.metric("Generacja", _format_seconds(stats.get("generation_sec")))
+    col_ttft.metric("TTFT", _format_seconds(stats.get("time_to_first_token_sec")))
+    with st.expander("Metryki techniczne"):
+        st.json(stats)
+
+
+def render_search_tab(config: AppConfig, default_rag_profile: str) -> None:
     st.subheader("Wyszukiwarka semantyczna")
-    st.caption("Tu testujesz sam retrieval, bez generowania odpowiedzi przez LLM.")
+    st.caption("Tu testujesz retrieval, bez generowania odpowiedzi przez LLM.")
     question = st.text_input("Zapytanie")
-    scope = st.selectbox(
-        "Zakres wyszukiwania",
-        options=["all"] + list(SCOPE_GROUPS.keys()),
-        index=(["all"] + list(SCOPE_GROUPS.keys())).index(default_scope) if default_scope in SCOPE_GROUPS else 0,
-        format_func=lambda value: "Wszystko" if value == "all" else SCOPE_LABELS.get(value, value),
+    rag_keys = [profile.key for profile in list_rag_profiles()]
+    rag_profile = st.selectbox(
+        "Profil RAG",
+        options=rag_keys,
+        index=model_option_index(rag_keys, default_rag_profile),
+        format_func=lambda key: get_rag_profile(key).label,
     )
-    top_k = st.number_input("Top K", min_value=1, max_value=20, value=config.top_k)
+    top_k = st.number_input("Top K", min_value=1, max_value=30, value=config.top_k)
     st.caption(f"Embedding: `{config.embedding_model}`")
     if st.button("Szukaj"):
         if not question.strip():
             st.warning("Wpisz zapytanie.")
             return
-        groups = None if scope == "all" else SCOPE_GROUPS[scope]
         try:
-            hits = RetrievalService(config).search(question.strip(), top_k=int(top_k), source_groups=groups)
+            hits = RetrievalService(config).search_with_profile(question.strip(), profile=get_rag_profile(rag_profile), top_k=int(top_k))
         except Exception as exc:  # noqa: BLE001
             st.error(f"Błąd wyszukiwania: {exc}")
             return
@@ -231,7 +355,11 @@ def render_search_tab(config: AppConfig, default_scope: str) -> None:
             st.warning("Brak trafień.")
         for hit in hits:
             st.markdown(f"**{hit.source_path}**")
-            st.caption(f"{hit.metadata.get('heading_path', 'ROOT')} | distance={hit.distance:.6f}")
+            st.caption(
+                f"{hit.metadata.get('heading_path', 'ROOT')} | {hit.metadata.get('source_type', '-')} | "
+                f"entity={hit.metadata.get('entity', '-')} | table={hit.metadata.get('table', '-')} | "
+                f"endpoint={hit.metadata.get('endpoint', '-')} | distance={hit.distance:.6f}"
+            )
             st.code(hit.text[:1500], language="markdown")
 
 
@@ -241,23 +369,29 @@ def render_sources_tab(config: AppConfig) -> None:
     col_docs, col_skipped = st.columns(2)
     col_docs.metric("Pliki .md w bazie", len(documents))
     col_skipped.metric("Pominięte", skipped)
-    st.caption("Baza odpowiedzi obejmuje tylko `InvoiceJet/doc_AI` i `InvoiceJet/doc_user`.")
+    st.caption("Baza odpowiedzi obejmuje `InvoiceJet/doc_AI` i `InvoiceJet/doc_user`; metadane są wyprowadzane ze ścieżek.")
     rows = [
         {
             "source_group": document.source_group,
-            "audience": document.audience,
+            "source_type": document.source_type,
+            "area": document.area,
+            "entity": document.entity,
+            "screen": document.screen,
+            "process": document.process,
+            "table": document.table,
+            "endpoint": document.endpoint,
             "priority": document.priority,
             "relative_path": document.relative_path,
         }
         for document in documents
     ]
-    st.dataframe(rows, use_container_width=True, height=520)
+    st.dataframe(rows, width="stretch", height=560)
 
 
 def render_index_tab(config: AppConfig) -> None:
     st.subheader("Index Manager")
     render_index_status(config)
-    st.caption("Domyślnie użyj odświeżenia incremental. Force rebuild tylko po zmianie embeddingu albo parametrów chunkingu.")
+    st.caption("Po tej zmianie wykonaj Force rebuild, bo manifest v2 dodaje metadane typów źródeł.")
     force = st.checkbox("Force rebuild od zera", value=False)
     if st.button("Odśwież indeks", type="primary"):
         with st.spinner("Indeksuję dokumentację..."):
@@ -270,9 +404,27 @@ def render_index_tab(config: AppConfig) -> None:
         st.json(stats.__dict__)
 
 
+def render_evaluation_tab(config: AppConfig) -> None:
+    st.subheader("Evaluation Lab")
+    st.caption("Golden set mierzy, czy profile RAG znajdują oczekiwane źródła dla pytań przekrojowych.")
+    mode = st.radio("Tryb", options=["retrieval", "answer"], horizontal=True, help="answer uruchamia pełne LLM i będzie wolniejsze.")
+    limit = st.number_input("Limit przypadków", min_value=1, max_value=50, value=12)
+    if st.button("Uruchom ewaluację", type="primary"):
+        with st.spinner("Uruchamiam evaluation lab..."):
+            results = run_eval_set(config, mode=mode, limit=int(limit))
+        summary = summarize_results(results)
+        col_total, col_ok, col_fail, col_rate = st.columns(4)
+        col_total.metric("Total", summary["total"])
+        col_ok.metric("Passed", summary["passed"])
+        col_fail.metric("Failed", summary["failed"])
+        col_rate.metric("Pass rate", f"{summary['pass_rate']:.0%}")
+        rows = [result_to_row(result) for result in results]
+        st.dataframe(rows, width="stretch", height=520)
+
+
 def render_agents_models_tab(config: AppConfig, active_profile: AgentProfile) -> None:
     st.subheader("Agenci i modele")
-    st.caption("Agenci to profile pracy. Modele zachowują oryginalne nazwy Ollama.")
+    st.caption("Agenci, modele i prompty są profilami konfiguracyjnymi w katalogu `profiles`.")
     client = OllamaClient(config.ollama_base_url)
     online, message = client.is_online()
     if not online:
@@ -293,13 +445,16 @@ def render_agents_models_tab(config: AppConfig, active_profile: AgentProfile) ->
                 "agent": profile.name,
                 "rola": profile.role,
                 "scope": SCOPE_LABELS.get(profile.default_scope, profile.default_scope),
+                "model_profile": profile.model_profile,
+                "prompt_profile": profile.prompt_profile,
+                "rag_profile": profile.rag_profile,
                 "LLM": profile.llm_model,
                 "embedding": profile.embedding_model,
                 "dostępny": all(is_model_available(model, available) for model in profile.required_models),
             }
             for profile in profiles
         ],
-        use_container_width=True,
+        width="stretch",
     )
 
     selected_profile_label = st.selectbox(
@@ -317,6 +472,12 @@ def render_agents_models_tab(config: AppConfig, active_profile: AgentProfile) ->
     if st.button("Pobierz wymagane modele profilu", type="primary"):
         pull_models(client, config, selected_profile.required_models)
 
+    with st.expander("Profile modeli"):
+        st.dataframe([profile.__dict__ for profile in list_model_profiles(config.tool_root)], width="stretch")
+    with st.expander("Prompt Studio - podgląd profili"):
+        st.dataframe([profile.__dict__ for profile in list_prompt_profiles(config.tool_root)], width="stretch")
+    with st.expander("Profile RAG"):
+        st.dataframe([profile.__dict__ for profile in list_rag_profiles()], width="stretch")
     with st.expander("Pobierz pojedynczy model z whitelisty"):
         model = st.selectbox("Model", options=recommended_models())
         if st.button("Pobierz wybrany model"):
@@ -333,11 +494,11 @@ def render_agents_models_tab(config: AppConfig, active_profile: AgentProfile) ->
             }
             for model in models
         ],
-        use_container_width=True,
+        width="stretch",
     )
 
 
-def render_diagnostics_tab(config: AppConfig, scope: str) -> None:
+def render_diagnostics_tab(config: AppConfig, scope: str, rag_profile: str, prompt_profile: str) -> None:
     st.subheader("Diagnostyka")
     test_embedding = st.checkbox("Testuj embedding przez Ollama", value=False, help=EMBEDDING_HELP)
     if st.button("Uruchom oracle-doctor"):
@@ -352,9 +513,9 @@ def render_diagnostics_tab(config: AppConfig, scope: str) -> None:
     st.markdown("**Szybkie testy RAG**")
     col_ok, col_fallback = st.columns(2)
     if col_ok.button("Test odpowiedzi z dokumentacji"):
-        run_rag_test(config, scope, "Jak wygląda proces rejestracji i logowania w InvoiceJet?", expect_fallback=False)
+        run_rag_test(config, scope, rag_profile, prompt_profile, "Jak wygląda proces rejestracji i logowania w InvoiceJet?", False)
     if col_fallback.button("Test braku w dokumentacji"):
-        run_rag_test(config, scope, "Jaka będzie jutro pogoda w Warszawie?", expect_fallback=True)
+        run_rag_test(config, scope, rag_profile, prompt_profile, "Jaka będzie jutro pogoda w Warszawie?", True)
 
 
 def render_index_status(config: AppConfig) -> None:
@@ -369,16 +530,24 @@ def render_index_status(config: AppConfig) -> None:
         return
     files = manifest.get("files", {})
     chunk_count = sum(len(file_state.get("chunk_ids", [])) for file_state in files.values() if isinstance(file_state, dict))
-    col_files, col_chunks, col_embedding = st.columns(3)
+    col_files, col_chunks, col_embedding, col_schema = st.columns(4)
     col_files.metric("Pliki w manifeście", len(files))
     col_chunks.metric("Chunki", chunk_count)
     col_embedding.metric("Embedding indeksu", manifest.get("embedding_model", "-"))
+    col_schema.metric("Schema", manifest.get("schema_version", "-"))
+    if int(manifest.get("schema_version", 0) or 0) < 2:
+        st.warning("Manifest jest starszy niż v2. Wykonaj Force rebuild, aby dodać metadane typów źródeł.")
 
 
-def run_rag_test(config: AppConfig, scope: str, question: str, expect_fallback: bool) -> None:
+def run_rag_test(config: AppConfig, scope: str, rag_profile: str, prompt_profile: str, question: str, expect_fallback: bool) -> None:
     with st.spinner("Uruchamiam test RAG..."):
         try:
-            result = OracleOrchestrator(config).answer(question, requested_scope=scope)
+            result = OracleOrchestrator(config).answer(
+                question,
+                requested_scope=scope,
+                requested_rag_profile=rag_profile,
+                prompt_profile_key=prompt_profile,
+            )
         except Exception as exc:  # noqa: BLE001
             st.error(f"Test nie powiódł się technicznie: {exc}")
             return
@@ -410,19 +579,21 @@ def pull_models(client: OllamaClient, config: AppConfig, models: Sequence[str]) 
 
 
 def format_profile_label(profile: AgentProfile) -> str:
-    return f"{profile.name} — {profile.role}"
+    return f"{profile.name} - {profile.role}"
 
 
-def llm_model_options(allowed_models: Sequence[str], profiles: Sequence[AgentProfile]) -> list[str]:
+def llm_model_options(allowed_models: Sequence[str], profiles: Sequence[AgentProfile], model_profiles) -> list[str]:
     profile_models = [profile.llm_model for profile in profiles]
+    configured = [profile.llm_model for profile in model_profiles]
     allowed_llms = [model for model in allowed_models if model not in {"bge-m3", "nomic-embed-text"}]
-    return unique_items([*profile_models, *allowed_llms])
+    return unique_items([*profile_models, *configured, *allowed_llms])
 
 
-def embedding_model_options(allowed_models: Sequence[str], profiles: Sequence[AgentProfile]) -> list[str]:
+def embedding_model_options(allowed_models: Sequence[str], profiles: Sequence[AgentProfile], model_profiles) -> list[str]:
     profile_models = [profile.embedding_model for profile in profiles]
+    configured = [profile.embedding_model for profile in model_profiles]
     allowed_embeddings = [model for model in allowed_models if model in {"bge-m3", "nomic-embed-text"}]
-    return unique_items([*profile_models, *allowed_embeddings])
+    return unique_items([*profile_models, *configured, *allowed_embeddings])
 
 
 def model_option_index(options: Sequence[str], selected: str) -> int:
@@ -447,6 +618,15 @@ def is_model_available(model: str, available: set[str]) -> bool:
 
 def unique_items(items: Sequence[str]) -> list[str]:
     return list(dict.fromkeys(item for item in items if item))
+
+
+def _format_seconds(value: Any) -> str:
+    if value is None:
+        return "-"
+    try:
+        return f"{float(value):.2f}s"
+    except (TypeError, ValueError):
+        return "-"
 
 
 if __name__ == "__main__":

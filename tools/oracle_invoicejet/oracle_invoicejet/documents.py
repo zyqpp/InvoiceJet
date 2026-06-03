@@ -5,6 +5,7 @@ from pathlib import Path
 from typing import Iterable, List, Tuple
 
 from .config import AppConfig, SourceConfig
+from .taxonomy import classify_document
 
 
 @dataclass(frozen=True)
@@ -14,6 +15,14 @@ class SourceDocument:
     source_group: str
     audience: str
     priority: int
+    source_type: str
+    area: str
+    entity: str
+    screen: str
+    process: str
+    table: str
+    endpoint: str
+    knowledge_tags: str
 
 
 def normalize_markdown(text: str) -> str:
@@ -58,11 +67,19 @@ def discover_documents(config: AppConfig) -> Tuple[List[SourceDocument], int]:
 
 def _to_source_document(config: AppConfig, source: SourceConfig, path: Path) -> SourceDocument:
     relative_path = path.relative_to(config.repo_root).as_posix()
+    taxonomy = classify_document(relative_path)
     return SourceDocument(
         path=path,
         relative_path=relative_path,
         source_group=source.source_group,
         audience=source.audience,
         priority=source.priority,
+        source_type=taxonomy.source_type,
+        area=taxonomy.area,
+        entity=taxonomy.entity,
+        screen=taxonomy.screen,
+        process=taxonomy.process,
+        table=taxonomy.table,
+        endpoint=taxonomy.endpoint,
+        knowledge_tags=taxonomy.knowledge_tags,
     )
-
