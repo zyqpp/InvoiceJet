@@ -25,6 +25,8 @@ class ModelPreset:
     repeat_penalty: float = 1.1
     seed: int | None = None
     timeout_sec: int = 900
+    think: bool | str | None = None
+    strip_thinking: bool = True
 
 
 @dataclass(frozen=True)
@@ -61,6 +63,10 @@ class AppConfig:
     sources: List[SourceConfig]
     exclude_dirs: List[str]
     allowed_models: List[str]
+    think: bool | str | None = None
+    strip_thinking: bool = True
+    docs_portal_doc_user: str = "http://127.0.0.1:8002"
+    docs_portal_doc_ai: str = "http://127.0.0.1:8001"
 
 
 PRESETS: Dict[str, ModelPreset] = {
@@ -157,9 +163,13 @@ def load_config() -> AppConfig:
     ))]
     allowed_models = _as_list(_read_var(
         "ALLOWED_MODELS",
-        "gemma3:4b,gemma3:1b,qwen3:4b,qwen3:1.7b,bge-m3,nomic-embed-text",
+        "gemma3:12b,gemma3:4b,gemma3:1b,deepseek-r1:8b,qwen3:4b,qwen3-vl:4b,qwen3:1.7b,bge-m3,nomic-embed-text",
         dotenv_values,
     ))
+    think = _parse_think(_read_var("THINK", _format_think(preset.think), dotenv_values))
+    strip_thinking = _as_bool(_read_var("STRIP_THINKING", str(preset.strip_thinking), dotenv_values))
+    docs_portal_doc_user = _read_var("DOCS_PORTAL_DOC_USER", "http://127.0.0.1:8002", dotenv_values).rstrip("/")
+    docs_portal_doc_ai   = _read_var("DOCS_PORTAL_DOC_AI",   "http://127.0.0.1:8001", dotenv_values).rstrip("/")
 
     if chunk_overlap >= chunk_size:
         raise ValueError("ORACLE_CHUNK_OVERLAP must be smaller than ORACLE_CHUNK_SIZE.")
@@ -195,4 +205,33 @@ def load_config() -> AppConfig:
         sources=DEFAULT_SOURCES,
         exclude_dirs=exclude_dirs,
         allowed_models=allowed_models,
+        think=think,
+        strip_thinking=strip_thinking,
+        docs_portal_doc_user=docs_portal_doc_user,
+        docs_portal_doc_ai=docs_portal_doc_ai,
     )
+
+
+def _parse_think(value: str) -> bool | str | None:
+    text = value.strip().lower()
+    if not text or text == "auto":
+        return None
+    if text in {"true", "on", "yes", "1"}:
+        return True
+    if text in {"false", "off", "no", "0"}:
+        return False
+    if text in {"low", "medium", "high"}:
+        return text
+    raise ValueError("ORACLE_THINK must be auto, true, false, low, medium or high.")
+
+
+def _format_think(value: bool | str | None) -> str:
+    if value is None:
+        return ""
+    if isinstance(value, bool):
+        return "true" if value else "false"
+    return value
+
+
+def _as_bool(value: str) -> bool:
+    return value.strip().lower() in {"true", "on", "yes", "1"}

@@ -1,13 +1,22 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+import re
 from typing import List
+import unicodedata
 
 from .profiles import PromptProfile
 from .retrieval import SearchHit
 
 
 NO_ANSWER = "Nie znalazłem tego w dokumentacji."
+NO_ANSWER_ASCII = "nie znalazlem tego w dokumentacji"
+
+_THINK_BLOCK_RE = re.compile(r"<think\b[^>]*>.*?</think>", re.IGNORECASE | re.DOTALL)
+_OPEN_THINK_BLOCK_RE = re.compile(r"<think\b[^>]*>.*$", re.IGNORECASE | re.DOTALL)
+_NO_ANSWER_LINE_RE = re.compile(
+    r"(?im)^\s*(?:[-*]\s*)?(?:Nie znalazłem tego w dokumentacji\.?|Nie znalazlem tego w dokumentacji\.?)\s*$"
+)
 
 
 @dataclass(frozen=True)
@@ -83,11 +92,35 @@ def pack_context(hits: List[SearchHit], max_chars: int = 18000) -> PackedContext
     return PackedContext(text="\n\n".join(blocks), citations=citations)
 
 
+def source_path_to_portal_url(source_path: str, doc_user_base: str, doc_ai_base: str) -> str | None:
+    """Convert an indexed documentation path to a full MkDocs portal URL."""
+    normalized_path = source_path.replace("\\", "/").lstrip("/")
+    for prefix, base in (
+        ("InvoiceJet/doc_user/", doc_user_base),
+        ("InvoiceJet/doc_AI/", doc_ai_base),
+    ):
+        if normalized_path.startswith(prefix):
+            if not base:
+                return None
+            rel = normalized_path.removeprefix(prefix)
+            if not rel or any(part in {".", ".."} for part in rel.split("/")):
+                return None
+            if rel == "README.md":
+                rel = "index.html"
+            elif rel.endswith("/README.md"):
+                rel = rel.removesuffix("/README.md") + "/index.html"
+            elif rel.endswith(".md"):
+                rel = rel.removesuffix(".md") + ".html"
+            return f"{base.rstrip('/')}/{rel}"
+    return None
+
+
 def build_answer_prompt(
     question: str,
     context: PackedContext,
     warnings: List[str] | None = None,
     prompt_profile: PromptProfile | None = None,
+    portal_urls: dict[str, str] | None = None,
 ) -> str:
     warning_text = "\n".join(f"- {warning}" for warning in (warnings or [])) or "Brak."
     if prompt_profile:
@@ -104,6 +137,19 @@ def build_answer_prompt(
         source_policy = "Na końcu odpowiedzi dodaj sekcję `Źródła` z listą użytych `source_path`."
         profile_line = "Prompt profile: builtin"
         profile_extra = ""
+    if portal_urls:
+        doc_user_base = portal_urls.get("doc_user", "")
+        doc_ai_base   = portal_urls.get("doc_ai", "")
+        portal_hint = (
+            "Portale dokumentacji – gdy tworzysz link do dokumentu, użyj pełnego URL:\n"
+            f"  doc_user: {doc_user_base}/[ścieżka].html  (usuń prefiks 'InvoiceJet/doc_user/')\n"
+            f"  doc_ai:   {doc_ai_base}/[ścieżka].html  (usuń prefiks 'InvoiceJet/doc_AI/')\n"
+            f"Przykład: InvoiceJet/doc_user/02_procesy/P-03_konfiguracja_firmy.md "
+            f"→ {doc_user_base}/02_procesy/P-03_konfiguracja_firmy.html\n"
+            "Nie używaj ścieżek .md ani ścieżek względnych (../) jako href w linkach.\n"
+        )
+    else:
+        portal_hint = ""
     return (
         "/no_think\n"
         f"{system_prompt}\n"
@@ -113,6 +159,7 @@ def build_answer_prompt(
         "Nie używaj wiedzy ogólnej do uzupełniania braków dokumentacji.\n"
         "Nie pokazuj procesu rozumowania ani sekcji thinking.\n"
         f"{profile_extra}"
+        f"{portal_hint}"
         f"{answer_style}\n"
         f"{source_policy}\n"
         "Dla pytań przekrojowych łącz informacje z `source_type=screen`, `api`, `data_model`, `process`, `mapping` i `validation`, jeśli są w Kontekście.\n"
@@ -144,3 +191,28 @@ def build_citation_lines(citations: List[Citation]) -> List[str]:
         )
         for citation in citations
     ]
+
+
+def strip_thinking_sections(text: str) -> str:
+    without_closed_blocks = _THINK_BLOCK_RE.sub("", text)
+    return _OPEN_THINK_BLOCK_RE.sub("", without_closed_blocks)
+
+
+def is_exact_no_answer(text: str) -> bool:
+    return _fold_no_answer(text.strip().strip("` .")) == NO_ANSWER_ASCII
+
+
+def has_mixed_no_answer(text: str) -> bool:
+    folded = _fold_no_answer(text)
+    return NO_ANSWER_ASCII in folded and not is_exact_no_answer(text)
+
+
+def remove_no_answer_markers(text: str) -> str:
+    return _NO_ANSWER_LINE_RE.sub("", text).strip()
+
+
+def _fold_no_answer(text: str) -> str:
+    translation = str.maketrans({"ł": "l", "Ł": "L"})
+    normalized = unicodedata.normalize("NFKD", text.translate(translation))
+    ascii_text = normalized.encode("ascii", errors="ignore").decode("ascii")
+    return " ".join(ascii_text.lower().split())

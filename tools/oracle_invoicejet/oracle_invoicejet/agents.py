@@ -7,7 +7,17 @@ from typing import Any, Iterable, List, Sequence
 from .config import AppConfig
 from .embeddings import OllamaClient, OllamaEmbeddingProvider
 from .profiles import PromptProfile, get_prompt_profile
-from .rag import NO_ANSWER, Citation, build_answer_prompt, build_citation_lines, pack_context
+from .rag import (
+    NO_ANSWER,
+    Citation,
+    build_answer_prompt,
+    build_citation_lines,
+    has_mixed_no_answer,
+    is_exact_no_answer,
+    pack_context,
+    remove_no_answer_markers,
+    strip_thinking_sections,
+)
 from .rag_profiles import RAGProfile, filter_source_groups, infer_rag_profile
 from .retrieval import RetrievalService, SearchHit
 
@@ -73,6 +83,11 @@ class SourceAuditorAgent:
             required_any = {"mapping", "api", "data_model", "process"}
             if "screen" in source_types and not (source_types & required_any):
                 warnings.append("Pytanie wygląda przekrojowo, ale retrieval nie znalazł źródeł API/modelu danych/procesu.")
+        if rag_profile.key == "algorithm_calculation":
+            if "algorithm" not in source_types:
+                warnings.append("Profil wyliczeniowy nie znalazl dokumentu typu algorithm.")
+            if "data_model" not in source_types:
+                warnings.append("Profil wyliczeniowy nie znalazl modelu danych dla weryfikacji pol.")
         message = (
             f"Grupy: {', '.join(sorted(source_groups)) or 'brak'}; "
             f"typy: {', '.join(sorted(source_types)) or 'brak'}."
@@ -111,8 +126,12 @@ class AnswererAgent:
             repeat_penalty=self.config.repeat_penalty,
             seed=self.config.seed,
             timeout_sec=self.config.timeout_sec,
+            think=self.config.think,
         )
-        answer = str(payload.get("response", "")).strip() or NO_ANSWER
+        answer = str(payload.get("response", ""))
+        if self.config.strip_thinking:
+            answer = strip_thinking_sections(answer)
+        answer = answer.strip() or NO_ANSWER
         return answer, _ollama_stats(payload), AgentTraceStep("Answerer", "Wygenerowano odpowiedź z lokalnego modelu Ollama.")
 
     def stream(self, prompt: str) -> Iterable[dict[str, Any]]:
@@ -127,6 +146,7 @@ class AnswererAgent:
             repeat_penalty=self.config.repeat_penalty,
             seed=self.config.seed,
             timeout_sec=self.config.timeout_sec,
+            think=self.config.think,
         )
 
 
@@ -134,8 +154,11 @@ class VerifierAgent:
     def verify(self, answer: str, citations: Sequence[Citation]) -> tuple[bool, List[str], AgentTraceStep]:
         warnings: List[str] = []
         stripped = answer.strip()
-        if stripped == NO_ANSWER:
+        if is_exact_no_answer(stripped):
             return True, warnings, AgentTraceStep("Verifier", "Odpowiedź poprawnie wskazuje brak danych w dokumentacji.")
+        if has_mixed_no_answer(stripped):
+            warnings.append("Model polaczyl odpowiedz z fallbackiem o braku danych. Odpowiedz wymaga ponownej generacji lub lepszego profilu.")
+            return False, warnings, AgentTraceStep("Verifier", "Sprzeczny fallback w tresci odpowiedzi.")
         if not citations:
             warnings.append("Odpowiedź została zablokowana, bo nie ma żadnych cytowanych źródeł.")
             return False, warnings, AgentTraceStep("Verifier", "Brak cytowań źródłowych.")
@@ -181,7 +204,11 @@ class OracleOrchestrator:
         audit_warnings, audit_step = self.auditor.audit(hits, rag_profile)
         trace.append(audit_step)
         packed_context = pack_context(hits, max_chars=rag_profile.max_context_chars)
-        prompt = build_answer_prompt(question, packed_context, audit_warnings, prompt_profile=prompt_profile)
+        portal_urls = {
+            "doc_user": self.config.docs_portal_doc_user,
+            "doc_ai":   self.config.docs_portal_doc_ai,
+        }
+        prompt = build_answer_prompt(question, packed_context, audit_warnings, prompt_profile=prompt_profile, portal_urls=portal_urls)
 
         generation_start = time.perf_counter()
         answer, model_stats, answerer_step = self.answerer.answer(prompt)
@@ -189,14 +216,21 @@ class OracleOrchestrator:
         trace.append(answerer_step)
 
         answer_citations = packed_context.citations
-        if answer.strip().startswith(NO_ANSWER):
+        if is_exact_no_answer(answer):
             answer = NO_ANSWER
             answer_citations = []
+        mixed_fallback = False
+        if answer_citations and has_mixed_no_answer(answer):
+            answer = remove_no_answer_markers(answer) or answer
+            mixed_fallback = True
 
         verified, verifier_warnings, verifier_step = self.verifier.verify(answer, answer_citations)
         trace.append(verifier_step)
         warnings = audit_warnings + verifier_warnings
-        if not verified:
+        if mixed_fallback:
+            verified = False
+            warnings.append("Model dopisal fallback o braku danych; fallback usunieto, a odpowiedz oznaczono jako niezweryfikowana.")
+        if not verified and not mixed_fallback:
             answer = NO_ANSWER
             answer_citations = []
 
@@ -254,18 +288,28 @@ class OracleOrchestrator:
             audit_warnings, audit_step = self.auditor.audit(hits, rag_profile)
             trace.append(audit_step)
             packed_context = pack_context(hits, max_chars=rag_profile.max_context_chars)
-            prompt = build_answer_prompt(question, packed_context, audit_warnings, prompt_profile=prompt_profile)
+            portal_urls = {
+                "doc_user": self.config.docs_portal_doc_user,
+                "doc_ai":   self.config.docs_portal_doc_ai,
+            }
+            prompt = build_answer_prompt(question, packed_context, audit_warnings, prompt_profile=prompt_profile, portal_urls=portal_urls)
             yield _phase_completed("prompt_build", "Prompt gotowy.", {"prompt_profile": prompt_profile.key})
 
             yield _phase_started("generation", f"Generuję odpowiedź modelem `{self.config.llm_model}`.")
             generation_start = time.perf_counter()
             first_token_sec: float | None = None
+            raw_accumulated = ""
             accumulated = ""
             model_stats: dict[str, Any] = {}
             for payload in self.answerer.stream(prompt):
                 delta = str(payload.get("response", ""))
                 if delta:
-                    accumulated += delta
+                    raw_accumulated += delta
+                    visible_text = strip_thinking_sections(raw_accumulated) if self.config.strip_thinking else raw_accumulated
+                    if visible_text == accumulated:
+                        continue
+                    delta = visible_text[len(accumulated) :] if visible_text.startswith(accumulated) else visible_text
+                    accumulated = visible_text
                     if first_token_sec is None:
                         first_token_sec = time.perf_counter() - start
                     yield {"type": "token", "delta": delta, "accumulated_text": accumulated}
@@ -274,15 +318,22 @@ class OracleOrchestrator:
             generation_sec = time.perf_counter() - generation_start
             yield _phase_completed("generation", "Generowanie zakończone.", {"generation_sec": generation_sec})
 
-            answer_text = accumulated.strip() or NO_ANSWER
+            answer_text = (strip_thinking_sections(raw_accumulated) if self.config.strip_thinking else accumulated).strip() or NO_ANSWER
             citations = packed_context.citations
-            if answer_text.startswith(NO_ANSWER):
+            if is_exact_no_answer(answer_text):
                 answer_text = NO_ANSWER
                 citations = []
+            mixed_fallback = False
+            if citations and has_mixed_no_answer(answer_text):
+                answer_text = remove_no_answer_markers(answer_text) or answer_text
+                mixed_fallback = True
             verified, verifier_warnings, verifier_step = self.verifier.verify(answer_text, citations)
             trace.append(verifier_step)
             warnings = audit_warnings + verifier_warnings
-            if not verified:
+            if mixed_fallback:
+                verified = False
+                warnings.append("Model dopisal fallback o braku danych; fallback usunieto, a odpowiedz oznaczono jako niezweryfikowana.")
+            if not verified and not mixed_fallback:
                 answer_text = NO_ANSWER
                 citations = []
             stats = _base_stats(start, retrieval_sec, generation_sec)

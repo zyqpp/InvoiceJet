@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from dataclasses import replace
 import json
+import re
 from typing import Any, Iterable, Sequence
 
 import streamlit as st
@@ -15,7 +16,7 @@ from oracle_invoicejet.embeddings import OllamaClient
 from oracle_invoicejet.evaluation import result_to_row, run_eval_set, summarize_results
 from oracle_invoicejet.indexing import IndexManager
 from oracle_invoicejet.profiles import get_model_profile, list_model_profiles, list_prompt_profiles
-from oracle_invoicejet.rag import NO_ANSWER
+from oracle_invoicejet.rag import NO_ANSWER, source_path_to_portal_url
 from oracle_invoicejet.rag_profiles import get_rag_profile, list_rag_profiles
 from oracle_invoicejet.retrieval import RetrievalService
 
@@ -34,6 +35,8 @@ SCOPE_LABELS = {
     "frontend": "Frontend/UI z doc_AI",
     "debt": "Dług techniczny z doc_AI",
 }
+
+MISSING_MODEL_SOURCES_WARNING = "Model nie dodał sekcji źródeł; cytowania pokazano osobno przez system."
 
 
 def main() -> None:
@@ -119,6 +122,8 @@ def render_sidebar(base_config: AppConfig) -> dict[str, Any]:
         default_repeat_penalty = profile.repeat_penalty if use_agent_overrides else model_profile.repeat_penalty
         default_seed = profile.seed if use_agent_overrides else model_profile.seed
         default_timeout_sec = profile.timeout_sec if use_agent_overrides else model_profile.timeout_sec
+        default_think = profile.think if use_agent_overrides else model_profile.think
+        default_strip_thinking = profile.strip_thinking if use_agent_overrides else model_profile.strip_thinking
 
         rag_profiles = list_rag_profiles()
         rag_keys = [item.key for item in rag_profiles]
@@ -169,10 +174,22 @@ def render_sidebar(base_config: AppConfig) -> dict[str, Any]:
             repeat_penalty = st.slider("repeat_penalty", min_value=0.8, max_value=2.0, value=float(default_repeat_penalty), step=0.05)
             seed_raw = st.text_input("seed", value="" if default_seed is None else str(default_seed))
             timeout_sec = st.number_input("Timeout generacji [s]", min_value=30, max_value=3600, value=default_timeout_sec, step=30)
+            think_option = st.selectbox(
+                "Thinking Ollama",
+                options=["auto", "off", "on", "low", "medium", "high"],
+                index=model_option_index(["auto", "off", "on", "low", "medium", "high"], think_to_option(default_think)),
+                help="Dla modeli typu Qwen/DeepSeek. Qwen w Oracle powinien zwykle pracowac z off.",
+            )
+            strip_thinking = st.toggle(
+                "Ukryj sekcje thinking",
+                value=bool(default_strip_thinking),
+                help="Usuwa bloki <think>...</think> z odpowiedzi, gdy model zwroci je mimo konfiguracji.",
+            )
             min_hits = st.number_input("Minimalna liczba trafień", min_value=1, max_value=10, value=profile.min_hits)
             show_trace = st.toggle("Pokaż trace agentów", value=False)
 
         seed = int(seed_raw) if seed_raw.strip() else None
+        think = option_to_think(think_option)
         if embedding_model != base_config.embedding_model:
             st.warning("Zmieniasz embedding względem bieżącej konfiguracji. Po zmianie embeddingu przebuduj indeks.")
 
@@ -190,6 +207,8 @@ def render_sidebar(base_config: AppConfig) -> dict[str, Any]:
             seed=seed,
             timeout_sec=int(timeout_sec),
             min_hits=int(min_hits),
+            think=think,
+            strip_thinking=bool(strip_thinking),
         )
 
         st.divider()
@@ -219,8 +238,13 @@ def render_sidebar_status(
     st.write(f"Prompt: `{prompt_profile}`")
     st.write(f"LLM: `{config.llm_model}`")
     st.write(f"Embedding: `{config.embedding_model}`")
+    st.write(f"Thinking: `{think_to_option(config.think)}`")
+    st.write(f"Strip thinking: `{config.strip_thinking}`")
     st.write(f"Ollama: `{config.ollama_base_url}`")
     st.write(f"Indeks: `{config.collection_name}`")
+    st.markdown("**Portale dokumentacji**")
+    st.markdown(f"- [doc_user]({config.docs_portal_doc_user})")
+    st.markdown(f"- [doc_AI]({config.docs_portal_doc_ai})")
 
     client = OllamaClient(config.ollama_base_url)
     online, message = client.is_online()
@@ -316,14 +340,92 @@ def render_chat_tab(
     if not final_event:
         st.error("Generator zakończył się bez eventu completed.")
         return
-    render_completed_answer(final_event, answer_placeholder, show_trace)
+    render_completed_answer(final_event, answer_placeholder, show_trace, config)
 
 
-def render_completed_answer(event: dict[str, Any], answer_placeholder, show_trace: bool) -> None:
+_MD_LINK_RE = re.compile(r"\[([^\]]+)\]\(([^)]+?\.md)\)")
+
+
+def _rewrite_md_links(
+    answer: str,
+    sources: list[dict[str, Any]],
+    doc_user_base: str,
+    doc_ai_base: str,
+) -> str:
+    """Przepisuje [text](*.md) na pełne URL portalu MkDocs na podstawie cytowań."""
+    filename_map: dict[str, str] = {}
+    for src in sources:
+        sp = _source_path_from_row(src)
+        url = source_path_to_portal_url(sp, doc_user_base, doc_ai_base)
+        if url:
+            filename_map[sp.replace("\\", "/").rsplit("/", 1)[-1]] = url
+
+    def _replace(m: re.Match) -> str:
+        text, href = m.group(1), m.group(2)
+        direct = source_path_to_portal_url(href, doc_user_base, doc_ai_base)
+        if direct:
+            return f"[{text}]({direct})"
+        filename = href.replace("\\", "/").rsplit("/", 1)[-1]
+        if filename in filename_map:
+            return f"[{text}]({filename_map[filename]})"
+        return m.group(0)
+
+    return _MD_LINK_RE.sub(_replace, answer)
+
+
+def build_enriched_source_rows(
+    sources: Sequence[dict[str, Any]],
+    doc_user_base: str,
+    doc_ai_base: str,
+) -> list[dict[str, Any]]:
+    rows: list[dict[str, Any]] = []
+    for source in sources:
+        source_path = _source_path_from_row(source)
+        row = dict(source)
+        row.pop("portal_url", None)
+        rows.append(
+            {
+                "portal_url": source_path_to_portal_url(source_path, doc_user_base, doc_ai_base) or "",
+                **row,
+            }
+        )
+    return rows
+
+
+def build_source_links_markdown(
+    sources: Sequence[dict[str, Any]],
+    doc_user_base: str,
+    doc_ai_base: str,
+) -> str:
+    links: list[str] = []
+    for source in sources:
+        source_path = _source_path_from_row(source)
+        url = source_path_to_portal_url(source_path, doc_user_base, doc_ai_base)
+        if url:
+            links.append(f"- [{source_path}]({url})")
+    return "\n".join(links)
+
+
+def _portal_markdown_link(source_path: str, doc_user_base: str, doc_ai_base: str, label: str = "Otwórz w portalu") -> str:
+    url = source_path_to_portal_url(source_path, doc_user_base, doc_ai_base)
+    return f"[{label}]({url})" if url else ""
+
+
+def _source_path_from_row(source: dict[str, Any]) -> str:
+    return str(source.get("source_path") or source.get("relative_path") or "")
+
+
+def render_completed_answer(event: dict[str, Any], answer_placeholder, show_trace: bool, config: AppConfig) -> None:
     answer = str(event.get("answer", "")).strip()
+    sources = list(event.get("sources", []))
     if answer == NO_ANSWER:
         answer_placeholder.warning(answer)
     else:
+        answer = _rewrite_md_links(
+            answer, sources,
+            config.docs_portal_doc_user,
+            config.docs_portal_doc_ai,
+        )
         answer_placeholder.markdown(answer)
     st.caption(
         f"Zakres: {event.get('scope')} | RAG={event.get('rag_profile')} | "
@@ -331,12 +433,35 @@ def render_completed_answer(event: dict[str, Any], answer_placeholder, show_trac
     )
     warnings = list(event.get("warnings", []))
     if warnings:
-        st.warning("\n".join(str(item) for item in warnings))
+        info_warnings = [str(item) for item in warnings if str(item) == MISSING_MODEL_SOURCES_WARNING]
+        warning_warnings = [str(item) for item in warnings if str(item) != MISSING_MODEL_SOURCES_WARNING]
+        if info_warnings:
+            st.info("\n".join(info_warnings))
+        if warning_warnings:
+            st.warning("\n".join(warning_warnings))
     render_metrics(event.get("stats", {}))
-    sources = list(event.get("sources", []))
     if sources:
         st.markdown("**Źródła systemowe**")
-        st.dataframe(sources, width="stretch", height=min(360, 80 + 36 * len(sources)))
+        source_links = build_source_links_markdown(
+            sources,
+            config.docs_portal_doc_user,
+            config.docs_portal_doc_ai,
+        )
+        if source_links:
+            st.markdown(source_links)
+        enriched = build_enriched_source_rows(
+            sources,
+            config.docs_portal_doc_user,
+            config.docs_portal_doc_ai,
+        )
+        st.dataframe(
+            enriched,
+            column_config={
+                "portal_url": st.column_config.LinkColumn("Portal", display_text="Otwórz ↗")
+            },
+            width="stretch",
+            height=min(360, 80 + 36 * len(enriched)),
+        )
     if show_trace:
         with st.expander("Trace agentów", expanded=True):
             for step in event.get("trace", []):
@@ -381,6 +506,13 @@ def render_search_tab(config: AppConfig, default_rag_profile: str) -> None:
             st.warning("Brak trafień.")
         for hit in hits:
             st.markdown(f"**{hit.source_path}**")
+            portal_link = _portal_markdown_link(
+                hit.source_path,
+                config.docs_portal_doc_user,
+                config.docs_portal_doc_ai,
+            )
+            if portal_link:
+                st.markdown(portal_link)
             st.caption(
                 f"{hit.metadata.get('heading_path', 'ROOT')} | {hit.metadata.get('source_type', '-')} | "
                 f"entity={hit.metadata.get('entity', '-')} | table={hit.metadata.get('table', '-')} | "
@@ -411,7 +543,19 @@ def render_sources_tab(config: AppConfig) -> None:
         }
         for document in documents
     ]
-    st.dataframe(rows, width="stretch", height=560)
+    enriched_rows = build_enriched_source_rows(
+        rows,
+        config.docs_portal_doc_user,
+        config.docs_portal_doc_ai,
+    )
+    st.dataframe(
+        enriched_rows,
+        column_config={
+            "portal_url": st.column_config.LinkColumn("Portal", display_text="Otwórz ↗")
+        },
+        width="stretch",
+        height=560,
+    )
 
 
 def render_index_tab(config: AppConfig) -> None:
@@ -624,6 +768,24 @@ def embedding_model_options(allowed_models: Sequence[str], profiles: Sequence[Ag
 
 def model_option_index(options: Sequence[str], selected: str) -> int:
     return list(options).index(selected) if selected in options else 0
+
+
+def think_to_option(value: bool | str | None) -> str:
+    if value is None:
+        return "auto"
+    if isinstance(value, bool):
+        return "on" if value else "off"
+    return value if value in {"low", "medium", "high"} else "auto"
+
+
+def option_to_think(value: str) -> bool | str | None:
+    if value == "auto":
+        return None
+    if value == "on":
+        return True
+    if value == "off":
+        return False
+    return value
 
 
 def normalized_model_names(model_names: Iterable[str]) -> set[str]:
