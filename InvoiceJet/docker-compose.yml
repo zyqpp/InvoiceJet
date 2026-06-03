@@ -1,0 +1,48 @@
+services:
+
+  invoicejet-db:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: invoicejet-sqlserver
+    ports:
+      - "14334:1433"
+    environment:
+      SA_PASSWORD: "InvoiceJet@Pass123!"
+      ACCEPT_EULA: "Y"
+      MSSQL_PID: "Developer"
+    volumes:
+      - invoicejet-db-data:/var/opt/mssql
+    healthcheck:
+      test: ["CMD-SHELL", "/opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P 'InvoiceJet@Pass123!' -Q 'SELECT 1' -No || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 30s
+
+  invoicejet-api:
+    build:
+      context: ./InvoiceJetAPI
+    container_name: invoicejet-api
+    ports:
+      - "5157:8080"
+    environment:
+      ASPNETCORE_ENVIRONMENT: "Development"
+      ASPNETCORE_URLS: "http://+:8080"
+      ConnectionStrings__ProdConnection: "Server=invoicejet-db,1433;Database=FacturilaDB;User Id=sa;Password=InvoiceJet@Pass123!;Encrypt=false;TrustServerCertificate=true;"
+      AppSettings__Token: "docker-local-jwt-secret-key-for-invoicejet-development-use-only-min64chars!!"
+      AppSettings__AnafApiUrl: "https://webservicesp.anaf.ro/PlatitorTvaRest/api/v8/ws/tva"
+    depends_on:
+      invoicejet-db:
+        condition: service_healthy
+    restart: on-failure
+
+  invoicejet-ui:
+    build:
+      context: ./InvoiceJetUI
+    container_name: invoicejet-ui
+    ports:
+      - "4200:80"
+    depends_on:
+      - invoicejet-api
+
+volumes:
+  invoicejet-db-data:
