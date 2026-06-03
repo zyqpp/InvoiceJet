@@ -2,7 +2,7 @@
 
 ## 1. Cel
 
-Obecny PoC ma dzialajacy lokalny RAG: Chroma jako baza wiedzy, Ollama jako model lokalny, Streamlit jako GUI i streaming odpowiedzi. Kolejny etap powinien zmienic go z prostej zakladki czatu w narzedzie do kontrolowania pracy LLM:
+Obecny `Oracle InvoiceJet` ma dzialajacy lokalny RAG: Chroma jako baza wiedzy, Ollama jako zrodlo modeli LLM i embeddingow, Streamlit jako GUI na porcie `8502`, profile agentow, diagnostyke, indeks i wyszukiwarke. Kolejny etap powinien rozbudowac go w narzedzie do kontrolowania pracy LLM:
 
 - wybor i porownywanie modeli,
 - kontrola parametrow generacji,

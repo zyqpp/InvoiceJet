@@ -104,6 +104,14 @@ Zakładki:
 - `Agenci i modele` — profile pracy, status modeli i pobieranie z whitelisty.
 - `Diagnostyka` — doctor, test embeddingu, test RAG i test fallbacku.
 
+## Plan rozbudowy LLM
+
+Plan dalszego rozwoju sterowania modelami, master promptami, agentami, profilami RAG, narzedziami i ewaluacja jakosci jest w:
+
+```text
+tools/oracle_invoicejet/LLM_EXPANSION_PLAN_PL.md
+```
+
 ## Docker
 
 Docker uruchamia portal. Ollama działa poza kontenerem na hoście.
