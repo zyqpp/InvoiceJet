@@ -107,6 +107,35 @@ Agent to konfiguracja pracy, nie osobny proces. Łączy:
 - zakres źródeł,
 - limity odpowiedzi.
 
+W sidebarze agent może mieć też własną instrukcję, listę możliwości, ograniczenia i przykładowe pytania. To jest ważne szczególnie dla wyspecjalizowanych agentów, bo użytkownik od razu widzi, do czego dany profil służy.
+
+### Agent bazodanowy: Zenon SQL
+
+`Zenon SQL` jest profilem do pytań o model danych i podstawowe zapytania SQL. Używa profilu RAG `database_sql`, który preferuje dokumenty typu `data_model`, `mapping`, `process`, `api`, `algorithm` i `validation`.
+
+Agent potrafi:
+
+- wyjaśnić, które tabele i kolumny odpowiadają za dany obszar,
+- wskazać relacje i klucze potrzebne do `JOIN`,
+- przygotować podstawowe zapytanie `SELECT`,
+- ograniczyć wynik do wskazanych kolumn,
+- wskazać braki dokumentacji, gdy nie ma pewnej relacji albo kolumny.
+
+Ograniczenia:
+
+- nie wykonuje SQL na bazie,
+- nie generuje zapytań modyfikujących dane,
+- nie zgaduje nieudokumentowanych nazw tabel, kolumn ani relacji,
+- nie zastępuje review DBA dla zapytań produkcyjnych.
+
+Przykłady:
+
+```text
+Przygotuj SELECT, który wyciągnie dokumenty dla kontrahenta o nazwie Abacki.
+Zrób SQL dla dokumentów w statusie Paid i pokaż tylko Id, numer, datę wystawienia oraz status.
+Jakie tabele łączą dokument z klientem i statusem?
+```
+
 ### Diagnostyka
 
 Zakładka do szybkiego sprawdzenia środowiska:

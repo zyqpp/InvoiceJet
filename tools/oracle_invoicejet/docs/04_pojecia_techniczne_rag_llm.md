@@ -136,6 +136,7 @@ Profil RAG to strategia wyszukiwania. W Oracle są cztery profile:
 - `full_app_qa` - ogólne pytania o aplikację.
 - `cross_reference` - pytania ekran/pole/API/tabela/walidacja.
 - `technical_deep_dive` - backend, baza, algorytmy, role, testy.
+- `database_sql` - model danych, relacje tabel i podstawowe zapytania `SELECT`.
 - `user_help` - instrukcje użytkownika z `doc_user`.
 
 Profil określa:
@@ -145,6 +146,17 @@ Profil określa:
 - boosty rankingowe,
 - mnożnik szerokiego wyszukiwania,
 - limit kontekstu.
+
+## Agent SQL
+
+Agent SQL w Oracle InvoiceJet jest nadal agentem RAG. Nie łączy się z bazą i nie wykonuje zapytań. Jego zadanie to:
+
+1. znaleźć dokumentację tabel, kolumn, relacji i procesów,
+2. wyjaśnić, z których tabel wynika odpowiedź,
+3. przygotować bezpieczne zapytanie `SELECT`,
+4. wskazać założenia albo braki dokumentacji.
+
+To oznacza, że SQL jest propozycją opartą o dokumentację. Przed użyciem na realnej bazie trzeba sprawdzić nazwy kolumn, plan wykonania, uprawnienia i wpływ na środowisko.
 
 ## Prompt
 

@@ -16,19 +16,27 @@ class ProfilesAndOllamaTests(unittest.TestCase):
     def test_agent_profiles_are_loaded_from_config_shape(self) -> None:
         profiles = list_agent_profiles()
         mietek = get_agent_profile("mietek")
+        db_sql = get_agent_profile("db_sql")
 
         self.assertGreaterEqual(len(profiles), 1)
         self.assertEqual(mietek.model_profile, "balanced")
         self.assertEqual(mietek.prompt_profile, "oracle_rag_default")
         self.assertEqual(mietek.rag_profile, "full_app_qa")
+        self.assertEqual(db_sql.prompt_profile, "database_sql_assistant")
+        self.assertEqual(db_sql.rag_profile, "database_sql")
+        self.assertIn("SELECT", " ".join(db_sql.capabilities or []))
+        self.assertIn("read-only", db_sql.notes)
 
     def test_model_and_prompt_profiles_load(self) -> None:
         model = get_model_profile(TOOL_ROOT, "strict")
         prompt = get_prompt_profile(TOOL_ROOT, "cross_reference")
+        sql_prompt = get_prompt_profile(TOOL_ROOT, "database_sql_assistant")
 
         self.assertEqual(model.llm_model, "gemma3:4b")
         self.assertEqual(prompt.key, "cross_reference")
         self.assertIn("Kontekstu", prompt.rag_instruction)
+        self.assertIn("SELECT", sql_prompt.rag_instruction)
+        self.assertIn("```sql```", sql_prompt.answer_style)
 
     @patch("oracle_invoicejet.embeddings.requests.post")
     def test_generate_maps_profile_options_to_ollama_payload(self, post: Mock) -> None:

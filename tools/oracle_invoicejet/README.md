@@ -50,6 +50,7 @@ Dostepne profile:
 - `full_app_qa` - ogolne pytania o aplikacje,
 - `cross_reference` - pytania przekrojowe ekran/pole/API/tabela,
 - `technical_deep_dive` - backend, API, algorytmy, model danych, role i testy,
+- `database_sql` - model danych, tabele, relacje i podstawowe zapytania `SELECT`,
 - `user_help` - instrukcje uzytkownika z `doc_user`.
 
 Profil RAG decyduje, jakie typy zrodel sa preferowane przy wyszukiwaniu. `cross_reference` dogrywa kontekst z kilku klas zrodel, zeby nie odpowiadac tylko z jednego najblizszego semantycznie fragmentu.

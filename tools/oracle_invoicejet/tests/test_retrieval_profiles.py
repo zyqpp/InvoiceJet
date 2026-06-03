@@ -48,6 +48,18 @@ class RetrievalProfileTests(unittest.TestCase):
         self.assertIn("api", source_types)
         self.assertIn("data_model", source_types)
 
+    def test_database_sql_profile_prioritizes_data_model_context(self) -> None:
+        service = object.__new__(RetrievalService)
+        service.config = _config()
+        service.embedding_provider = FakeEmbeddingProvider()
+        service.collection = FakeCollection()
+
+        hits = service.search_with_profile("select dokumenty status klient", get_rag_profile("database_sql"), top_k=3)
+        source_types = [hit.metadata["source_type"] for hit in hits]
+
+        self.assertEqual(source_types[0], "data_model")
+        self.assertIn("mapping", source_types)
+
 
 def _source_type_from_where(where) -> str | None:  # noqa: ANN001
     if not where:

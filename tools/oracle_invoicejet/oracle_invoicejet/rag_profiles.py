@@ -49,6 +49,17 @@ RAG_PROFILES: Dict[str, RAGProfile] = {
         per_type_k=2,
         max_context_chars=22000,
     ),
+    "database_sql": RAGProfile(
+        key="database_sql",
+        label="Model danych i SQL",
+        description="Tabele, kolumny, relacje, slowniki i podstawowe zapytania SELECT.",
+        source_groups=["doc_ai"],
+        preferred_source_types=["data_model", "mapping", "process", "api", "algorithm", "validation"],
+        type_boosts={"data_model": 0.1, "mapping": 0.08, "process": 0.05, "api": 0.04, "algorithm": 0.03},
+        top_k_multiplier=6,
+        per_type_k=3,
+        max_context_chars=26000,
+    ),
     "user_help": RAGProfile(
         key="user_help",
         label="Pomoc użytkownika",
@@ -79,6 +90,14 @@ CROSS_REFERENCE_MARKERS = {
     "pobiera",
     "źródło",
     "zrodlo",
+    "sql",
+    "select",
+    "join",
+    "kolumna",
+    "kolumny",
+    "status",
+    "kontrahent",
+    "klient",
 }
 
 

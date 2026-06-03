@@ -119,7 +119,7 @@ class RetrievalService:
                         id=f"lexical::{document.relative_path}",
                         text=_lexical_snippet(text, query_terms),
                         metadata=metadata,
-                        distance=max(0.01, 0.55 - score * 0.05),
+                        distance=_lexical_distance(score, profile),
                     ),
                 )
             )
@@ -212,6 +212,29 @@ def _select_profiled_hits(
     )
     selected: List[SearchHit] = []
     selected_ids: set[str] = set()
+    if profile.key == "database_sql":
+        for suffix in _sql_table_suffixes(query_terms or []):
+            candidate = next(
+                (
+                    hit
+                    for hit in ranked
+                    if hit.id not in selected_ids and hit.source_path.lower().endswith(suffix)
+                ),
+                None,
+            )
+            if candidate is None:
+                continue
+            selected.append(candidate)
+            selected_ids.add(candidate.id)
+            if len(selected) >= top_k:
+                return selected
+        for hit in ranked:
+            if hit.id in selected_ids or hit.metadata.get("source_type") != "data_model":
+                continue
+            selected.append(hit)
+            selected_ids.add(hit.id)
+            if len(selected) >= min(top_k, max(profile.per_type_k, 4)):
+                break
     for source_type in profile.preferred_source_types:
         candidate = next((hit for hit in ranked if hit.id not in selected_ids and hit.metadata.get("source_type") == source_type), None)
         if candidate is None:
@@ -230,9 +253,23 @@ def _select_profiled_hits(
     return selected
 
 
+def _sql_table_suffixes(query_terms: Sequence[str]) -> List[str]:
+    terms = set(query_terms)
+    suffixes: List[str] = []
+    if "document" in terms:
+        suffixes.append("/dbo.document.md")
+    if terms & {"firm", "client", "kontrahent", "klient"}:
+        suffixes.append("/dbo.firm.md")
+    if terms & {"userfirm", "client", "kontrahent", "klient", "firm"}:
+        suffixes.append("/dbo.userfirm.md")
+    if terms & {"documentstatus", "document_status", "status"}:
+        suffixes.append("/dbo.documentstatus.md")
+    return suffixes
+
+
 def _query_terms(question: str) -> List[str]:
     terms = re.findall(r"[a-zA-Z0-9_ąćęłńóśźżĄĆĘŁŃÓŚŹŻ]+", question.lower())
-    technical_short_terms = {"api", "dto", "pdf", "db", "ui"}
+    technical_short_terms = {"api", "dto", "pdf", "db", "ui", "sql"}
     expanded = [term for term in terms if len(term) >= 4 or term in technical_short_terms]
     aliases = {
         "logowania": ["login", "auth"],
@@ -248,6 +285,25 @@ def _query_terms(question: str) -> List[str]:
         "produktów": ["product"],
         "fakture": ["invoice", "document"],
         "fakturę": ["invoice", "document"],
+        "dokument": ["document"],
+        "dokumentu": ["document"],
+        "dokumenty": ["document"],
+        "kontrahent": ["firm", "client", "userfirm"],
+        "kontrahenta": ["firm", "client", "userfirm"],
+        "klient": ["firm", "client", "userfirm"],
+        "klienta": ["firm", "client", "userfirm"],
+        "nazwisko": ["name", "firm"],
+        "nazwisku": ["name", "firm"],
+        "nazwie": ["name", "firm"],
+        "nazwa": ["name", "firm"],
+        "status": ["documentstatus", "document_status"],
+        "statusie": ["documentstatus", "document_status"],
+        "statusu": ["documentstatus", "document_status"],
+        "kolumna": ["column"],
+        "kolumny": ["column"],
+        "sprzedazy": ["issuedate"],
+        "sql": ["select", "join", "where"],
+        "select": ["sql", "join", "where"],
         "pdf": ["generatepdf", "getpdfstream"],
         "dashboard": ["dashboardstats"],
         "statystyki": ["dashboardstats"],
@@ -275,6 +331,12 @@ def _lexical_bonus(hit: SearchHit, query_terms: Sequence[str]) -> float:
     return min(matches * 0.025, 0.125)
 
 
+def _lexical_distance(score: int, profile: RAGProfile) -> float:
+    if profile.key == "database_sql":
+        return max(0.001, 1.0 / (score + 1))
+    return max(0.01, 0.55 - score * 0.05)
+
+
 def _lexical_document_score(relative_path: str, text: str, query_terms: Sequence[str]) -> int:
     path_haystack = relative_path.lower()
     text_haystack = text[:6000].lower()
@@ -286,6 +348,14 @@ def _lexical_document_score(relative_path: str, text: str, query_terms: Sequence
             score += 1
     if _has_table_intent(query_terms) and ("/01_db/" in path_haystack or "/dbo/" in path_haystack):
         score += 8
+    if "document" in query_terms and path_haystack.endswith("/dbo.document.md"):
+        score += 12
+    if any(term in query_terms for term in {"firm", "client", "kontrahent", "klient"}) and path_haystack.endswith("/dbo.firm.md"):
+        score += 12
+    if "userfirm" in query_terms and path_haystack.endswith("/dbo.userfirm.md"):
+        score += 8
+    if any(term in query_terms for term in {"documentstatus", "document_status", "status"}) and path_haystack.endswith("/dbo.documentstatus.md"):
+        score += 12
     if _has_endpoint_intent(query_terms) and "/01_api_frontend/" in path_haystack:
         score += 5
     if _has_endpoint_intent(query_terms) and re.search(r"/(get|post|put|patch|delete)_", path_haystack):
@@ -294,7 +364,7 @@ def _lexical_document_score(relative_path: str, text: str, query_terms: Sequence
 
 
 def _has_table_intent(query_terms: Sequence[str]) -> bool:
-    return any(term in {"tabela", "tabele", "tabeli", "przechowuje"} for term in query_terms)
+    return any(term in {"tabela", "tabele", "tabeli", "przechowuje", "sql", "select", "join", "column"} for term in query_terms)
 
 
 def _has_endpoint_intent(query_terms: Sequence[str]) -> bool:

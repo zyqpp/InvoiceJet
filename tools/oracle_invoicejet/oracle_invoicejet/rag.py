@@ -96,12 +96,14 @@ def build_answer_prompt(
         answer_style = prompt_profile.answer_style
         source_policy = prompt_profile.source_policy
         profile_line = f"Prompt profile: {prompt_profile.key} v{prompt_profile.version}"
+        profile_extra = _profile_extra_instruction(prompt_profile)
     else:
         system_prompt = "Jesteś Oracle InvoiceJet, lokalnym asystentem RAG dla dokumentacji InvoiceJet."
         rag_instruction = "Odpowiadasz zawsze po polsku, konkretnie i tylko na podstawie sekcji Kontekst."
         answer_style = "Odwołuj się do fragmentów jako `[Kontekst N]`, gdy podajesz ustalenia."
         source_policy = "Na końcu odpowiedzi dodaj sekcję `Źródła` z listą użytych `source_path`."
         profile_line = "Prompt profile: builtin"
+        profile_extra = ""
     return (
         "/no_think\n"
         f"{system_prompt}\n"
@@ -110,6 +112,7 @@ def build_answer_prompt(
         f"Zwróć dokładnie `{NO_ANSWER}` tylko wtedy, gdy Kontekst jest pusty albo wszystkie fragmenty są nietrafione.\n"
         "Nie używaj wiedzy ogólnej do uzupełniania braków dokumentacji.\n"
         "Nie pokazuj procesu rozumowania ani sekcji thinking.\n"
+        f"{profile_extra}"
         f"{answer_style}\n"
         f"{source_policy}\n"
         "Dla pytań przekrojowych łącz informacje z `source_type=screen`, `api`, `data_model`, `process`, `mapping` i `validation`, jeśli są w Kontekście.\n"
@@ -118,6 +121,17 @@ def build_answer_prompt(
         f"Ostrzeżenia:\n{warning_text}\n\n"
         f"Pytanie:\n{question}\n\n"
         f"Kontekst:\n{context.text}\n"
+    )
+
+
+def _profile_extra_instruction(prompt_profile: PromptProfile) -> str:
+    if prompt_profile.key != "database_sql_assistant":
+        return ""
+    return (
+        "Tryb SQL: Kontekst opisuje schemat bazy, a nie konkretne rekordy danych. "
+        "Wartosci filtrow podane w pytaniu uzytkownika sa parametrami zapytania i nie musza wystepowac w Kontekscie. "
+        f"Nie zwracaj `{NO_ANSWER}` tylko dlatego, ze konkretna wartosc filtra, np. nazwa klienta, nie wystepuje w dokumentacji. "
+        "Jesli Kontekst potwierdza tabele, kolumny i relacje potrzebne do SELECT, przygotuj SELECT oraz jawnie opisz zalozenia.\n"
     )
 
 

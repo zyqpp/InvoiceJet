@@ -101,6 +101,26 @@
     "expected_source_types": ["mapping"]
   },
   {
+    "id": "sql-documents-by-client",
+    "question": "Przygotuj SELECT, ktory wyciagnie dokumenty dla kontrahenta o nazwie Abacki i wyjasnij tabele oraz JOIN.",
+    "rag_profile": "database_sql",
+    "expected_sources": [
+      "InvoiceJet/doc_AI/05_model_danych/01_db/dbo/dbo.Document.md",
+      "InvoiceJet/doc_AI/05_model_danych/01_db/dbo/dbo.Firm.md"
+    ],
+    "expected_source_types": ["data_model"]
+  },
+  {
+    "id": "sql-documents-by-status-columns",
+    "question": "Zrob SQL, ktory wyswietli dokumenty w statusie Paid i tylko kolumny Id, numer dokumentu, data wystawienia oraz status.",
+    "rag_profile": "database_sql",
+    "expected_sources": [
+      "InvoiceJet/doc_AI/05_model_danych/01_db/dbo/dbo.Document.md",
+      "InvoiceJet/doc_AI/05_model_danych/01_db/dbo/dbo.DocumentStatus.md"
+    ],
+    "expected_source_types": ["data_model"]
+  },
+  {
     "id": "user-help-invoice",
     "question": "Jak uzytkownik ma wystawic fakture?",
     "rag_profile": "user_help",

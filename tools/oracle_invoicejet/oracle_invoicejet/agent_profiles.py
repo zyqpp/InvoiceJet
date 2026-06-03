@@ -31,6 +31,10 @@ class AgentProfile:
     prompt_profile: str = "oracle_rag_default"
     rag_profile: str = "full_app_qa"
     notes: str = ""
+    tooltip: str = ""
+    capabilities: List[str] | None = None
+    limitations: List[str] | None = None
+    examples: List[str] | None = None
 
     @property
     def required_models(self) -> List[str]:
@@ -87,6 +91,10 @@ def _profile_from_row(row: dict[str, Any], model: ModelProfile) -> AgentProfile:
         prompt_profile=str(row.get("prompt_profile", "oracle_rag_default")),
         rag_profile=str(row.get("rag_profile", "full_app_qa")),
         notes=str(row.get("notes", "")),
+        tooltip=str(row.get("tooltip", "")),
+        capabilities=[str(item) for item in row.get("capabilities", [])],
+        limitations=[str(item) for item in row.get("limitations", [])],
+        examples=[str(item) for item in row.get("examples", [])],
     )
 
 

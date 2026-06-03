@@ -84,6 +84,9 @@ def render_sidebar(base_config: AppConfig) -> dict[str, Any]:
         )
         profile = get_agent_profile(profiles[profile_labels.index(selected_label)].key)
         st.caption(profile.description)
+        if profile.tooltip:
+            st.caption(f"Instrukcja: {profile.tooltip}")
+        render_agent_guidance(profile)
         if profile.notes:
             st.warning(profile.notes)
 
@@ -227,6 +230,27 @@ def render_sidebar_status(
         st.error(message)
 
 
+def render_agent_guidance(profile: AgentProfile) -> None:
+    capabilities = list(profile.capabilities or [])
+    limitations = list(profile.limitations or [])
+    examples = list(profile.examples or [])
+    if not capabilities and not limitations and not examples:
+        return
+    with st.expander("Co potrafi ten agent?", expanded=False):
+        if capabilities:
+            st.markdown("**Potrafi**")
+            for item in capabilities:
+                st.write(f"- {item}")
+        if limitations:
+            st.markdown("**Ograniczenia**")
+            for item in limitations:
+                st.write(f"- {item}")
+        if examples:
+            st.markdown("**Przykladowe pytania**")
+            for item in examples:
+                st.code(item, language="text")
+
+
 def render_chat_tab(
     config: AppConfig,
     profile: AgentProfile,
@@ -241,6 +265,8 @@ def render_chat_tab(
         f"Model: `{config.llm_model}`, embedding: `{config.embedding_model}`, "
         f"RAG: `{rag_profile}`, prompt: `{prompt_profile}`."
     )
+    if profile.tooltip:
+        st.caption(f"Instrukcja agenta: {profile.tooltip}")
     question = st.text_area(
         "Pytanie",
         height=120,

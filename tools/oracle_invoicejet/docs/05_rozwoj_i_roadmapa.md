@@ -98,6 +98,7 @@ Możliwe usprawnienia:
 
 - reranking drugim modelem po pierwszym szerokim wyszukiwaniu,
 - graf źródeł: screen -> mapping -> endpoint -> table,
+- graf modelu danych: tabela -> FK -> tabela -> ekran/proces/API,
 - osobne indeksy dla dokumentacji użytkownika, technicznej i kodu,
 - wykrywanie intencji pytania bardziej formalnym klasyfikatorem,
 - normalizacja nazw ekranów, tabel, endpointów i encji,
@@ -113,6 +114,7 @@ Bezpieczny zestaw narzędzi po stabilizacji RAG:
 - `summarize_sources` - streść kilka źródeł,
 - `compare_profiles` - porównaj konfiguracje,
 - `run_eval_set` - uruchom golden set,
+- `draft_select_sql` - przygotuj propozycję `SELECT` wyłącznie na podstawie modelu danych,
 - `explain_trace` - wyjaśnij, skąd wzięła się odpowiedź.
 
 Operacje mutujące, zapisywanie dokumentów, GitHub issue/PR i automatyzacje powinny zostać poza pierwszą wersją agentów.

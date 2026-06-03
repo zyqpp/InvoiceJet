@@ -55,7 +55,7 @@ def query_main() -> None:
     parser = argparse.ArgumentParser(description="Zadaje pytanie do Oracle InvoiceJet.")
     parser.add_argument("question", nargs="+", help="Pytanie do dokumentacji.")
     parser.add_argument("--scope", default=None, help="Zakres: full, technical, user, backend, frontend, debt.")
-    parser.add_argument("--rag-profile", default=None, help="Profil RAG: full_app_qa, cross_reference, technical_deep_dive, user_help.")
+    parser.add_argument("--rag-profile", default=None, help="Profil RAG: full_app_qa, cross_reference, technical_deep_dive, database_sql, user_help.")
     parser.add_argument("--prompt-profile", default=None, help="Profil promptu z katalogu profiles.")
     args = parser.parse_args()
     result = OracleOrchestrator(load_config()).answer(
