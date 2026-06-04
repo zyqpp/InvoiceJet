@@ -1,19 +1,19 @@
 #!/usr/bin/env pwsh
 <#
 .SYNOPSIS
-    Uruchamia serwer edycji plików (port 8010).
+    Uruchamia webowy edytor plikow Markdown dla portali MkDocs.
 
 .PARAMETER Port
-    Port serwera. Domyślnie: 8010.
+    Port serwera edycji. Domyslnie: 8010.
 
 .PARAMETER Editor
-    Ścieżka do edytora. Domyślnie: Windows "Otwórz za pomocą".
-    Przykłady: "notepad++", "code", "C:\Program Files\Notepad++\notepad++.exe"
+    Opcjonalny zewnetrzny edytor dla endpointu /open-external.
+    Zwykle nie jest potrzebny, bo klikniecie w MkDocs otwiera edytor webowy.
 
 .EXAMPLE
     .\start-editor.ps1
-    .\start-editor.ps1 -Editor "notepad++"
-    .\start-editor.ps1 -Editor "code" -Port 8011
+    .\start-editor.ps1 -Port 8011
+    .\start-editor.ps1 -Editor "code"
 #>
 
 param(
@@ -21,15 +21,27 @@ param(
     [string]$Editor = ""
 )
 
+$ErrorActionPreference = "Stop"
+
 $python = $null
 foreach ($cmd in @("python", "python3", "py")) {
-    try { & $cmd --version 2>$null | Out-Null; $python = $cmd; break } catch {}
+    try {
+        & $cmd --version 2>$null | Out-Null
+        $python = $cmd
+        break
+    } catch {}
 }
-if (-not $python) { Write-Host "❌ Python nie znaleziony!" -ForegroundColor Red; exit 1 }
+
+if (-not $python) {
+    Write-Host "Python nie znaleziony." -ForegroundColor Red
+    exit 1
+}
 
 $script = Join-Path (Split-Path -Parent $MyInvocation.MyCommand.Path) "editor-server.py"
-$args_ = "--port $Port"
-if ($Editor) { $args_ += " --editor `"$Editor`"" }
 
-Write-Host "✏️  Uruchamiam serwer edycji na porcie $Port..." -ForegroundColor Green
-& $python $script --port $Port $(if ($Editor) { "--editor"; $Editor })
+Write-Host "Uruchamiam webowy edytor MkDocs: http://127.0.0.1:$Port" -ForegroundColor Green
+if ($Editor) {
+    & $python $script --port $Port --editor $Editor
+} else {
+    & $python $script --port $Port
+}

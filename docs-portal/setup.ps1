@@ -16,10 +16,13 @@
     Host/bind address dla MkDocs. Domyslnie: 127.0.0.1. Alias: -Host.
 
 .PARAMETER PortAI
-    Port dla dokumentacji technicznej (doc_AI). Domyslnie: 8201.
+    Port dla dokumentacji technicznej (doc_AI). Domyslnie: 8001.
 
 .PARAMETER PortUser
-    Port dla dokumentacji uzytkownika (doc_user). Domyslnie: 8301.
+    Port dla dokumentacji uzytkownika (doc_user). Domyslnie: 8002.
+
+.PARAMETER EditorPort
+    Port webowego edytora dokumentow. Domyslnie: 8010.
 
 .PARAMETER OracleEnvPath
     Lokalna sciezka do pliku .env narzedzia Oracle InvoiceJet.
@@ -28,8 +31,11 @@
 param(
     [Alias("Host")]
     [string]$HostName = "127.0.0.1",
-    [int]$PortAI = 8201,
-    [int]$PortUser = 8301,
+    [int]$PortAI = 8001,
+    [int]$PortUser = 8002,
+    [int]$EditorPort = 8010,
+    [switch]$NoEditor,
+    [string]$Editor = "",
     [string]$OracleEnvPath
 )
 
@@ -203,6 +209,7 @@ if (-not (Test-Path -LiteralPath $docUser)) { FAIL "Folder doc_user nie znalezio
 
 $aiDir = Join-Path $SCRIPT_DIR "doc-ai"
 $userDir = Join-Path $SCRIPT_DIR "doc-user"
+$editorScript = Join-Path $SCRIPT_DIR "start-editor.ps1"
 OK "doc_AI:   $docAI"
 OK "doc_user: $docUser"
 
@@ -217,6 +224,7 @@ OK "Porty: doc_AI=$PortAI, doc_user=$PortUser"
 
 $aiUrl = "http://${HostName}:$PortAI/"
 $userUrl = "http://${HostName}:$PortUser/"
+$editorUrl = "http://127.0.0.1:$EditorPort"
 
 Update-OracleEnv -Path $oracleEnv -DocAIUrl $aiUrl -DocUserUrl $userUrl
 OK "Zaktualizowano lokalny Oracle .env: $oracleEnv"
@@ -324,6 +332,8 @@ markdown_extensions:
 
 extra:
   generator: false
+  editor_url: "$editorUrl"
+  source_dir: "$docAIYaml"
   portal:
     doc_ai_url: "$aiUrl"
     doc_user_url: "$userUrl"
@@ -396,6 +406,8 @@ markdown_extensions:
 
 extra:
   generator: false
+  editor_url: "$editorUrl"
+  source_dir: "$docUserYaml"
   portal:
     doc_ai_url: "$aiUrl"
     doc_user_url: "$userUrl"
@@ -407,6 +419,21 @@ extra_javascript:
 $aiYml | Out-File (Join-Path $aiDir "mkdocs.yml") -Encoding utf8
 $userYml | Out-File (Join-Path $userDir "mkdocs.yml") -Encoding utf8
 OK "mkdocs.yml wygenerowane"
+
+if (-not $NoEditor) {
+    if (Test-PortInUse -Port $EditorPort) {
+        INFO "Edytor MkDocs juz dziala: http://127.0.0.1:$EditorPort"
+    } elseif (Test-Path -LiteralPath $editorScript) {
+        $editorArgs = @("-NoProfile", "-ExecutionPolicy", "Bypass", "-File", $editorScript, "-Port", "$EditorPort")
+        if ($Editor) {
+            $editorArgs += @("-Editor", $Editor)
+        }
+        Start-Process powershell -WindowStyle Hidden -ArgumentList $editorArgs
+        OK "Edytor MkDocs: http://127.0.0.1:$EditorPort"
+    } else {
+        WARN "Nie znaleziono start-editor.ps1 - edytor nie zostal uruchomiony."
+    }
+}
 
 INFO "Uruchamiam serwery..."
 Start-Process powershell -ArgumentList "-NoExit", "-Command", `
@@ -427,8 +454,9 @@ Write-Host ""
 Write-Host "=======================================================" -ForegroundColor Cyan
 if ($r1 -eq 200) { OK "doc_AI   -> $aiUrl" } else { WARN "doc_AI   -> TIMEOUT (moze jeszcze startuje)" }
 if ($r2 -eq 200) { OK "doc_user -> $userUrl" } else { WARN "doc_user -> TIMEOUT" }
+if (-not $NoEditor) { OK "Edytor  -> http://127.0.0.1:$EditorPort" }
 Write-Host ""
-Write-Host "  Edycja: zmien plik .md -> przegladarka auto-odswiezy" -ForegroundColor Gray
+Write-Host "  Edycja: kliknij 'Edytuj' w portalu MkDocs." -ForegroundColor Gray
 Write-Host "  Stop:   zamknij okna PowerShell albo uruchom stop-docs.ps1" -ForegroundColor Gray
 Write-Host "=======================================================" -ForegroundColor Cyan
 

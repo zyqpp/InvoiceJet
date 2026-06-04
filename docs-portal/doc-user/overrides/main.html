@@ -3,32 +3,30 @@
 {% block styles %}
 {{ super() }}
 <style>
-/* Ukryj domyślne zakładki Material */
 .md-tabs { display: none !important; }
-/* Ten sam styl co doc-ai */
 .ij-cat-bar { background: #3f51b5; display: flex; flex-wrap: wrap; gap: 4px; padding: 8px 16px; align-items: center; }
-.ij-cat-btn { display: inline-flex; align-items: center; gap: 5px; padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 500; color: rgba(255,255,255,0.85); text-decoration: none !important; background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.2); transition: all 0.15s; white-space: nowrap; }
-.ij-cat-btn:hover { background: rgba(255,255,255,0.25); color: #fff; border-color: rgba(255,255,255,0.5); }
-.ij-cat-btn.active { background: #fff; color: #3f51b5; font-weight: 700; border-color: #fff; }
-.ij-portal-switch { display: flex; gap: 4px; margin-left: 8px; }
-.ij-portal-btn { padding: 3px 10px; border-radius: 14px; font-size: 0.72rem; font-weight: 600; text-decoration: none !important; border: 1.5px solid rgba(255,255,255,0.4); color: rgba(255,255,255,0.8); transition: all 0.15s; }
+.ij-cat-btn { color: rgba(255,255,255,.85); text-decoration: none; padding: 6px 10px; border-radius: 4px; font-size: .78rem; font-weight: 500; border: 1px solid transparent; transition: all .15s; }
+.ij-cat-btn:hover { background: rgba(255,255,255,.12); color: #fff; }
+.ij-cat-btn.active { background: rgba(255,255,255,.18); color: #fff; border-color: #fff; }
+.ij-portal-switch { display: flex; gap: 4px; margin-left: auto; align-items: center; }
+.ij-portal-btn { color: rgba(255,255,255,.75); text-decoration: none; padding: 4px 8px; border-radius: 4px; border: 1px solid rgba(255,255,255,.25); font-size: .72rem; }
 .ij-portal-btn:hover { border-color: #fff; color: #fff; }
-.ij-portal-btn.current { background: rgba(255,255,255,0.2); color: #fff; border-color: rgba(255,255,255,0.6); }
-.md-sidebar--primary { width: 270px; }
-.md-content { max-width: 880px; }
+.ij-portal-btn.current { background: rgba(255,255,255,.2); color: #fff; border-color: rgba(255,255,255,.6); }
+.md-content { max-width: 920px; }
 .md-nav__link--active { color: #3f51b5 !important; font-weight: 600; }
-.md-typeset table th { background: #3f51b5; color: #fff; }
-.md-typeset table tr:hover { background: #f1f5f9; }
+.md-typeset table:not([class]) { font-size: .78rem; }
+.md-typeset table th { background: #eef2ff; font-weight: 700; }
+.md-typeset table tr:hover { background: #f8fafc; }
 .md-typeset code { background: #f1f5f9 !important; color: #0f172a !important; border-radius: 4px; padding: 1px 5px; }
 </style>
 {% endblock %}
 
 {% block tabs %}
 <div class="ij-cat-bar" role="navigation" aria-label="Sekcje dokumentacji">
-  <a href="/" class="ij-cat-btn" data-cat="">🏠 Strona główna</a>
-  <a href="/01_ekrany/index.html" class="ij-cat-btn" data-cat="01_ekrany">🖥️ Opisy ekranów</a>
-  <a href="/02_procesy/index.html" class="ij-cat-btn" data-cat="02_procesy">▶️ Instrukcje procesów</a>
-  <a href="/zrodla.html" class="ij-cat-btn" data-cat="zrodla">📚 Źródła</a>
+  <a href="/" class="ij-cat-btn" data-cat="">Strona glowna</a>
+  <a href="/01_ekrany/index.html" class="ij-cat-btn" data-cat="01_ekrany">Opisy ekranow</a>
+  <a href="/02_procesy/index.html" class="ij-cat-btn" data-cat="02_procesy">Instrukcje procesow</a>
+  <a href="/zrodla.html" class="ij-cat-btn" data-cat="zrodla">Zrodla</a>
 </div>
 {% endblock %}
 
@@ -38,66 +36,68 @@
 (function() {
   var DOC_AI_URL = "{{ config.extra.portal.doc_ai_url }}";
   var DOC_USER_URL = "{{ config.extra.portal.doc_user_url }}";
+  var DOCS_DIR = "{{ config.extra.source_dir }}";
+  var EDITOR_URL = "{{ config.extra.editor_url }}";
 
   function setActiveBtn() {
     var path = window.location.pathname;
     document.querySelectorAll(".ij-cat-btn[data-cat]").forEach(function(btn) {
       var cat = btn.getAttribute("data-cat");
       var active = cat === ""
-        ? !["01_ekrany","02_procesy","zrodla"].some(function(c){ return path.indexOf("/"+c)!==-1; })
-        : path.indexOf("/"+cat)!==-1;
+        ? !["01_ekrany","02_procesy","zrodla"].some(function(c) { return path.indexOf("/" + c) !== -1; })
+        : path.indexOf("/" + cat) !== -1;
       btn.classList.toggle("active", active);
     });
   }
-  setActiveBtn();
 
   function addPortalSwitch() {
     if (document.getElementById("ij-portal-sw")) return;
     var sw = document.createElement("div");
     sw.id = "ij-portal-sw";
     sw.className = "ij-portal-switch";
-    sw.innerHTML = '<a href="' + DOC_AI_URL + '" class="ij-portal-btn" title="Dokumentacja Techniczna">📚 Techniczna</a>'
-      + '<a href="' + DOC_USER_URL + '" class="ij-portal-btn current" title="Dokumentacja Użytkownika">👤 Użytkownik</a>';
+    sw.innerHTML = '<a href="' + DOC_AI_URL + '" class="ij-portal-btn" title="Dokumentacja techniczna">Techniczna</a>'
+      + '<a href="' + DOC_USER_URL + '" class="ij-portal-btn current" title="Dokumentacja uzytkownika">Uzytkownik</a>';
     var header = document.querySelector(".md-header__inner");
     if (header) header.appendChild(sw);
   }
-  var DOCS_DIR = "G:\\Projekty informatyczne\\Gotowe aplikacje\\InvoiceJet\\InvoiceJet\\doc_user\\";
-  var EDITOR_PORT = 8010;
+
+  function sourcePathFromLocation() {
+    var urlPath = decodeURIComponent(window.location.pathname).replace(/^\//, "").replace(/\.html$/, ".md");
+    if (!urlPath) urlPath = "README.md";
+    urlPath = urlPath.replace(/\/index\.md$/, "/README.md").replace(/^index\.md$/, "README.md");
+    if (!urlPath || !DOCS_DIR || !EDITOR_URL) return "";
+    return DOCS_DIR.replace(/[\\/]+$/, "") + "/" + urlPath;
+  }
 
   function addEditButton() {
     if (document.getElementById("ij-edit-btn")) return;
-    var urlPath = window.location.pathname.replace(/^\//, '').replace(/\.html$/, '.md');
-    urlPath = urlPath.replace(/\/index\.md$/, '/README.md').replace(/^index\.md$/, 'README.md');
-    if (!urlPath) return;
-    var filePath = DOCS_DIR + urlPath.replace(/\//g, '\\');
-    var editUrl = 'http://127.0.0.1:' + EDITOR_PORT + '/edit?path=' + encodeURIComponent(filePath);
-    var btn = document.createElement('a');
-    btn.id = 'ij-edit-btn';
-    btn.href = editUrl;
-    btn.title = 'Edytuj ten plik';
-    btn.innerHTML = '✏️';
-    btn.style.cssText = 'margin-left:6px;font-size:1rem;opacity:.7;text-decoration:none;transition:opacity .15s;cursor:pointer;';
-    btn.onmouseover = function(){ this.style.opacity='1'; };
-    btn.onmouseout  = function(){ this.style.opacity='.7'; };
-    btn.onclick = function(e) {
-      e.preventDefault();
-      fetch(editUrl)
-        .then(function(r){ return r.json(); })
-        .then(function(d){ if(!d.ok) alert('Błąd: ' + d.msg); })
-        .catch(function(){ alert('Serwer edycji nie działa!\nUruchom: .\\start-editor.ps1'); });
-    };
+    var filePath = sourcePathFromLocation();
+    if (!filePath) return;
+    var btn = document.createElement("a");
+    btn.id = "ij-edit-btn";
+    btn.href = EDITOR_URL.replace(/\/$/, "") + "/edit?path=" + encodeURIComponent(filePath);
+    btn.target = "_blank";
+    btn.rel = "noopener noreferrer";
+    btn.title = "Edytuj ten plik w webowym edytorze";
+    btn.textContent = "Edytuj";
+    btn.style.cssText = "margin-left:6px;font-size:.78rem;opacity:.86;text-decoration:none;transition:opacity .15s;cursor:pointer;border:1px solid rgba(255,255,255,.35);border-radius:4px;padding:3px 8px;color:inherit;";
+    btn.onmouseover = function() { this.style.opacity = "1"; };
+    btn.onmouseout = function() { this.style.opacity = ".86"; };
     var header = document.querySelector(".md-header__inner");
     if (header) header.appendChild(btn);
   }
 
-  document.addEventListener("DOMContentLoaded", function(){ addPortalSwitch(); addEditButton(); });
+  function refreshHeaderTools() {
+    setActiveBtn();
+    addPortalSwitch();
+    var old = document.getElementById("ij-edit-btn");
+    if (old) old.remove();
+    addEditButton();
+  }
 
+  document.addEventListener("DOMContentLoaded", refreshHeaderTools);
   if (typeof document$ !== "undefined") {
-    document$.subscribe(function() {
-      setActiveBtn(); addPortalSwitch();
-      var old = document.getElementById("ij-edit-btn"); if (old) old.remove();
-      addEditButton();
-    });
+    document$.subscribe(refreshHeaderTools);
   }
 })();
 </script>

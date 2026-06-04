@@ -9,6 +9,9 @@ param(
   [string]$HostName = "127.0.0.1",
   [int]$PortAI = 8001,
   [int]$PortUser = 8002,
+  [int]$EditorPort = 8010,
+  [switch]$NoEditor,
+  [string]$Editor = "",
   [string]$OracleEnvPath
 )
 
@@ -17,6 +20,7 @@ $ErrorActionPreference = "Stop"
 $ROOT = Split-Path -Parent $MyInvocation.MyCommand.Path
 $AI_DIR = Join-Path $ROOT "doc-ai"
 $USER_DIR = Join-Path $ROOT "doc-user"
+$EDITOR_SCRIPT = Join-Path $ROOT "start-editor.ps1"
 
 $MKDOCS = "C:\Users\kamil\AppData\Roaming\Python\Python314\Scripts\mkdocs.exe"
 if (-not (Test-Path -LiteralPath $MKDOCS)) {
@@ -34,6 +38,29 @@ if (-not (Test-Path -LiteralPath $MKDOCS)) {
 function Get-DefaultOracleEnvPath {
   $repoRoot = Split-Path -Parent $ROOT
   return Join-Path $repoRoot "tools\oracle_invoicejet\.env"
+}
+
+function Convert-ToPortalPath {
+  param([Parameter(Mandatory = $true)][string]$Path)
+  return ((Resolve-Path -LiteralPath $Path).Path -replace "\\", "/")
+}
+
+function Resolve-DocsSourcePath {
+  param([Parameter(Mandatory = $true)][string]$FolderName)
+
+  $repoRoot = Split-Path -Parent $ROOT
+  $candidates = @(
+    (Join-Path $repoRoot "InvoiceJet\$FolderName"),
+    (Join-Path $repoRoot $FolderName),
+    (Join-Path $repoRoot "InvoiceJet\InvoiceJet\$FolderName")
+  )
+  foreach ($candidate in $candidates) {
+    if (Test-Path -LiteralPath $candidate) {
+      return (Convert-ToPortalPath -Path $candidate)
+    }
+  }
+  Write-Host "Nie znaleziono folderu $FolderName dla przycisku edycji." -ForegroundColor Yellow
+  return ""
 }
 
 function Update-OracleEnv {
@@ -98,7 +125,9 @@ function Update-MkDocsPortalConfig {
     [Parameter(Mandatory = $true)][string]$Path,
     [Parameter(Mandatory = $true)][string]$SiteUrl,
     [Parameter(Mandatory = $true)][string]$DocAIUrl,
-    [Parameter(Mandatory = $true)][string]$DocUserUrl
+    [Parameter(Mandatory = $true)][string]$DocUserUrl,
+    [Parameter(Mandatory = $true)][string]$EditorUrl,
+    [Parameter(Mandatory = $true)][string]$SourceDir
   )
 
   if (-not (Test-Path -LiteralPath $Path)) {
@@ -111,8 +140,34 @@ function Update-MkDocsPortalConfig {
     [void]$lines.Add($line)
   }
   [void](Set-YamlValue -Lines $lines -Pattern '^\s*site_url:\s*' -Value "site_url: `"$SiteUrl`"")
+  $hasEditorUrl = Set-YamlValue -Lines $lines -Pattern '^\s*editor_url:\s*' -Value "  editor_url: `"$EditorUrl`""
+  $hasSourceDir = Set-YamlValue -Lines $lines -Pattern '^\s*source_dir:\s*' -Value "  source_dir: `"$SourceDir`""
   $hasDocAIUrl = Set-YamlValue -Lines $lines -Pattern '^\s*doc_ai_url:\s*' -Value "    doc_ai_url: `"$DocAIUrl`""
   $hasDocUserUrl = Set-YamlValue -Lines $lines -Pattern '^\s*doc_user_url:\s*' -Value "    doc_user_url: `"$DocUserUrl`""
+
+  if (-not ($hasEditorUrl -and $hasSourceDir)) {
+    $extraIndexForEditor = -1
+    for ($i = 0; $i -lt $lines.Count; $i++) {
+      if ($lines[$i] -match '^extra:\s*$') {
+        $extraIndexForEditor = $i
+        break
+      }
+    }
+    if ($extraIndexForEditor -ge 0) {
+      $insertAt = $extraIndexForEditor + 1
+      if (-not $hasSourceDir) {
+        $lines.Insert($insertAt, "  source_dir: `"$SourceDir`"")
+      }
+      if (-not $hasEditorUrl) {
+        $lines.Insert($insertAt, "  editor_url: `"$EditorUrl`"")
+      }
+    } else {
+      $lines.Add("")
+      $lines.Add("extra:")
+      if (-not $hasEditorUrl) { $lines.Add("  editor_url: `"$EditorUrl`"") }
+      if (-not $hasSourceDir) { $lines.Add("  source_dir: `"$SourceDir`"") }
+    }
+  }
 
   if (-not ($hasDocAIUrl -and $hasDocUserUrl)) {
     $extraIndex = -1
@@ -146,6 +201,9 @@ function Update-MkDocsPortalConfig {
 $oracleEnv = if ($OracleEnvPath) { $OracleEnvPath } else { Get-DefaultOracleEnvPath }
 $docAIUrl = "http://${HostName}:$PortAI/"
 $docUserUrl = "http://${HostName}:$PortUser/"
+$editorUrl = "http://127.0.0.1:$EditorPort"
+$docAISourceDir = Resolve-DocsSourcePath -FolderName "doc_AI"
+$docUserSourceDir = Resolve-DocsSourcePath -FolderName "doc_user"
 
 Write-Host "================================================" -ForegroundColor Cyan
 Write-Host " InvoiceJet Docs Portal" -ForegroundColor Cyan
@@ -159,11 +217,29 @@ foreach ($port in @($PortAI, $PortUser)) {
   }
 }
 
+if (-not $NoEditor) {
+  $editorUsed = netstat -ano | Select-String ":$EditorPort\s" | Select-String "LISTENING"
+  if ($editorUsed) {
+    Write-Host "Edytor MkDocs juz dziala na http://127.0.0.1:$EditorPort" -ForegroundColor Gray
+  } else {
+    if (-not (Test-Path -LiteralPath $EDITOR_SCRIPT)) {
+      Write-Host "Nie znaleziono start-editor.ps1, pomijam edytor." -ForegroundColor Yellow
+    } else {
+      $editorArgs = @("-NoProfile", "-ExecutionPolicy", "Bypass", "-File", $EDITOR_SCRIPT, "-Port", "$EditorPort")
+      if ($Editor) {
+        $editorArgs += @("-Editor", $Editor)
+      }
+      Start-Process powershell -WindowStyle Hidden -ArgumentList $editorArgs
+      Write-Host "Uruchomiono edytor MkDocs: http://127.0.0.1:$EditorPort" -ForegroundColor Gray
+    }
+  }
+}
+
 Update-OracleEnv -Path $oracleEnv -DocAIUrl $docAIUrl -DocUserUrl $docUserUrl
 Write-Host "Zaktualizowano lokalny Oracle .env: $oracleEnv" -ForegroundColor Gray
 
-Update-MkDocsPortalConfig -Path (Join-Path $AI_DIR "mkdocs.yml") -SiteUrl $docAIUrl -DocAIUrl $docAIUrl -DocUserUrl $docUserUrl
-Update-MkDocsPortalConfig -Path (Join-Path $USER_DIR "mkdocs.yml") -SiteUrl $docUserUrl -DocAIUrl $docAIUrl -DocUserUrl $docUserUrl
+Update-MkDocsPortalConfig -Path (Join-Path $AI_DIR "mkdocs.yml") -SiteUrl $docAIUrl -DocAIUrl $docAIUrl -DocUserUrl $docUserUrl -EditorUrl $editorUrl -SourceDir $docAISourceDir
+Update-MkDocsPortalConfig -Path (Join-Path $USER_DIR "mkdocs.yml") -SiteUrl $docUserUrl -DocAIUrl $docAIUrl -DocUserUrl $docUserUrl -EditorUrl $editorUrl -SourceDir $docUserSourceDir
 Write-Host "Zaktualizowano mkdocs.yml dla portali." -ForegroundColor Gray
 
 Write-Host ""
@@ -187,8 +263,11 @@ Write-Host " GOTOWE! Otworz w przegladarce:" -ForegroundColor Green
 Write-Host ""
 Write-Host "  Dokumentacja Techniczna : $docAIUrl" -ForegroundColor Yellow
 Write-Host "  Dokumentacja Uzytkownika: $docUserUrl" -ForegroundColor Yellow
+if (-not $NoEditor) {
+  Write-Host "  Edytor dokumentow       : http://127.0.0.1:$EditorPort" -ForegroundColor Yellow
+}
 Write-Host ""
-Write-Host "  Edycja: zmien plik .md -> przegladarka auto-odswiezy" -ForegroundColor Gray
+Write-Host "  Edycja: kliknij 'Edytuj' w portalu MkDocs." -ForegroundColor Gray
 Write-Host "  Stop:   uruchom stop-docs.ps1" -ForegroundColor Gray
 Write-Host "================================================" -ForegroundColor Green
 

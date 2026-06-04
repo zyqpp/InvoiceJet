@@ -483,3 +483,6 @@ $RECYCLE.BIN/
 
 # MkDocs build outputs
 docs-portal/**/_site/
+
+# Local MkDocs review/editor state
+.docreview/

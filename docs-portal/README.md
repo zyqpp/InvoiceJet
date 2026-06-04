@@ -1,63 +1,51 @@
 # InvoiceJet Docs Portal
 
-Lokalny portal dokumentacji dla projektu InvoiceJet oparty na **MkDocs + Material theme**.
-Uruchamia dwa niezależne serwery HTTP z pełną nawigacją, wyszukiwarką i możliwością edycji plików.
-
----
-
-## Idea portalu
-
-Dokumentacja projektu żyje jako pliki `.md` w folderach `doc_AI/` i `doc_user/`.
-Portal **nie modyfikuje** tych plików — czyta je i wyświetla jako ładne strony HTML z:
-
-- **Lewym sidebarem** — drzewo nawigacji zwężające się do aktywnej sekcji
-- **Górnym paskiem kategorii** — szybkie przeskakiwanie między głównymi sekcjami
-- **Prawym spisem treści** — linki do nagłówków bieżącego dokumentu
-- **Wyszukiwarką** — full-text po całej dokumentacji
-- **Przyciskiem edycji** — otwiera plik w edytorze na dysku
+Lokalny portal dokumentacji InvoiceJet oparty na **MkDocs + Material theme**.
+Uruchamia dwa serwery HTTP z nawigacją, wyszukiwarką i webowym edytorem plików Markdown.
 
 ```
-doc_AI/        ← pliki źródłowe (niezmieniane)   → Portal Techniczny http://127.0.0.1:8001
-doc_user/      ← pliki źródłowe (niezmieniane)   → Portal Użytkownika http://127.0.0.1:8002
-docs-portal/   ← konfiguracja portali (ten folder)
+InvoiceJet/doc_AI/     -> Portal techniczny   http://127.0.0.1:8001
+InvoiceJet/doc_user/   -> Portal użytkownika  http://127.0.0.1:8002
+docs-portal/           -> konfiguracja MkDocs i edytor
 ```
+
+Edytor działa jako osobny lokalny serwer na `http://127.0.0.1:8010`. Przycisk **Edytuj** w portalu MkDocs otwiera właściwy plik `.md` w przeglądarce, z możliwością zapisu treści, zmiany statusu i dodania komentarzy.
 
 ---
 
 ## Wymagania
 
-| Wymaganie | Wersja | Sprawdź |
-|---|---|---|
-| Python | ≥ 3.8 | `python --version` |
+| Wymaganie | Wersja | Sprawdzenie |
+|---|---:|---|
+| Python | 3.8+ | `python --version` |
 | pip | dowolna | `pip --version` |
-| Dostęp do internetu | — | instalacja pakietów (jednorazowo) |
+| Internet | jednorazowo | instalacja pakietów MkDocs |
 
 ---
 
-## Pierwsze uruchomienie (nowy komputer)
-
-**Jednym poleceniem** — skrypt sam zainstaluje wszystko i uruchomi portale:
+## Pierwsze uruchomienie
 
 ```powershell
 cd "ścieżka\do\InvoiceJet\docs-portal"
 .\setup.ps1
 ```
 
-Domyślnie uruchamia na portach **8001** (tech) i **8002** (user). Własne porty albo host:
+Domyślnie skrypt uruchamia:
+
+| Usługa | Port |
+|---|---:|
+| Dokumentacja techniczna `doc_AI` | 8001 |
+| Dokumentacja użytkownika `doc_user` | 8002 |
+| Webowy edytor dokumentów | 8010 |
+
+Własne porty:
 
 ```powershell
-.\setup.ps1 -PortAI 9001 -PortUser 9002
+.\setup.ps1 -PortAI 9001 -PortUser 9002 -EditorPort 9010
 .\setup.ps1 -Host 192.168.1.10 -PortAI 9001 -PortUser 9002
 ```
 
-Skrypt wykonuje kolejno:
-1. Sprawdza Python 3.8+
-2. Instaluje `mkdocs`, `mkdocs-material`, `mkdocs-awesome-pages-plugin`, `Pygments`
-3. Ustala finalne porty i bazowe URL-e portali
-4. Generuje `mkdocs.yml` z ścieżkami pasującymi do tego komputera
-5. Synchronizuje lokalny `.env` Oracle InvoiceJet
-6. Uruchamia oba serwery
-7. Otwiera przeglądarkę
+`setup.ps1` instaluje zależności, generuje lokalne `mkdocs.yml`, synchronizuje `tools/oracle_invoicejet/.env` i uruchamia portale.
 
 ---
 
@@ -68,227 +56,230 @@ cd "ścieżka\do\InvoiceJet\docs-portal"
 .\start-docs.ps1
 ```
 
-Własny host, porty albo ścieżka do lokalnego `.env` Oracle:
+`start-docs.ps1` uruchamia oba portale oraz edytor. Przed startem aktualizuje:
+
+- `site_url` w obu plikach `mkdocs.yml`,
+- `extra.editor_url` i `extra.source_dir` dla przycisku **Edytuj**,
+- `extra.portal.doc_ai_url` i `extra.portal.doc_user_url` dla przełącznika portali,
+- `ORACLE_DOCS_PORTAL_DOC_AI` i `ORACLE_DOCS_PORTAL_DOC_USER` w lokalnym `.env` Oracle.
+
+Opcje:
 
 ```powershell
-.\start-docs.ps1 -Host 192.168.1.10 -PortAI 9001 -PortUser 9002
+.\start-docs.ps1 -Host 192.168.1.10 -PortAI 9001 -PortUser 9002 -EditorPort 9010
 .\start-docs.ps1 -OracleEnvPath "..\tools\oracle_invoicejet\.env"
+.\start-docs.ps1 -NoEditor
 ```
 
-Lub uruchom skrót na pulpicie wskazujący na `start-docs.ps1`.
+Zmiany w plikach `.md` są widoczne po zapisie dzięki live-reload MkDocs. Zmiany w `overrides/main.html` wymagają restartu `start-docs.ps1`.
 
-Opcjonalnie — uruchom też serwer edycji:
+---
+
+## Zatrzymanie
 
 ```powershell
-.\start-editor.ps1                          # Windows "Otwórz za pomocą"
-.\start-editor.ps1 -Editor "notepad++"      # zawsze Notepad++
-.\start-editor.ps1 -Editor "code"           # zawsze VS Code
+.\stop-docs.ps1
+.\stop-docs.ps1 -PortAI 9001 -PortUser 9002 -EditorPort 9010
+.\stop-docs.ps1 -NoEditor
 ```
 
----
-
-## Opis skryptów
-
-### `setup.ps1` — jednorazowy setup
-```
-Parametry: -Host <string>  -PortAI <int>  -PortUser <int>  -OracleEnvPath <path>
-Domyślnie: 127.0.0.1, 8001 i 8002
-```
-Używaj na nowym komputerze lub po klonowaniu repo. Instaluje zależności, wykrywa ścieżki, generuje `mkdocs.yml`, ustawia linki między portalami i aktualizuje Oracle.
-
----
-
-### `start-docs.ps1` — uruchomienie portali
-```
-Parametry: -Host <string>  -PortAI <int>  -PortUser <int>  -OracleEnvPath <path>
-```
-Uruchamia dwa okna PowerShell z serwerami MkDocs. Przed startem synchronizuje `ORACLE_DOCS_PORTAL_DOC_AI` i `ORACLE_DOCS_PORTAL_DOC_USER` w lokalnym `.env` Oracle. Live-reload — zmiany w `.md` są widoczne natychmiast bez restartu.
-
-> ⚠️ Zmiany w `overrides/main.html` (CSS/JS) wymagają restartu skryptu!
-
----
-
-### `stop-docs.ps1` — zatrzymanie portali
-```
-Parametry: -PortAI <int>  -PortUser <int>
-Domyślnie: 8001 i 8002
-```
-Zatrzymuje procesy na portach portali MkDocs.
-
----
-
-### `start-editor.ps1` — serwer edycji plików
-```
-Parametry: -Port <int>  -Editor <string>
-Domyślnie: port 8010, Windows "Otwórz za pomocą"
-```
-Uruchamia mikro-serwer HTTP który obsługuje żądania edycji plików z przeglądarki.
-Gdy klikniesz ✏️ na stronie dokumentu, przeglądarka wywołuje `http://127.0.0.1:8010/edit?path=...`
-i serwer otwiera plik w edytorze.
-
-```powershell
-.\start-editor.ps1                              # dialog Windows "Otwórz za pomocą"
-.\start-editor.ps1 -Editor "notepad++"          # Notepad++ (musi być w PATH)
-.\start-editor.ps1 -Editor "code"               # VS Code
-.\start-editor.ps1 -Editor "C:\...\nppp.exe"    # pełna ścieżka do edytora
-```
-
----
-
-### `editor-server.py` — serwer edycji (Python)
-Bezpośrednio wywoływany przez `start-editor.ps1`. Można uruchomić ręcznie:
-```powershell
-python editor-server.py --port 8010 --editor notepad++
-```
+Skrypt zatrzymuje procesy nasłuchujące na portach portali i edytora.
 
 ---
 
 ## Edycja dokumentów
 
-### Sposób 1 — przycisk ✏️ na portalu (wymaga serwera edycji)
-1. Uruchom `.\start-editor.ps1` (raz, w osobnym terminalu)
-2. Wejdź na dowolną stronę dokumentacji
-3. Kliknij **✏️** w prawym górnym rogu paska
-4. Wybierz edytor w oknie Windows lub plik otworzy się bezpośrednio
+1. Uruchom `.\start-docs.ps1`.
+2. Wejdź do portalu MkDocs na `8001` albo `8002`.
+3. Otwórz dokument.
+4. Kliknij **Edytuj** w górnym pasku.
+5. W nowej karcie edytuj Markdown, status lub komentarze.
+6. Kliknij **Zapisz**.
 
-### Sposób 2 — bezpośrednio w edytorze
-Otwórz dowolny plik `.md` z `doc_AI/` lub `doc_user/` w edytorze,
-zapisz → portal automatycznie odświeży stronę (live-reload).
+Komentarze są zapisywane lokalnie w `.docreview/comments.json`. Ten folder jest ignorowany przez git i nie trafia do indeksu RAG.
 
-### Sposób 3 — VS Code z podglądem
-Otwórz folder `InvoiceJet/` w VS Code. Edytuj `.md`, podgląd Markdown w VS Code,
-portal odśwież się po zapisie.
+Edytor dopuszcza zapis tylko w:
 
----
+- `InvoiceJet/doc_AI`
+- `InvoiceJet/doc_user`
 
-## Dodawanie nowej dokumentacji
-
-### Nowy plik w istniejącym folderze
-Utwórz `doc_AI/XX_folder/nowy-plik.md` → portal wykryje automatycznie.
-
-### Nowy folder (sekcja)
-1. Utwórz folder np. `doc_AI/11_nowy_obszar/`
-2. Dodaj `README.md` z opisem
-3. Dodaj plik `.pages` w folderze (opcjonalnie, kontroluje kolejność):
-   ```yaml
-   nav:
-     - README.md
-     - plik1.md
-     - podfolder
-   ```
-4. Dodaj folder do `doc_AI/.pages` w odpowiednim miejscu
-5. Dodaj przycisk w `doc-ai/overrides/main.html` (sekcja `var CATS = [...]`)
+Ścieżki spoza tych katalogów są blokowane.
 
 ---
 
-## Konfiguracja
+## Skrypty
 
-### Zmiana portów
-Nie edytuj już wartości w treści skryptu. Podaj porty przy uruchomieniu:
+### `setup.ps1`
+
+Jednorazowy setup na nowym komputerze.
+
+```text
+-Host <string>
+-PortAI <int>
+-PortUser <int>
+-EditorPort <int>
+-NoEditor
+-OracleEnvPath <path>
+```
+
+### `start-docs.ps1`
+
+Codzienne uruchomienie portali. Automatycznie synchronizuje linki portali, ścieżki źródłowe i lokalny `.env` Oracle.
+
+```text
+-Host <string>
+-PortAI <int>
+-PortUser <int>
+-EditorPort <int>
+-NoEditor
+-OracleEnvPath <path>
+```
+
+### `start-editor.ps1`
+
+Uruchamia tylko webowy edytor Markdown.
 
 ```powershell
-.\start-docs.ps1 -PortAI 9001 -PortUser 9002
+.\start-editor.ps1
+.\start-editor.ps1 -Port 8011
 ```
 
-Skrypt ustawi te same adresy w `mkdocs.yml`, przełączniku między portalami oraz w lokalnym `tools/oracle_invoicejet/.env`, żeby Oracle otwierał właściwe dokumenty z tabeli źródeł.
+Parametr `-Editor` zostaje jako opcjonalny fallback dla endpointu `/open-external`, ale standardowa edycja odbywa się w przeglądarce.
 
-### Zmiana motywu kolorystycznego
-Edytuj `doc-ai/mkdocs.yml` → sekcja `palette`:
-```yaml
-palette:
-  - scheme: default
-    primary: indigo   # zmień na: blue, teal, green, red...
+### `editor-server.py`
+
+Serwer edycji bez zależności zewnętrznych.
+
+```powershell
+python editor-server.py --port 8010
 ```
 
-### Dodanie własnego logo
-Dodaj plik `doc-ai/overrides/logo.png` i w `mkdocs.yml`:
-```yaml
-theme:
-  logo: logo.png
-```
+Najważniejsze endpointy:
 
-### Język interfejsu
-W `mkdocs.yml` zmień `language: pl` na inny kod ISO (en, de, fr...).
+| Endpoint | Rola |
+|---|---|
+| `GET /edit?path=...` | strona edytora |
+| `GET /api/doc?path=...` | pobranie treści dokumentu |
+| `PUT /api/doc` | zapis dokumentu |
+| `PATCH /api/doc/meta` | zmiana statusu dokumentu |
+| `GET /api/comments?path=...` | komentarze dokumentu |
+| `POST /api/comments` | dodanie komentarza |
+| `PATCH /api/comments/<id>` | zmiana komentarza |
 
 ---
 
-## Struktura folderów
+## Konfiguracja linkowania
 
+Przycisk **Edytuj** w `doc-ai/overrides/main.html` i `doc-user/overrides/main.html` buduje link z dwóch wartości MkDocs:
+
+```yaml
+extra:
+  editor_url: "http://127.0.0.1:8010"
+  source_dir: "G:/.../InvoiceJet/InvoiceJet/doc_AI"
 ```
-docs-portal/
-├── README.md                    ← ten plik
-├── setup.ps1                    ← jednorazowy setup (nowy komputer)
-├── start-docs.ps1               ← uruchomienie portali
-├── stop-docs.ps1                ← zatrzymanie portali
-├── start-editor.ps1             ← uruchomienie serwera edycji
-├── editor-server.py             ← mikro-serwer edycji plików (Python)
-│
-├── doc-ai/                      ← portal Dokumentacji Technicznej
-│   ├── mkdocs.yml               ← konfiguracja MkDocs
-│   ├── overrides/
-│   │   └── main.html            ← custom HTML (pasek kategorii, edytor, portal switch)
-│   └── _site/                   ← build HTML (gitignored, generowany automatycznie)
-│
-└── doc-user/                    ← portal Dokumentacji Użytkownika
-    ├── mkdocs.yml
-    ├── overrides/
-    │   └── main.html
-    └── _site/
+
+Dla portalu użytkownika `source_dir` wskazuje na `InvoiceJet/doc_user`.
+
+Przykłady mapowania:
+
+| URL w MkDocs | Plik źródłowy |
+|---|---|
+| `/` | `README.md` |
+| `/index.html` | `README.md` |
+| `/01_ekrany/index.html` | `01_ekrany/README.md` |
+| `/01_ekrany/faktury.html` | `01_ekrany/faktury.md` |
+
+Jeśli zmieniasz port edytora, użyj `-EditorPort`. Jeśli dokumentacja ma być dostępna w sieci lokalnej, użyj `-Host` dla portali MkDocs.
+
+---
+
+## Dodawanie dokumentacji
+
+Nowy plik w istniejącym folderze:
+
+```text
+InvoiceJet/doc_AI/XX_folder/nowy-plik.md
+InvoiceJet/doc_user/XX_folder/nowy-plik.md
 ```
+
+Nowa sekcja:
+
+1. Dodaj folder, np. `InvoiceJet/doc_AI/11_nowy_obszar`.
+2. Dodaj `README.md`.
+3. Opcjonalnie dodaj `.pages`, jeśli chcesz kontrolować kolejność nawigacji.
+4. Po zapisie MkDocs odświeży portal.
 
 ---
 
 ## Rozwiązywanie problemów
 
-### Portal nie startuje — "Port X is already in use"
+### Port jest zajęty
+
 ```powershell
-.\stop-docs.ps1           # zatrzymaj stare procesy
-.\start-docs.ps1          # uruchom ponownie
+.\stop-docs.ps1
+.\start-docs.ps1
 ```
 
-### Zmiany w CSS/JS nie są widoczne
-Zmiany w `overrides/main.html` nie są wykrywane przez live-reload.
-Wymagają restartu: `.\stop-docs.ps1` → `.\start-docs.ps1`.
+Albo wybierz inne porty:
 
-### Przycisk ✏️ daje błąd "serwer edycji nie działa"
-Uruchom w osobnym terminalu:
+```powershell
+.\start-docs.ps1 -PortAI 9001 -PortUser 9002 -EditorPort 9010
+```
+
+### Nie widać przycisku Edytuj
+
+Zrestartuj portale, bo zmiany w `overrides/main.html` nie są przeładowywane automatycznie:
+
+```powershell
+.\stop-docs.ps1
+.\start-docs.ps1
+```
+
+### Kliknięcie Edytuj nie otwiera edytora
+
+Sprawdź, czy działa serwer edycji:
+
+```powershell
+Invoke-RestMethod http://127.0.0.1:8010/health
+```
+
+Jeśli nie działa:
+
 ```powershell
 .\start-editor.ps1
 ```
 
-### mkdocs nie znaleziony po instalacji
-```powershell
-# Sprawdź ścieżkę
-python -c "import sysconfig; print(sysconfig.get_path('scripts'))"
-# Dodaj do PATH lub użyj pełnej ścieżki
-```
+### Edytor pokazuje błąd ścieżki
 
-### Diagramy Mermaid nie renderują się
-Sprawdź połączenie z internetem — Mermaid ładuje się z CDN (`unpkg.com`).
-Przy braku internetu diagramy pokażą się jako kod źródłowy.
+Sprawdź `extra.source_dir` w odpowiednim `mkdocs.yml`. Powinien wskazywać fizyczny katalog `InvoiceJet/doc_AI` albo `InvoiceJet/doc_user`.
 
 ---
 
-## Historia zmian
+## Struktura
 
-| Wersja | Data | Opis |
-|---|---|---|
-| 1.5 | 2026-06-02 | Serwer edycji plików (`editor-server.py`), przycisk ✏️, README |
-| 1.4 | 2026-06-02 | Sidebar zwęża się do aktywnej sekcji (`navigation.tabs`) |
-| 1.3 | 2026-06-02 | Przyciski kategorii w górnym pasku, portal switch w headerze |
-| 1.2 | 2026-06-02 | Naprawiono 404 — absolutne ścieżki, index.html zamiast README.html |
-| 1.1 | 2026-06-01 | Drzewo nawigacji, `navigation.prune`, pliki `.pages` |
-| 1.0 | 2026-06-01 | Pierwsze wdrożenie — MkDocs Material, dwa serwery, setup.ps1 |
+```text
+docs-portal/
+├── README.md
+├── setup.ps1
+├── start-docs.ps1
+├── stop-docs.ps1
+├── start-editor.ps1
+├── editor-server.py
+├── doc-ai/
+│   ├── mkdocs.yml
+│   └── overrides/main.html
+└── doc-user/
+    ├── mkdocs.yml
+    └── overrides/main.html
+```
 
 ---
 
 ## Technologie
 
-| Pakiet | Wersja | Rola |
-|---|---|---|
-| [MkDocs](https://www.mkdocs.org/) | ≥1.6 | Silnik — buduje HTML z Markdown |
-| [MkDocs Material](https://squidfunk.github.io/mkdocs-material/) | ≥9.5 | Motyw — nawigacja, wyszukiwarka, TOC |
-| [mkdocs-awesome-pages-plugin](https://github.com/lukasgeiter/mkdocs-awesome-pages-plugin) | ≥2.9 | Kontrola kolejności i filtrowania nawigacji |
-| [Pygments](https://pygments.org/) | ≥2.18 | Podświetlanie składni kodu |
-| [Mermaid](https://mermaid.js.org/) | 10 (CDN) | Renderowanie diagramów sekwencji, flowchartów |
-| Python `http.server` | stdlib | Serwer edycji plików (bez zewnętrznych zależności) |
+| Pakiet | Rola |
+|---|---|
+| MkDocs | budowanie HTML z Markdown |
+| MkDocs Material | motyw, nawigacja, wyszukiwarka |
+| mkdocs-awesome-pages-plugin | kolejność i filtrowanie nawigacji |
+| Python `http.server` | lokalny webowy edytor dokumentów |
