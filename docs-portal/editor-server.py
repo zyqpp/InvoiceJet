@@ -186,9 +186,12 @@ def editor_html(raw_path: str) -> str:
     .path, .hint, .state {{ color: var(--muted); font-size: 12px; }}
     .path {{ padding: 8px 12px; border-bottom: 1px solid var(--border); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }}
     .comment {{ border: 1px solid var(--border); border-radius: 8px; background: #fff; padding: 10px; margin: 10px 0; }}
+    .comment.reply {{ margin-left: 18px; border-left: 3px solid var(--accent); }}
     .comment p {{ margin: 0 0 8px; white-space: pre-wrap; }}
     .comment .meta {{ display: flex; gap: 8px; align-items: center; justify-content: space-between; }}
     .comment-text {{ width: 100%; min-height: 76px; box-sizing: border-box; resize: vertical; }}
+    .reply-form {{ display: none; margin-top: 8px; }}
+    .reply-form.open {{ display: block; }}
     @media (prefers-color-scheme: dark) {{
       body {{ background: #111827; color: #e5e7eb; }}
       header, .toolbar, aside {{ background: #172033; }}
@@ -291,21 +294,15 @@ def editor_html(raw_path: str) -> str:
         box.innerHTML = '<p class="hint">Brak komentarzy.</p>';
         return;
       }}
-      for (const item of data.comments) {{
-        const el = document.createElement("div");
-        el.className = "comment";
-        const select = commentStatuses.map((status) =>
-          `<option value="${{status}}" ${{status === item.status ? "selected" : ""}}>${{status}}</option>`
-        ).join("");
-        el.innerHTML = `
-          <p>${{escapeHtml(item.text)}}</p>
-          ${{item.quote ? `<p class="hint">${{escapeHtml(item.quote)}}</p>` : ""}}
-          <div class="meta">
-            <span class="hint">${{new Date(item.updatedAt || item.createdAt).toLocaleString()}}</span>
-            <select data-id="${{item.id}}">${{select}}</select>
-          </div>
-        `;
-        box.appendChild(el);
+      const items = data.comments.slice().sort((a, b) => String(a.createdAt || "").localeCompare(String(b.createdAt || "")));
+      const children = new Map();
+      for (const item of items) {{
+        const parentId = item.parentId || "";
+        if (!children.has(parentId)) children.set(parentId, []);
+        children.get(parentId).push(item);
+      }}
+      for (const item of (children.get("") || [])) {{
+        box.appendChild(renderComment(item, children, 0));
       }}
       box.querySelectorAll("select[data-id]").forEach((select) => {{
         select.addEventListener("change", async () => {{
@@ -316,6 +313,52 @@ def editor_html(raw_path: str) -> str:
           await loadComments();
         }});
       }});
+      box.querySelectorAll("button[data-reply-id]").forEach((button) => {{
+        button.addEventListener("click", () => {{
+          const form = document.querySelector(`[data-reply-form="${{button.dataset.replyId}}"]`);
+          if (form) form.classList.toggle("open");
+        }});
+      }});
+      box.querySelectorAll("button[data-send-reply]").forEach((button) => {{
+        button.addEventListener("click", async () => {{
+          const parentId = button.dataset.sendReply;
+          const textarea = document.querySelector(`[data-reply-text="${{parentId}}"]`);
+          const text = textarea ? textarea.value.trim() : "";
+          if (!text) return;
+          await api("/api/comments", {{
+            method: "POST",
+            body: JSON.stringify({{ path: docKey, parentId, text }}),
+          }});
+          await loadComments();
+        }});
+      }});
+    }}
+
+    function renderComment(item, children, depth) {{
+        const el = document.createElement("div");
+        el.className = depth > 0 ? "comment reply" : "comment";
+        const select = commentStatuses.map((status) =>
+          `<option value="${{status}}" ${{status === item.status ? "selected" : ""}}>${{status}}</option>`
+        ).join("");
+        el.innerHTML = `
+          <p>${{escapeHtml(item.text)}}</p>
+          ${{item.quote ? `<p class="hint">${{escapeHtml(item.quote)}}</p>` : ""}}
+          <div class="meta">
+            <span class="hint">${{new Date(item.updatedAt || item.createdAt).toLocaleString()}}</span>
+            <span style="display:flex;gap:6px;align-items:center;">
+              <button type="button" data-reply-id="${{item.id}}">Odpowiedz</button>
+              <select data-id="${{item.id}}">${{select}}</select>
+            </span>
+          </div>
+          <div class="reply-form" data-reply-form="${{item.id}}">
+            <textarea class="comment-text" data-reply-text="${{item.id}}" placeholder="Odpowiedz na komentarz"></textarea>
+            <button type="button" class="primary" data-send-reply="${{item.id}}">Dodaj odpowiedz</button>
+          </div>
+        `;
+        for (const child of (children.get(item.id) || [])) {{
+          el.appendChild(renderComment(child, children, depth + 1));
+        }}
+        return el;
     }}
 
     async function addComment() {{
@@ -400,6 +443,8 @@ class EditHandler(BaseHTTPRequestHandler):
             if parsed.path == "/api/comments":
                 key = params.get("path", [""])[0]
                 comments = [item for item in load_comments() if item.get("path") == key]
+                for item in comments:
+                    item.setdefault("parentId", "")
                 comments.sort(key=lambda item: item.get("updatedAt") or item.get("createdAt") or "", reverse=True)
                 return json_response(self, 200, {"comments": comments})
             if parsed.path == "/open-external":
@@ -475,19 +520,23 @@ class EditHandler(BaseHTTPRequestHandler):
             key = str(payload.get("path") or "").strip()
             text = str(payload.get("text") or "").strip()
             quote = str(payload.get("quote") or "").strip()
+            parent_id = str(payload.get("parentId") or "").strip()
             if not key or not text:
                 raise ValueError("Komentarz wymaga path i text.")
+            comments = load_comments()
+            if parent_id and not any(item.get("id") == parent_id and item.get("path") == key for item in comments):
+                raise ValueError("Komentarz nadrzedny nie istnieje dla tego dokumentu.")
             now = now_iso()
             record = {
                 "id": str(uuid4()),
                 "path": key,
+                "parentId": parent_id,
                 "text": text,
                 "quote": quote,
                 "status": "new",
                 "createdAt": now,
                 "updatedAt": now,
             }
-            comments = load_comments()
             comments.append(record)
             save_comments(comments)
             return json_response(self, 201, {"comment": record})

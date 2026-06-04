@@ -57,6 +57,27 @@
 .md-typeset table th { background: #eef2ff; font-weight: 700; }
 .md-typeset table tr:hover { background: #f8fafc; }
 .md-typeset code { background: #f1f5f9 !important; color: #0f172a !important; border-radius: 4px; padding: 1px 5px; }
+.ij-doc-review { border: 1px solid #d6d8df; border-radius: 8px; background: #f8fafc; padding: 12px; margin: 0 0 18px; font-size: .78rem; }
+.ij-doc-review__head { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
+.ij-doc-review__meta { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; color: #687080; }
+.ij-status { display: inline-flex; align-items: center; border: 1px solid #c7d2fe; border-radius: 999px; background: #eef2ff; color: #283593; padding: 2px 8px; font-weight: 700; }
+.ij-comment { border-top: 1px solid #e2e8f0; padding: 10px 0 0; margin-top: 10px; }
+.ij-comment.reply { margin-left: 18px; border-left: 3px solid #c7d2fe; padding-left: 10px; }
+.ij-comment__body { white-space: pre-wrap; margin: 0 0 6px; }
+.ij-comment__meta { display: flex; align-items: center; justify-content: space-between; gap: 8px; color: #687080; font-size: .72rem; }
+.ij-doc-review textarea { width: 100%; min-height: 64px; box-sizing: border-box; resize: vertical; border: 1px solid #d6d8df; border-radius: 6px; padding: 7px 8px; font: inherit; }
+.ij-doc-review button { border: 1px solid #d6d8df; background: #fff; color: #172033; border-radius: 6px; padding: 5px 9px; cursor: pointer; font: inherit; }
+.ij-doc-review button.primary { background: #1f6feb; border-color: #1f6feb; color: #fff; }
+.ij-reply-form { display: none; margin-top: 8px; }
+.ij-reply-form.open { display: block; }
+.md-main__inner > .ij-doc-review { flex: 0 0 260px; align-self: flex-start; position: sticky; top: 72px; max-height: calc(100vh - 96px); overflow: auto; margin: 24px 16px 24px 0; font-size: .68rem; }
+.md-main__inner > .ij-doc-review .ij-doc-review__head { align-items: flex-start; }
+.md-main__inner > .ij-doc-review .ij-doc-review__meta { align-items: flex-start; flex-direction: column; gap: 6px; }
+.md-main__inner > .ij-doc-review .ij-comment.reply { margin-left: 8px; padding-left: 8px; }
+.md-main__inner > .ij-doc-review button { padding: 4px 7px; }
+@media screen and (max-width: 700px) {
+  .md-main__inner > .ij-doc-review { flex: 1 1 100%; position: static; max-height: none; margin: 12px 16px; }
+}
 </style>
 {% endblock %}
 
@@ -139,12 +160,142 @@
     if (header) header.appendChild(btn);
   }
 
+  function editorBaseUrl() {
+    return EDITOR_URL.replace(/\/$/, "");
+  }
+
+  function escapeHtml(value) {
+    return String(value || "").replace(/[&<>"']/g, function(ch) {
+      return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[ch];
+    });
+  }
+
+  async function editorApi(path, options) {
+    var response = await fetch(editorBaseUrl() + path, Object.assign({
+      headers: { "Content-Type": "application/json" }
+    }, options || {}));
+    var data = await response.json();
+    if (!response.ok || data.error) throw new Error(data.error || "Blad API komentarzy");
+    return data;
+  }
+
+  function renderComment(item, children, depth) {
+    var childHtml = (children[item.id] || []).map(function(child) {
+      return renderComment(child, children, depth + 1);
+    }).join("");
+    var updated = item.updatedAt || item.createdAt || "";
+    var dateText = updated ? new Date(updated).toLocaleString() : "";
+    return '<div class="ij-comment' + (depth > 0 ? ' reply' : '') + '">'
+      + '<p class="ij-comment__body">' + escapeHtml(item.text) + '</p>'
+      + '<div class="ij-comment__meta"><span>' + escapeHtml(item.status || "new") + ' - ' + escapeHtml(dateText) + '</span>'
+      + '<button type="button" data-reply-toggle="' + escapeHtml(item.id) + '">Odpowiedz</button></div>'
+      + '<div class="ij-reply-form" data-reply-form="' + escapeHtml(item.id) + '">'
+      + '<textarea data-reply-text="' + escapeHtml(item.id) + '" placeholder="Odpowiedz na komentarz"></textarea>'
+      + '<button type="button" class="primary" data-reply-send="' + escapeHtml(item.id) + '">Dodaj odpowiedz</button>'
+      + '</div>'
+      + childHtml
+      + '</div>';
+  }
+
+  function reviewPanelHost() {
+    return document.querySelector(".md-main__inner")
+      || document.querySelector(".md-content__inner");
+  }
+
+  function ensureReviewPanel() {
+    var host = reviewPanelHost();
+    if (!host) return null;
+    var panel = document.getElementById("ij-doc-review");
+    if (!panel) {
+      panel = document.createElement("section");
+      panel.id = "ij-doc-review";
+      panel.className = "ij-doc-review";
+    }
+    if (panel.parentElement !== host) {
+      var content = document.querySelector(".md-content");
+      if (content && content.parentElement === host) {
+        host.insertBefore(panel, content);
+      } else {
+        host.insertBefore(panel, host.firstChild);
+      }
+    }
+    return panel;
+  }
+
+  async function refreshReviewPanel() {
+    var filePath = sourcePathFromLocation();
+    if (!filePath) return;
+    var panel = ensureReviewPanel();
+    if (!panel) return;
+    panel.innerHTML = '<div class="ij-doc-review__head"><strong>Status i komentarze</strong><span>Ladowanie...</span></div>';
+    try {
+      var doc = await editorApi("/api/doc?path=" + encodeURIComponent(filePath));
+      var data = await editorApi("/api/comments?path=" + encodeURIComponent(doc.key));
+      var comments = (data.comments || []).slice().sort(function(a, b) {
+        return String(a.createdAt || "").localeCompare(String(b.createdAt || ""));
+      });
+      var children = {};
+      comments.forEach(function(item) {
+        var parentId = item.parentId || "";
+        if (!children[parentId]) children[parentId] = [];
+        children[parentId].push(item);
+      });
+      var status = (doc.meta && doc.meta.status) || "draft";
+      var updated = (doc.meta && (doc.meta.ostatnia_aktualizacja || doc.meta.updated_at)) || "";
+      var commentsHtml = (children[""] || []).map(function(item) {
+        return renderComment(item, children, 0);
+      }).join("") || '<p>Brak komentarzy.</p>';
+      panel.innerHTML = '<div class="ij-doc-review__head">'
+        + '<div><strong>Status dokumentu</strong> <span class="ij-status">' + escapeHtml(status) + '</span></div>'
+        + '<div class="ij-doc-review__meta"><span>Komentarze: ' + comments.length + '</span>'
+        + (updated ? '<span>Aktualizacja: ' + escapeHtml(updated) + '</span>' : '')
+        + '<button type="button" data-refresh-comments>Odswiez</button></div>'
+        + '</div>'
+        + '<div style="margin-top:10px;"><textarea data-new-comment placeholder="Dodaj komentarz do dokumentu"></textarea>'
+        + '<button type="button" class="primary" data-add-comment="" style="margin-top:8px;">Dodaj komentarz</button></div>'
+        + '<div class="ij-comments">' + commentsHtml + '</div>';
+      panel.querySelector("[data-refresh-comments]").addEventListener("click", refreshReviewPanel);
+      panel.querySelector("[data-add-comment]").addEventListener("click", async function() {
+        var textarea = panel.querySelector("[data-new-comment]");
+        var text = textarea ? textarea.value.trim() : "";
+        if (!text) return;
+        await editorApi("/api/comments", {
+          method: "POST",
+          body: JSON.stringify({ path: doc.key, text: text })
+        });
+        await refreshReviewPanel();
+      });
+      panel.querySelectorAll("[data-reply-toggle]").forEach(function(button) {
+        button.addEventListener("click", function() {
+          var form = panel.querySelector('[data-reply-form="' + button.dataset.replyToggle + '"]');
+          if (form) form.classList.toggle("open");
+        });
+      });
+      panel.querySelectorAll("[data-reply-send]").forEach(function(button) {
+        button.addEventListener("click", async function() {
+          var parentId = button.dataset.replySend;
+          var textarea = panel.querySelector('[data-reply-text="' + parentId + '"]');
+          var text = textarea ? textarea.value.trim() : "";
+          if (!text) return;
+          await editorApi("/api/comments", {
+            method: "POST",
+            body: JSON.stringify({ path: doc.key, parentId: parentId, text: text })
+          });
+          await refreshReviewPanel();
+        });
+      });
+    } catch (error) {
+      panel.innerHTML = '<div class="ij-doc-review__head"><strong>Status i komentarze</strong><span>' + escapeHtml(error.message) + '</span></div>';
+    }
+  }
+
   function refreshHeaderTools() {
     setActiveBtn();
     addPortalSwitch();
     var old = document.getElementById("ij-edit-btn");
     if (old) old.remove();
     addEditButton();
+    refreshReviewPanel();
   }
 
   document.addEventListener("DOMContentLoaded", refreshHeaderTools);

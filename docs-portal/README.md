@@ -105,7 +105,9 @@ Skrypt zatrzymuje procesy nasłuchujące na portach portali i edytora.
 5. W nowej karcie edytuj Markdown, status lub komentarze.
 6. Kliknij **Zapisz**.
 
-Komentarze są zapisywane lokalnie w `.docreview/comments.json`. Ten folder jest ignorowany przez git i nie trafia do indeksu RAG.
+Komentarze są zapisywane lokalnie w `.docreview/comments.json`. Ten folder jest ignorowany przez git i nie trafia do indeksu RAG. Komentarz może być odpowiedzią na inny komentarz; wtedy rekord ma `parentId` wskazujący komentarz nadrzędny z tego samego dokumentu.
+
+Po uruchomieniu edytora portal MkDocs pokazuje po lewej stronie dokumentu sekcję **Status i komentarze**. Panel pobiera status z front matter dokumentu oraz komentarze z tego samego API co webowy edytor, dlatego status zmieniony w edytorze i nowe odpowiedzi są widoczne po odświeżeniu panelu w portalu. Przy bardzo wąskim ekranie sekcja spada awaryjnie nad treść dokumentu, żeby nie rozbić układu.
 
 Edytor dopuszcza zapis tylko w:
 
@@ -173,7 +175,7 @@ Najważniejsze endpointy:
 | `PUT /api/doc` | zapis dokumentu |
 | `PATCH /api/doc/meta` | zmiana statusu dokumentu |
 | `GET /api/comments?path=...` | komentarze dokumentu |
-| `POST /api/comments` | dodanie komentarza |
+| `POST /api/comments` | dodanie komentarza; opcjonalnie `parentId` dla odpowiedzi |
 | `PATCH /api/comments/<id>` | zmiana komentarza |
 
 ---
