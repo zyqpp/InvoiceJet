@@ -11,6 +11,7 @@ param(
   [int]$PortUser = 8002,
   [int]$EditorPort = 8010,
   [switch]$NoEditor,
+  [switch]$EnableKroki,
   [string]$Editor = "",
   [string]$OracleEnvPath
 )
@@ -38,6 +39,24 @@ if (-not (Test-Path -LiteralPath $MKDOCS)) {
 function Get-DefaultOracleEnvPath {
   $repoRoot = Split-Path -Parent $ROOT
   return Join-Path $repoRoot "tools\oracle_invoicejet\.env"
+}
+
+function Write-Utf8NoBom {
+  param(
+    [Parameter(Mandatory = $true)][string]$Path,
+    [Parameter(Mandatory = $true)]$Lines
+  )
+
+  $targetPath = if (Test-Path -LiteralPath $Path) {
+    (Resolve-Path -LiteralPath $Path).Path
+  } else {
+    [System.IO.Path]::GetFullPath($Path)
+  }
+  $content = [string]::Join([Environment]::NewLine, [string[]]$Lines)
+  if ($content.Length -gt 0) {
+    $content += [Environment]::NewLine
+  }
+  [System.IO.File]::WriteAllText($targetPath, $content, [System.Text.UTF8Encoding]::new($false))
 }
 
 function Convert-ToPortalPath {
@@ -77,7 +96,7 @@ function Update-OracleEnv {
 
   $lines = [System.Collections.Generic.List[string]]::new()
   if (Test-Path -LiteralPath $Path) {
-    foreach ($line in Get-Content -LiteralPath $Path) {
+    foreach ($line in Get-Content -LiteralPath $Path -Encoding utf8) {
       [void]$lines.Add($line)
     }
   }
@@ -101,12 +120,12 @@ function Update-OracleEnv {
     }
   }
 
-  Set-Content -LiteralPath $Path -Value $lines -Encoding utf8
+  Write-Utf8NoBom -Path $Path -Lines $lines
 }
 
 function Set-YamlValue {
   param(
-    [Parameter(Mandatory = $true)][System.Collections.Generic.List[string]]$Lines,
+    [Parameter(Mandatory = $true)]$Lines,
     [Parameter(Mandatory = $true)][string]$Pattern,
     [Parameter(Mandatory = $true)][string]$Value
   )
@@ -136,7 +155,7 @@ function Update-MkDocsPortalConfig {
   }
 
   $lines = [System.Collections.Generic.List[string]]::new()
-  foreach ($line in Get-Content -LiteralPath $Path) {
+  foreach ($line in Get-Content -LiteralPath $Path -Encoding utf8) {
     [void]$lines.Add($line)
   }
   [void](Set-YamlValue -Lines $lines -Pattern '^\s*site_url:\s*' -Value "site_url: `"$SiteUrl`"")
@@ -195,7 +214,7 @@ function Update-MkDocsPortalConfig {
     }
   }
 
-  Set-Content -LiteralPath $Path -Value $lines -Encoding utf8
+  Write-Utf8NoBom -Path $Path -Lines $lines
 }
 
 $oracleEnv = if ($OracleEnvPath) { $OracleEnvPath } else { Get-DefaultOracleEnvPath }
@@ -204,6 +223,11 @@ $docUserUrl = "http://${HostName}:$PortUser/"
 $editorUrl = "http://127.0.0.1:$EditorPort"
 $docAISourceDir = Resolve-DocsSourcePath -FolderName "doc_AI"
 $docUserSourceDir = Resolve-DocsSourcePath -FolderName "doc_user"
+$krokiEnvCommand = if ($EnableKroki) {
+  '$env:INVOICEJET_MKDOCS_KROKI="true"; '
+} else {
+  '$env:INVOICEJET_MKDOCS_KROKI="false"; '
+}
 
 Write-Host "================================================" -ForegroundColor Cyan
 Write-Host " InvoiceJet Docs Portal" -ForegroundColor Cyan
@@ -225,9 +249,9 @@ if (-not $NoEditor) {
     if (-not (Test-Path -LiteralPath $EDITOR_SCRIPT)) {
       Write-Host "Nie znaleziono start-editor.ps1, pomijam edytor." -ForegroundColor Yellow
     } else {
-      $editorArgs = @("-NoProfile", "-ExecutionPolicy", "Bypass", "-File", $EDITOR_SCRIPT, "-Port", "$EditorPort")
+      $editorArgs = @("-NoProfile", "-ExecutionPolicy", "Bypass", "-File", "`"$EDITOR_SCRIPT`"", "-Port", "$EditorPort")
       if ($Editor) {
-        $editorArgs += @("-Editor", $Editor)
+        $editorArgs += @("-Editor", "`"$Editor`"")
       }
       Start-Process powershell -WindowStyle Hidden -ArgumentList $editorArgs
       Write-Host "Uruchomiono edytor MkDocs: http://127.0.0.1:$EditorPort" -ForegroundColor Gray
@@ -245,7 +269,7 @@ Write-Host "Zaktualizowano mkdocs.yml dla portali." -ForegroundColor Gray
 Write-Host ""
 Write-Host "doc_AI   -> $docAIUrl" -ForegroundColor Green
 Start-Process powershell -ArgumentList "-NoExit", "-Command", `
-  "Set-Location '$AI_DIR'; Write-Host 'doc_AI $docAIUrl' -ForegroundColor Cyan; & '$MKDOCS' serve --dev-addr=${HostName}:$PortAI"
+  "$krokiEnvCommand Set-Location '$AI_DIR'; Write-Host 'doc_AI $docAIUrl' -ForegroundColor Cyan; & '$MKDOCS' serve --dev-addr=${HostName}:$PortAI"
 
 Start-Sleep 3
 

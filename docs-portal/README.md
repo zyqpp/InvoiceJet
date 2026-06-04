@@ -56,6 +56,12 @@ cd "ścieżka\do\InvoiceJet\docs-portal"
 .\start-docs.ps1
 ```
 
+Jeśli Windows blokuje `.ps1` jako niepodpisany skrypt, uruchom:
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File .\start-docs.ps1
+```
+
 `start-docs.ps1` uruchamia oba portale oraz edytor. Przed startem aktualizuje:
 
 - `site_url` w obu plikach `mkdocs.yml`,
@@ -69,9 +75,12 @@ Opcje:
 .\start-docs.ps1 -Host 192.168.1.10 -PortAI 9001 -PortUser 9002 -EditorPort 9010
 .\start-docs.ps1 -OracleEnvPath "..\tools\oracle_invoicejet\.env"
 .\start-docs.ps1 -NoEditor
+.\start-docs.ps1 -EnableKroki
 ```
 
 Zmiany w plikach `.md` są widoczne po zapisie dzięki live-reload MkDocs. Zmiany w `overrides/main.html` wymagają restartu `start-docs.ps1`.
+
+Plugin `kroki` dla diagramów PlantUML jest domyślnie wyłączony, żeby portal techniczny startował także bez internetu. Włącz go parametrem `-EnableKroki`, jeśli masz dostęp do `https://kroki.io`.
 
 ---
 
@@ -119,6 +128,7 @@ Jednorazowy setup na nowym komputerze.
 -PortUser <int>
 -EditorPort <int>
 -NoEditor
+-EnableKroki
 -OracleEnvPath <path>
 ```
 

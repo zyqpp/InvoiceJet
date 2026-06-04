@@ -1,5 +1,5 @@
-site_name: "InvoiceJet — Dokumentacja Techniczna (AOS)"
-site_description: "Agent-Oriented Specification — pełna dokumentacja techniczna"
+site_name: "InvoiceJet - Dokumentacja Techniczna (AOS)"
+site_description: "Agent-Oriented Specification - pelna dokumentacja techniczna"
 site_url: "http://127.0.0.1:8001/"
 docs_dir: "G:\\Projekty informatyczne\\Gotowe aplikacje\\InvoiceJet\\InvoiceJet\\doc_AI"
 site_dir: "_site"
@@ -39,8 +39,6 @@ theme:
     - search.suggest
     - search.highlight
     - search.share
-    # content.action.edit USUNIĘTE — powodowało "edycja" w TOC
-    # Własny przycisk ✏️ jest w overrides/main.html
     - content.code.copy
     - content.code.annotate
     - content.tabs.link
@@ -53,14 +51,15 @@ plugins:
       separator: '[\s\-\.]+'
   - awesome-pages
   - kroki:
+      enabled: !ENV [INVOICEJET_MKDOCS_KROKI, false]
       server_url: https://kroki.io
-      enable_mermaid: false     # Mermaid przez CDN
+      enable_mermaid: false
       enable_block_diag: false
       enable_bpmn: false
       enable_excalidraw: false
-      fence_prefix: ""          # KLUCZOWE: pusty prefix → ```plantuml działa (nie ```kroki-plantuml)
+      fence_prefix: ""
       http_method: POST
-      tag_format: svg           # inline SVG zamiast <img>
+      tag_format: svg
       request_timeout: 30
 
 markdown_extensions:
@@ -74,7 +73,6 @@ markdown_extensions:
         - name: mermaid
           class: mermaid
           format: !!python/name:pymdownx.superfences.fence_code_format
-        # plantuml obsługiwane przez plugin kroki (nie custom_fence)
   - pymdownx.highlight:
       anchor_linenums: true
       line_spans: __span

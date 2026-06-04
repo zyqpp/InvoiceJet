@@ -35,6 +35,7 @@ param(
     [int]$PortUser = 8002,
     [int]$EditorPort = 8010,
     [switch]$NoEditor,
+    [switch]$EnableKroki,
     [string]$Editor = "",
     [string]$OracleEnvPath
 )
@@ -69,6 +70,24 @@ function Get-DefaultOracleEnvPath {
     return Join-Path $repoRoot "tools\oracle_invoicejet\.env"
 }
 
+function Write-Utf8NoBom {
+    param(
+        [Parameter(Mandatory = $true)][string]$Path,
+        [Parameter(Mandatory = $true)]$Lines
+    )
+
+    $targetPath = if (Test-Path -LiteralPath $Path) {
+        (Resolve-Path -LiteralPath $Path).Path
+    } else {
+        [System.IO.Path]::GetFullPath($Path)
+    }
+    $content = [string]::Join([Environment]::NewLine, [string[]]$Lines)
+    if ($content.Length -gt 0) {
+        $content += [Environment]::NewLine
+    }
+    [System.IO.File]::WriteAllText($targetPath, $content, [System.Text.UTF8Encoding]::new($false))
+}
+
 function Update-OracleEnv {
     param(
         [Parameter(Mandatory = $true)][string]$Path,
@@ -83,7 +102,7 @@ function Update-OracleEnv {
 
     $lines = [System.Collections.Generic.List[string]]::new()
     if (Test-Path -LiteralPath $Path) {
-        foreach ($line in Get-Content -LiteralPath $Path) {
+        foreach ($line in Get-Content -LiteralPath $Path -Encoding utf8) {
             [void]$lines.Add($line)
         }
     }
@@ -107,7 +126,7 @@ function Update-OracleEnv {
         }
     }
 
-    Set-Content -LiteralPath $Path -Value $lines -Encoding utf8
+    Write-Utf8NoBom -Path $Path -Lines $lines
 }
 
 function ConvertTo-YamlPath {
@@ -225,6 +244,11 @@ OK "Porty: doc_AI=$PortAI, doc_user=$PortUser"
 $aiUrl = "http://${HostName}:$PortAI/"
 $userUrl = "http://${HostName}:$PortUser/"
 $editorUrl = "http://127.0.0.1:$EditorPort"
+$krokiEnvCommand = if ($EnableKroki) {
+    '$env:INVOICEJET_MKDOCS_KROKI="true"; '
+} else {
+    '$env:INVOICEJET_MKDOCS_KROKI="false"; '
+}
 
 Update-OracleEnv -Path $oracleEnv -DocAIUrl $aiUrl -DocUserUrl $userUrl
 OK "Zaktualizowano lokalny Oracle .env: $oracleEnv"
@@ -290,6 +314,7 @@ plugins:
       separator: '[\s\-\.]+'
   - awesome-pages
   - kroki:
+      enabled: !ENV [INVOICEJET_MKDOCS_KROKI, false]
       server_url: https://kroki.io
       enable_mermaid: false
       enable_block_diag: false
@@ -416,17 +441,17 @@ extra_javascript:
   - https://unpkg.com/mermaid@10/dist/mermaid.min.js
 "@
 
-$aiYml | Out-File (Join-Path $aiDir "mkdocs.yml") -Encoding utf8
-$userYml | Out-File (Join-Path $userDir "mkdocs.yml") -Encoding utf8
+Write-Utf8NoBom -Path (Join-Path $aiDir "mkdocs.yml") -Lines @($aiYml)
+Write-Utf8NoBom -Path (Join-Path $userDir "mkdocs.yml") -Lines @($userYml)
 OK "mkdocs.yml wygenerowane"
 
 if (-not $NoEditor) {
     if (Test-PortInUse -Port $EditorPort) {
         INFO "Edytor MkDocs juz dziala: http://127.0.0.1:$EditorPort"
     } elseif (Test-Path -LiteralPath $editorScript) {
-        $editorArgs = @("-NoProfile", "-ExecutionPolicy", "Bypass", "-File", $editorScript, "-Port", "$EditorPort")
+        $editorArgs = @("-NoProfile", "-ExecutionPolicy", "Bypass", "-File", "`"$editorScript`"", "-Port", "$EditorPort")
         if ($Editor) {
-            $editorArgs += @("-Editor", $Editor)
+            $editorArgs += @("-Editor", "`"$Editor`"")
         }
         Start-Process powershell -WindowStyle Hidden -ArgumentList $editorArgs
         OK "Edytor MkDocs: http://127.0.0.1:$EditorPort"
@@ -437,7 +462,7 @@ if (-not $NoEditor) {
 
 INFO "Uruchamiam serwery..."
 Start-Process powershell -ArgumentList "-NoExit", "-Command", `
-  "Set-Location '$aiDir'; Write-Host 'doc_AI $aiUrl' -ForegroundColor Cyan; & '$mkdocs' serve --dev-addr=${HostName}:$PortAI"
+  "$krokiEnvCommand Set-Location '$aiDir'; Write-Host 'doc_AI $aiUrl' -ForegroundColor Cyan; & '$mkdocs' serve --dev-addr=${HostName}:$PortAI"
 
 Start-Sleep 3
 

@@ -19,13 +19,13 @@ foreach ($port in $ports) {
   $pids = netstat -ano | Select-String ":$port\s" | Select-String "LISTENING" |
     ForEach-Object { ($_ -split '\s+')[-1] } | Sort-Object -Unique
 
-  foreach ($pid in $pids) {
-    if ($pid -match '^\d+$') {
+  foreach ($processId in $pids) {
+    if ($processId -match '^\d+$') {
       try {
-        Stop-Process -Id $pid -Force -ErrorAction Stop
-        Write-Host "Zatrzymano PID $pid (port $port)" -ForegroundColor Green
+        Stop-Process -Id ([int]$processId) -Force -ErrorAction Stop
+        Write-Host "Zatrzymano PID $processId (port $port)" -ForegroundColor Green
       } catch {
-        Write-Host "PID $pid juz nieaktywny" -ForegroundColor Gray
+        Write-Host "PID $processId juz nieaktywny" -ForegroundColor Gray
       }
     }
   }
