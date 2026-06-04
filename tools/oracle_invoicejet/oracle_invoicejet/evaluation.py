@@ -8,7 +8,7 @@ from typing import Any, List
 
 from .agents import OracleOrchestrator
 from .config import AppConfig
-from .rag import NO_ANSWER
+from .rag import NO_ANSWER, has_mixed_no_answer
 from .rag_profiles import get_rag_profile
 from .retrieval import RetrievalService
 
@@ -20,6 +20,8 @@ class EvalCase:
     rag_profile: str = "full_app_qa"
     expected_sources: List[str] = field(default_factory=list)
     expected_source_types: List[str] = field(default_factory=list)
+    expected_answer_terms: List[str] = field(default_factory=list)
+    forbidden_answer_terms: List[str] = field(default_factory=list)
     expect_fallback: bool = False
     notes: str = ""
 
@@ -35,8 +37,11 @@ class EvalResult:
     source_types: List[str]
     missing_sources: List[str]
     missing_source_types: List[str]
+    missing_answer_terms: List[str]
+    forbidden_answer_terms_found: List[str]
     expected_fallback: bool
     got_fallback: bool
+    mixed_fallback: bool
     elapsed_sec: float
     answer_length: int
     citations_present: bool
@@ -56,6 +61,8 @@ def load_eval_cases(tool_root: Path) -> List[EvalCase]:
             rag_profile=str(row.get("rag_profile", "full_app_qa")),
             expected_sources=[str(item) for item in row.get("expected_sources", [])],
             expected_source_types=[str(item) for item in row.get("expected_source_types", [])],
+            expected_answer_terms=[str(item) for item in row.get("expected_answer_terms", [])],
+            forbidden_answer_terms=[str(item) for item in row.get("forbidden_answer_terms", [])],
             expect_fallback=bool(row.get("expect_fallback", False)),
             notes=str(row.get("notes", "")),
         )
@@ -97,6 +104,9 @@ def result_to_row(result: EvalResult) -> dict[str, Any]:
         "got_fallback": result.got_fallback,
         "missing_sources": ", ".join(result.missing_sources),
         "missing_source_types": ", ".join(result.missing_source_types),
+        "missing_answer_terms": ", ".join(result.missing_answer_terms),
+        "forbidden_answer_terms_found": ", ".join(result.forbidden_answer_terms_found),
+        "mixed_fallback": result.mixed_fallback,
         "sources": ", ".join(result.sources[:5]),
         "source_types": ", ".join(result.source_types),
         "answer_length": result.answer_length,
@@ -117,7 +127,16 @@ def _run_retrieval_case(config: AppConfig, case: EvalCase) -> EvalResult:
         missing_sources = _missing_expected(sources, case.expected_sources)
         missing_types = _missing_expected(source_types, case.expected_source_types)
         got_fallback = len(hits) < max(config.min_hits, profile.min_hits)
-        passed = _is_passed(case, got_fallback, missing_sources, missing_types, mode="retrieval")
+        passed = _is_passed(
+            case,
+            got_fallback,
+            missing_sources,
+            missing_types,
+            missing_answer_terms=[],
+            forbidden_answer_terms_found=[],
+            mixed_fallback=False,
+            mode="retrieval",
+        )
         return EvalResult(
             case_id=case.id,
             question=case.question,
@@ -128,8 +147,11 @@ def _run_retrieval_case(config: AppConfig, case: EvalCase) -> EvalResult:
             source_types=source_types,
             missing_sources=missing_sources,
             missing_source_types=missing_types,
+            missing_answer_terms=[],
+            forbidden_answer_terms_found=[],
             expected_fallback=case.expect_fallback,
             got_fallback=got_fallback,
+            mixed_fallback=False,
             elapsed_sec=time.perf_counter() - start,
             answer_length=0,
             citations_present=bool(sources),
@@ -148,7 +170,21 @@ def _run_answer_case(config: AppConfig, case: EvalCase) -> EvalResult:
         missing_sources = _missing_expected(sources, case.expected_sources)
         missing_types = _missing_expected(source_types, case.expected_source_types)
         got_fallback = result.answer.strip() == NO_ANSWER
-        passed = _is_passed(case, got_fallback, missing_sources, missing_types, mode="answer")
+        mixed_fallback = has_mixed_no_answer(result.answer) or any(
+            "fallback" in str(warning).lower() for warning in getattr(result, "warnings", [])
+        )
+        missing_answer_terms = _missing_expected_terms(result.answer, case.expected_answer_terms)
+        forbidden_terms_found = _found_forbidden_terms(result.answer, case.forbidden_answer_terms)
+        passed = _is_passed(
+            case,
+            got_fallback,
+            missing_sources,
+            missing_types,
+            missing_answer_terms=missing_answer_terms,
+            forbidden_answer_terms_found=forbidden_terms_found,
+            mixed_fallback=mixed_fallback,
+            mode="answer",
+        )
         return EvalResult(
             case_id=case.id,
             question=case.question,
@@ -159,8 +195,11 @@ def _run_answer_case(config: AppConfig, case: EvalCase) -> EvalResult:
             source_types=source_types,
             missing_sources=missing_sources,
             missing_source_types=missing_types,
+            missing_answer_terms=missing_answer_terms,
+            forbidden_answer_terms_found=forbidden_terms_found,
             expected_fallback=case.expect_fallback,
             got_fallback=got_fallback,
+            mixed_fallback=mixed_fallback,
             elapsed_sec=time.perf_counter() - start,
             answer_length=len(result.answer),
             citations_present=bool(result.citations),
@@ -180,12 +219,38 @@ def _missing_expected(actual_values: List[str], expected_values: List[str]) -> L
     return missing
 
 
-def _is_passed(case: EvalCase, got_fallback: bool, missing_sources: List[str], missing_types: List[str], mode: str) -> bool:
+def _missing_expected_terms(answer: str, expected_terms: List[str]) -> List[str]:
+    normalized_answer = _normalize_text(answer)
+    return [term for term in expected_terms if _normalize_text(term) not in normalized_answer]
+
+
+def _found_forbidden_terms(answer: str, forbidden_terms: List[str]) -> List[str]:
+    normalized_answer = _normalize_text(answer)
+    return [term for term in forbidden_terms if _normalize_text(term) in normalized_answer]
+
+
+def _normalize_text(value: str) -> str:
+    return " ".join(value.lower().split())
+
+
+def _is_passed(
+    case: EvalCase,
+    got_fallback: bool,
+    missing_sources: List[str],
+    missing_types: List[str],
+    missing_answer_terms: List[str],
+    forbidden_answer_terms_found: List[str],
+    mixed_fallback: bool,
+    mode: str,
+) -> bool:
     if case.expect_fallback:
         if mode == "retrieval":
             return True
         return got_fallback
-    return not got_fallback and not missing_sources and not missing_types
+    answer_quality_ok = not missing_answer_terms and not forbidden_answer_terms_found and not mixed_fallback
+    if mode == "retrieval":
+        answer_quality_ok = True
+    return not got_fallback and not missing_sources and not missing_types and answer_quality_ok
 
 
 def _error_result(case: EvalCase, mode: str, elapsed_sec: float, error: str) -> EvalResult:
@@ -199,8 +264,11 @@ def _error_result(case: EvalCase, mode: str, elapsed_sec: float, error: str) -> 
         source_types=[],
         missing_sources=case.expected_sources,
         missing_source_types=case.expected_source_types,
+        missing_answer_terms=case.expected_answer_terms,
+        forbidden_answer_terms_found=[],
         expected_fallback=case.expect_fallback,
         got_fallback=False,
+        mixed_fallback=False,
         elapsed_sec=elapsed_sec,
         answer_length=0,
         citations_present=False,

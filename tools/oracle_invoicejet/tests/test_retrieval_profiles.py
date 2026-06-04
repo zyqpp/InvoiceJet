@@ -34,6 +34,51 @@ class FakeCollection:
         }
 
 
+class FakeCalculationCollection:
+    def query(self, query_embeddings, n_results, where=None):  # noqa: ANN001
+        rows = [
+            (
+                "algorithm",
+                "calc-line",
+                "TotalPrice = UnitPrice * Quantity * (1 + VatRate / 100)",
+                "InvoiceJet/doc_AI/03_algorytmy/wyliczeniowe/obliczanie_ceny_pozycji.md",
+                0.40,
+            ),
+            (
+                "algorithm",
+                "calc-update",
+                "UpdateDocumentProducts sumuje dto.TotalPrice i UnitPrice * Quantity",
+                "InvoiceJet/doc_AI/03_algorytmy/wyliczeniowe/aktualizacja_produktow_dokumentu.md",
+                0.41,
+            ),
+            (
+                "algorithm",
+                "calc-total",
+                "Document.TotalPrice to suma brutto dokumentu.",
+                "InvoiceJet/doc_AI/03_algorytmy/wyliczeniowe/obliczanie_wartosci_dokumentu.md",
+                0.42,
+            ),
+            (
+                "data_model",
+                "document-product",
+                "DocumentProduct ma UnitPrice, Quantity, TotalPrice.",
+                "InvoiceJet/doc_AI/05_model_danych/01_db/dbo/dbo.DocumentProduct.md",
+                0.50,
+            ),
+            ("screen", "screen", "Ekran przelicza pozycje.", "InvoiceJet/doc_AI/01_ekrany/E-10_AddOrEditInvoiceComponent/E-10_ekran.md", 0.55),
+        ]
+        source_type = _source_type_from_where(where)
+        if source_type:
+            rows = [row for row in rows if row[0] == source_type]
+        rows = rows[:n_results]
+        return {
+            "ids": [[row[1] for row in rows]],
+            "documents": [[row[2] for row in rows]],
+            "metadatas": [[_metadata_with_path(row[0], row[1], row[3]) for row in rows]],
+            "distances": [[row[4] for row in rows]],
+        }
+
+
 class RetrievalProfileTests(unittest.TestCase):
     def test_cross_reference_profile_merges_preferred_source_types(self) -> None:
         service = object.__new__(RetrievalService)
@@ -60,6 +105,24 @@ class RetrievalProfileTests(unittest.TestCase):
         self.assertEqual(source_types[0], "data_model")
         self.assertIn("mapping", source_types)
 
+    def test_algorithm_calculation_profile_prioritizes_required_calculation_sources(self) -> None:
+        service = object.__new__(RetrievalService)
+        service.config = _config()
+        service.embedding_provider = FakeEmbeddingProvider()
+        service.collection = FakeCalculationCollection()
+
+        hits = service.search_with_profile(
+            "wyliczanie kwoty ceny produktu na pozycji dokumentu i suma dokumentu",
+            get_rag_profile("algorithm_calculation"),
+            top_k=5,
+        )
+        source_paths = [hit.source_path for hit in hits]
+
+        self.assertIn("InvoiceJet/doc_AI/03_algorytmy/wyliczeniowe/obliczanie_ceny_pozycji.md", source_paths)
+        self.assertIn("InvoiceJet/doc_AI/03_algorytmy/wyliczeniowe/aktualizacja_produktow_dokumentu.md", source_paths)
+        self.assertIn("InvoiceJet/doc_AI/03_algorytmy/wyliczeniowe/obliczanie_wartosci_dokumentu.md", source_paths)
+        self.assertIn("InvoiceJet/doc_AI/05_model_danych/01_db/dbo/dbo.DocumentProduct.md", source_paths)
+
 
 def _source_type_from_where(where) -> str | None:  # noqa: ANN001
     if not where:
@@ -75,10 +138,14 @@ def _source_type_from_where(where) -> str | None:  # noqa: ANN001
 
 
 def _metadata(source_type: str, item_id: str) -> dict[str, object]:
+    return _metadata_with_path(source_type, item_id, f"InvoiceJet/doc_AI/{item_id}.md")
+
+
+def _metadata_with_path(source_type: str, item_id: str, source_path: str) -> dict[str, object]:
     return {
         "source_group": "doc_ai",
         "source_type": source_type,
-        "source_path": f"InvoiceJet/doc_AI/{item_id}.md",
+        "source_path": source_path,
         "heading_path": "ROOT",
         "priority": 100,
     }

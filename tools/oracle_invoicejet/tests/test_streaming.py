@@ -3,7 +3,7 @@ from __future__ import annotations
 from pathlib import Path
 import unittest
 
-from oracle_invoicejet.agents import OracleOrchestrator
+from oracle_invoicejet.agents import OracleOrchestrator, VerifierAgent
 from oracle_invoicejet.config import AppConfig, SourceConfig
 from oracle_invoicejet.retrieval import SearchHit
 
@@ -33,6 +33,13 @@ class FailingAnswerer:
     def stream(self, prompt: str):  # noqa: ANN201
         raise TimeoutError("timeout")
         yield {}
+
+
+class ThinkingAnswerer:
+    def stream(self, prompt: str):  # noqa: ANN201
+        yield {"response": "<think>ukryte rozumowanie</think>"}
+        yield {"response": "Finalna odpowiedz."}
+        yield {"done": True}
 
 
 class StreamingTests(unittest.TestCase):
@@ -78,6 +85,28 @@ class StreamingTests(unittest.TestCase):
         self.assertEqual(events[-1]["type"], "error")
         self.assertIn("timeout", events[-1]["technical_details"])
 
+    def test_stream_answer_strips_thinking_blocks(self) -> None:
+        orchestrator = OracleOrchestrator(_config())
+        orchestrator.retriever = FakeRetriever([_hit()])
+        orchestrator.answerer = ThinkingAnswerer()
+
+        events = list(orchestrator.stream_answer("Jak liczy sie dokument?", requested_rag_profile="algorithm_calculation"))
+        tokens = [event for event in events if event["type"] == "token"]
+        completed = events[-1]
+
+        self.assertEqual(tokens[-1]["accumulated_text"], "Finalna odpowiedz.")
+        self.assertNotIn("<think>", completed["answer"])
+        self.assertEqual(completed["answer"], "Finalna odpowiedz.")
+
+    def test_verifier_rejects_mixed_fallback(self) -> None:
+        verified, warnings, _ = VerifierAgent().verify(
+            "Odpowiedz merytoryczna.\nNie znalazłem tego w dokumentacji.",
+            [_citation()],
+        )
+
+        self.assertFalse(verified)
+        self.assertTrue(warnings)
+
 
 def _hit() -> SearchHit:
     return SearchHit(
@@ -90,6 +119,18 @@ def _hit() -> SearchHit:
             "heading_path": "ROOT",
             "priority": 100,
         },
+        distance=0.1,
+    )
+
+
+def _citation():
+    from oracle_invoicejet.rag import Citation
+
+    return Citation(
+        source_path="InvoiceJet/doc_AI/source.md",
+        source_group="doc_ai",
+        source_type="algorithm",
+        heading_path="ROOT",
         distance=0.1,
     )
 

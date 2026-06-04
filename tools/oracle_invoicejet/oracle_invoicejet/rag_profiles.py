@@ -60,6 +60,17 @@ RAG_PROFILES: Dict[str, RAGProfile] = {
         per_type_k=3,
         max_context_chars=26000,
     ),
+    "algorithm_calculation": RAGProfile(
+        key="algorithm_calculation",
+        label="Algorytmy i wyliczenia",
+        description="Wyliczenia kwot, sum dokumentu, logika frontend/backend, model danych i ryzyka.",
+        source_groups=["doc_ai"],
+        preferred_source_types=["algorithm", "screen", "data_model", "process", "mapping", "validation", "api"],
+        type_boosts={"algorithm": 0.14, "screen": 0.06, "data_model": 0.06, "process": 0.05, "mapping": 0.04},
+        top_k_multiplier=6,
+        per_type_k=3,
+        max_context_chars=28000,
+    ),
     "user_help": RAGProfile(
         key="user_help",
         label="Pomoc użytkownika",
@@ -98,6 +109,40 @@ CROSS_REFERENCE_MARKERS = {
     "status",
     "kontrahent",
     "klient",
+    "kwota",
+    "kwoty",
+    "cena",
+    "ceny",
+    "suma",
+    "sumy",
+    "wartosc",
+    "wartosci",
+    "wyliczanie",
+    "obliczanie",
+}
+
+
+CALCULATION_MARKERS = {
+    "kwota",
+    "kwoty",
+    "cena",
+    "ceny",
+    "suma",
+    "sumy",
+    "wartosc",
+    "wartosci",
+    "wyliczanie",
+    "wyliczana",
+    "obliczanie",
+    "obliczana",
+    "pozycja",
+    "pozycji",
+    "produkt",
+    "produktu",
+    "totalprice",
+    "unitprice",
+    "vatrate",
+    "quantity",
 }
 
 
@@ -116,9 +161,12 @@ def infer_rag_profile(question: str, scope: str | None = None, requested_profile
         return get_rag_profile(requested_profile)
     if scope == "user":
         return RAG_PROFILES["user_help"]
+    normalized = question.lower()
+    calc_hits = sum(1 for marker in CALCULATION_MARKERS if marker in normalized)
+    if calc_hits >= 2:
+        return RAG_PROFILES["algorithm_calculation"]
     if scope in {"technical", "backend", "debt"}:
         return RAG_PROFILES["technical_deep_dive"]
-    normalized = question.lower()
     marker_hits = sum(1 for marker in CROSS_REFERENCE_MARKERS if marker in normalized)
     if marker_hits >= 2:
         return RAG_PROFILES["cross_reference"]

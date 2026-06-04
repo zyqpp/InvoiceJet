@@ -85,6 +85,7 @@ class OllamaClient:
         repeat_penalty: float = 1.1,
         seed: int | None = None,
         timeout_sec: int = 900,
+        think: bool | str | None = None,
     ) -> dict[str, Any]:
         options = _generate_options(
             num_ctx=num_ctx,
@@ -95,14 +96,17 @@ class OllamaClient:
             repeat_penalty=repeat_penalty,
             seed=seed,
         )
+        request_payload: dict[str, Any] = {
+            "model": model,
+            "prompt": prompt,
+            "stream": False,
+            "options": options,
+        }
+        if think is not None:
+            request_payload["think"] = think
         response = requests.post(
             f"{self.base_url}/api/generate",
-            json={
-                "model": model,
-                "prompt": prompt,
-                "stream": False,
-                "options": options,
-            },
+            json=request_payload,
             timeout=timeout_sec,
         )
         response.raise_for_status()
@@ -120,6 +124,7 @@ class OllamaClient:
         repeat_penalty: float = 1.1,
         seed: int | None = None,
         timeout_sec: int = 900,
+        think: bool | str | None = None,
     ) -> Iterable[dict[str, Any]]:
         payload = {
             "model": model,
@@ -135,6 +140,8 @@ class OllamaClient:
                 seed=seed,
             ),
         }
+        if think is not None:
+            payload["think"] = think
         with requests.post(
             f"{self.base_url}/api/generate",
             json=payload,

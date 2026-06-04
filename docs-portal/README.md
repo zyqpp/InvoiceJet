@@ -43,19 +43,21 @@ cd "ścieżka\do\InvoiceJet\docs-portal"
 .\setup.ps1
 ```
 
-Domyślnie uruchamia na portach **8201** (tech) i **8301** (user). Własne porty:
+Domyślnie uruchamia na portach **8001** (tech) i **8002** (user). Własne porty albo host:
 
 ```powershell
 .\setup.ps1 -PortAI 9001 -PortUser 9002
+.\setup.ps1 -Host 192.168.1.10 -PortAI 9001 -PortUser 9002
 ```
 
 Skrypt wykonuje kolejno:
 1. Sprawdza Python 3.8+
 2. Instaluje `mkdocs`, `mkdocs-material`, `mkdocs-awesome-pages-plugin`, `Pygments`
-3. Generuje `mkdocs.yml` z ścieżkami pasującymi do tego komputera
-4. Sprawdza wolne porty
-5. Uruchamia oba serwery
-6. Otwiera przeglądarkę
+3. Ustala finalne porty i bazowe URL-e portali
+4. Generuje `mkdocs.yml` z ścieżkami pasującymi do tego komputera
+5. Synchronizuje lokalny `.env` Oracle InvoiceJet
+6. Uruchamia oba serwery
+7. Otwiera przeglądarkę
 
 ---
 
@@ -64,6 +66,13 @@ Skrypt wykonuje kolejno:
 ```powershell
 cd "ścieżka\do\InvoiceJet\docs-portal"
 .\start-docs.ps1
+```
+
+Własny host, porty albo ścieżka do lokalnego `.env` Oracle:
+
+```powershell
+.\start-docs.ps1 -Host 192.168.1.10 -PortAI 9001 -PortUser 9002
+.\start-docs.ps1 -OracleEnvPath "..\tools\oracle_invoicejet\.env"
 ```
 
 Lub uruchom skrót na pulpicie wskazujący na `start-docs.ps1`.
@@ -82,18 +91,18 @@ Opcjonalnie — uruchom też serwer edycji:
 
 ### `setup.ps1` — jednorazowy setup
 ```
-Parametry: -PortAI <int>  -PortUser <int>
-Domyślnie: 8201 i 8301
+Parametry: -Host <string>  -PortAI <int>  -PortUser <int>  -OracleEnvPath <path>
+Domyślnie: 127.0.0.1, 8001 i 8002
 ```
-Używaj na nowym komputerze lub po klonowaniu repo. Instaluje zależności, wykrywa ścieżki i startuje.
+Używaj na nowym komputerze lub po klonowaniu repo. Instaluje zależności, wykrywa ścieżki, generuje `mkdocs.yml`, ustawia linki między portalami i aktualizuje Oracle.
 
 ---
 
 ### `start-docs.ps1` — uruchomienie portali
 ```
-Brak parametrów (porty 8001/8002 hardcoded)
+Parametry: -Host <string>  -PortAI <int>  -PortUser <int>  -OracleEnvPath <path>
 ```
-Uruchamia dwa okna PowerShell z serwerami MkDocs. Live-reload — zmiany w `.md` są widoczne natychmiast bez restartu.
+Uruchamia dwa okna PowerShell z serwerami MkDocs. Przed startem synchronizuje `ORACLE_DOCS_PORTAL_DOC_AI` i `ORACLE_DOCS_PORTAL_DOC_USER` w lokalnym `.env` Oracle. Live-reload — zmiany w `.md` są widoczne natychmiast bez restartu.
 
 > ⚠️ Zmiany w `overrides/main.html` (CSS/JS) wymagają restartu skryptu!
 
@@ -101,9 +110,10 @@ Uruchamia dwa okna PowerShell z serwerami MkDocs. Live-reload — zmiany w `.md`
 
 ### `stop-docs.ps1` — zatrzymanie portali
 ```
-Brak parametrów
+Parametry: -PortAI <int>  -PortUser <int>
+Domyślnie: 8001 i 8002
 ```
-Zatrzymuje procesy na portach 8001 i 8002.
+Zatrzymuje procesy na portach portali MkDocs.
 
 ---
 
@@ -174,11 +184,13 @@ Utwórz `doc_AI/XX_folder/nowy-plik.md` → portal wykryje automatycznie.
 ## Konfiguracja
 
 ### Zmiana portów
-Edytuj `start-docs.ps1`:
+Nie edytuj już wartości w treści skryptu. Podaj porty przy uruchomieniu:
+
 ```powershell
-$PORT_AI   = 8001   # zmień tutaj
-$PORT_USER = 8002   # zmień tutaj
+.\start-docs.ps1 -PortAI 9001 -PortUser 9002
 ```
+
+Skrypt ustawi te same adresy w `mkdocs.yml`, przełączniku między portalami oraz w lokalnym `tools/oracle_invoicejet/.env`, żeby Oracle otwierał właściwe dokumenty z tabeli źródeł.
 
 ### Zmiana motywu kolorystycznego
 Edytuj `doc-ai/mkdocs.yml` → sekcja `palette`:

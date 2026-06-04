@@ -75,6 +75,9 @@ markdown_extensions:
 
 extra:
   generator: false
+  portal:
+    doc_ai_url: "http://127.0.0.1:8001/"
+    doc_user_url: "http://127.0.0.1:8002/"
 
 extra_javascript:
   - https://unpkg.com/mermaid@10/dist/mermaid.min.js

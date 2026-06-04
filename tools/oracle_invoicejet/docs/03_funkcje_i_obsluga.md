@@ -36,6 +36,8 @@ Widoczne etapy:
 
 Źródła są renderowane dopiero po zakończeniu generacji, żeby nie sugerować finalnego wyniku zanim odpowiedź zostanie zweryfikowana.
 
+Po zakończeniu odpowiedzi Oracle pokazuje źródła systemowe niezależnie od tego, czy model sam dodał sekcję `Źródła`. Dla dokumentów z `InvoiceJet/doc_AI` i `InvoiceJet/doc_user` UI buduje klikalne linki do portali MkDocs, więc użytkownik może przejść bezpośrednio do dokumentu w bazie wiedzy AOS.
+
 ### Wyszukiwarka
 
 Pozwala testować retrieval bez uruchamiania LLM. To najważniejsze narzędzie do diagnozy, gdy odpowiedź jest słaba. Jeżeli wyszukiwarka nie znajduje właściwych źródeł, model zwykle też nie odpowie dobrze.
@@ -49,11 +51,16 @@ Wyszukiwarka pokazuje:
 - `table`,
 - `endpoint`,
 - dystans semantyczny,
+- link do portalu MkDocs,
 - fragment tekstu.
+
+`distance` to dystans semantyczny z retrievalu. Im niższa wartość, tym bliżej pytania jest dany fragment, ale wynik nadal trzeba oceniać razem z typem źródła, nagłówkiem i treścią chunka.
 
 ### Źródła
 
 Lista dokumentów, które wchodzą do bazy odpowiedzi. Ta zakładka pomaga sprawdzić, czy dokumentacja została poprawnie sklasyfikowana.
+
+Kolumna `Portal` otwiera odpowiadającą stronę HTML w portalu MkDocs. Link powstaje z `relative_path` i aktywnych adresów `ORACLE_DOCS_PORTAL_DOC_AI` oraz `ORACLE_DOCS_PORTAL_DOC_USER`.
 
 Przydatne pytania kontrolne:
 
@@ -92,7 +99,12 @@ Raport pokazuje:
 - brakujące źródła,
 - czas,
 - długość odpowiedzi,
-- obecność cytowań.
+- obecność cytowań,
+- brakujące wymagane terminy/formuły w odpowiedzi,
+- zakazane fragmenty znalezione w odpowiedzi,
+- wykrycie sprzecznego fallbacku po znalezieniu źródeł.
+
+W trybie `answer` przypadek typu poprawna treść plus dopisek `Nie znalazłem tego w dokumentacji.` jest traktowany jako błąd jakościowy. Taki test nie powinien przejść, bo użytkownik dostaje sprzeczny komunikat.
 
 ### Agenci i modele
 
@@ -108,6 +120,26 @@ Agent to konfiguracja pracy, nie osobny proces. Łączy:
 - limity odpowiedzi.
 
 W sidebarze agent może mieć też własną instrukcję, listę możliwości, ograniczenia i przykładowe pytania. To jest ważne szczególnie dla wyspecjalizowanych agentów, bo użytkownik od razu widzi, do czego dany profil służy.
+
+### Agent algorytmiczny: Klara
+
+`Klara` jest profilem do trudnych pytań o wyliczenia i algorytmy biznesowe, np. cenę pozycji dokumentu, sumę dokumentu, VAT, odpowiedzialność frontend/backend i ryzyka danych.
+
+Używa:
+
+- profilu modelu `quality_local_12b`,
+- promptu `algorithm_explainer`,
+- profilu RAG `algorithm_calculation`.
+
+Ten profil preferuje dokumenty typu `algorithm`, ale dogrywa też `screen`, `data_model`, `process`, `mapping` i `validation`. Dla pytań o kwoty powinien pobrać m.in. dokumenty `obliczanie_ceny_pozycji`, `aktualizacja_produktow_dokumentu`, `obliczanie_wartosci_dokumentu` i model danych `DocumentProduct`.
+
+Odpowiedź Klary powinna rozdzielać:
+
+- co liczy frontend,
+- co zapisuje albo przelicza backend,
+- jakie pola/tabele przechowują wynik,
+- jak wygląda prezentacja PDF,
+- jakie są ryzyka lub anomalie dokumentacji.
 
 ### Agent bazodanowy: Zenon SQL
 
@@ -208,6 +240,13 @@ Która tabela przechowuje dane kont bankowych?
 3. Jeżeli źródła są dobre, sprawdź profil RAG i `top_k`.
 4. Jeżeli retrieval jest dobry, ale odpowiedź słaba, porównaj profil promptu i modelu.
 5. Dodaj przypadek do `eval/golden_set.json`, żeby problem nie wrócił po kolejnych zmianach.
+
+Jeżeli źródła są znalezione, ale linki do bazy wiedzy nie otwierają dokumentów:
+
+1. Sprawdź w sidebarze Oracle aktywne adresy `doc_AI` i `doc_user`.
+2. Sprawdź, czy portale MkDocs odpowiadają na tych adresach.
+3. Sprawdź, czy `source_path` zaczyna się od `InvoiceJet/doc_AI/` albo `InvoiceJet/doc_user/`.
+4. Po zmianie portów uruchom ponownie `docs-portal/start-docs.ps1`, żeby zsynchronizować `.env` Oracle.
 
 ## Kryteria poprawnej odpowiedzi
 

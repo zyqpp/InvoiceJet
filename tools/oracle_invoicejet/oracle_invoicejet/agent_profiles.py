@@ -26,6 +26,8 @@ class AgentProfile:
     repeat_penalty: float = 1.1
     seed: int | None = None
     timeout_sec: int = 900
+    think: bool | str | None = None
+    strip_thinking: bool = True
     min_hits: int = 1
     model_profile: str = "balanced"
     prompt_profile: str = "oracle_rag_default"
@@ -86,6 +88,8 @@ def _profile_from_row(row: dict[str, Any], model: ModelProfile) -> AgentProfile:
         repeat_penalty=float(row.get("repeat_penalty", model.repeat_penalty)),
         seed=int(row["seed"]) if row.get("seed") is not None else model.seed,
         timeout_sec=int(row.get("timeout_sec", model.timeout_sec)),
+        think=_parse_think(row.get("think", model.think)),
+        strip_thinking=bool(row.get("strip_thinking", model.strip_thinking)),
         min_hits=int(row.get("min_hits", 1)),
         model_profile=str(row.get("model_profile", model.key)),
         prompt_profile=str(row.get("prompt_profile", "oracle_rag_default")),
@@ -121,3 +125,20 @@ def _default_agent_rows() -> List[dict[str, Any]]:
             "min_hits": 1,
         }
     ]
+
+
+def _parse_think(value: Any) -> bool | str | None:
+    if value is None:
+        return None
+    if isinstance(value, bool):
+        return value
+    text = str(value).strip().lower()
+    if not text or text == "auto":
+        return None
+    if text in {"true", "on", "yes", "1"}:
+        return True
+    if text in {"false", "off", "no", "0"}:
+        return False
+    if text in {"low", "medium", "high"}:
+        return text
+    raise ValueError(f"Unsupported think agent value: {value}")

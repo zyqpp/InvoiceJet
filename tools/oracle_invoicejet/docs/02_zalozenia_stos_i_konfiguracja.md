@@ -50,8 +50,11 @@ System ma znaleźć nie tylko opis ekranu, ale również mapowania, endpointy, p
 Whitelistę modeli definiuje `ORACLE_ALLOWED_MODELS` w konfiguracji. Domyślnie portal dopuszcza:
 
 - `gemma3:4b` - domyślny model generacyjny dla jakości odpowiedzi na lokalnym sprzęcie.
+- `gemma3:12b` - mocniejszy lokalny model jakościowy dla trudnych pytań i porównań.
 - `gemma3:1b` - lżejszy model do szybkich testów.
-- `qwen3:4b` - alternatywny model generacyjny do porównań.
+- `deepseek-r1:8b` - eksperymentalny model reasoningowy, używany tylko do porównań.
+- `qwen3:4b` - alternatywny model generacyjny do porównań; w profilu Qwen ma wymuszone `think=false`.
+- `qwen3-vl:4b` - lokalny wariant Qwen z whitelisty, na razie tylko do świadomych eksperymentów.
 - `qwen3:1.7b` - lżejszy wariant Qwen do eksperymentów.
 - `bge-m3` - domyślny model embeddingów.
 - `nomic-embed-text` - alternatywny model embeddingów.
@@ -86,9 +89,15 @@ Najważniejsze zmienne:
 | `ORACLE_REPEAT_PENALTY` | kara za powtarzanie |
 | `ORACLE_SEED` | deterministyczne ziarno, jeżeli model je wspiera |
 | `ORACLE_TIMEOUT_SEC` | limit czasu generacji |
+| `ORACLE_THINK` | opcjonalny parametr Ollamy dla modeli thinking: `true`, `false`, `low`, `medium`, `high` albo puste `auto` |
+| `ORACLE_STRIP_THINKING` | lokalne czyszczenie bloków `<think>...</think>` z odpowiedzi |
 | `ORACLE_CHUNK_SIZE` | docelowy rozmiar chunka |
 | `ORACLE_CHUNK_OVERLAP` | nakładka między chunkami |
 | `ORACLE_MIN_HITS` | minimalna liczba trafień, aby uruchomić LLM |
+| `ORACLE_DOCS_PORTAL_DOC_AI` | bazowy URL portalu MkDocs dla `InvoiceJet/doc_AI` |
+| `ORACLE_DOCS_PORTAL_DOC_USER` | bazowy URL portalu MkDocs dla `InvoiceJet/doc_user` |
+
+Adresy portali dokumentacji są używane wyłącznie do budowania linków w UI i w promptach. Zmiana tych wartości nie wymaga przebudowy indeksu, bo Chroma przechowuje `source_path` do plików Markdown, a Oracle dopiero przy renderowaniu zamienia ścieżkę na URL portalu.
 
 ## Profile konfiguracyjne
 
@@ -121,6 +130,18 @@ Taksonomia rozpoznaje typy:
 - `mapping`.
 
 Metadane są wyprowadzane głównie ze ścieżki i nazwy pliku. Przykładowo dokument pod `05_model_danych` zwykle dostanie `source_type=data_model`, a endpoint pod `04_api_i_integracje` dostanie `source_type=api` i pole `endpoint`.
+
+## Linkowanie do portali MkDocs
+
+Oracle linkuje wyniki RAG do portali dokumentacji przez deterministyczne mapowanie `source_path`:
+
+- `InvoiceJet/doc_AI/.../plik.md` trafia do `ORACLE_DOCS_PORTAL_DOC_AI/.../plik.html`,
+- `InvoiceJet/doc_user/.../plik.md` trafia do `ORACLE_DOCS_PORTAL_DOC_USER/.../plik.html`,
+- `README.md` trafia do `index.html`, zgodnie z generowaniem MkDocs.
+
+Wartość `distance` w tabelach źródeł to dystans semantyczny zwrócony przez bazę wektorową. Niższa wartość oznacza bliższe dopasowanie fragmentu do pytania, ale nie jest to procent pewności ani ranking jakości finalnej odpowiedzi.
+
+Portale MkDocs mogą działać na innych portach albo pod innym hostem, np. w sieci wewnętrznej. Wtedy trzeba zaktualizować bazowe URL-e w `.env` albo uruchomić skrypty `docs-portal`, które synchronizują te wartości automatycznie.
 
 ## Bezpieczeństwo i prywatność
 

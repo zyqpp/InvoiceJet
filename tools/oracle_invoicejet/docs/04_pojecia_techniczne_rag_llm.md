@@ -191,8 +191,10 @@ LLM to model generujący tekst. W Oracle LLM dostaje prompt i zwraca odpowiedź 
 Modele dostępne w projekcie:
 
 - `gemma3:4b` - domyślny model generacyjny; lepszy balans jakości i wydajności.
+- `gemma3:12b` - mocniejszy lokalny model do trudnych pytań przekrojowych; wolniejszy, ale zwykle rozumniejszy.
 - `gemma3:1b` - szybki, lżejszy model; dobry do testów, zwykle słabszy w odpowiedziach przekrojowych.
-- `qwen3:4b` - alternatywa do porównań jakościowych.
+- `deepseek-r1:8b` - eksperymentalny model reasoningowy; wymaga kontroli thinkingu i oceny w Evaluation Lab.
+- `qwen3:4b` - alternatywa do porównań jakościowych; w Oracle używa profilu `qwen3_no_think`, bo modele Qwen potrafią domyślnie generować thinking.
 - `qwen3:1.7b` - lżejsza alternatywa do szybkich eksperymentów.
 
 Różnice między modelami należy oceniać praktycznie:
@@ -221,6 +223,16 @@ Różnice między modelami należy oceniać praktycznie:
 `seed` może pomagać w powtarzalności, jeżeli model i runtime go respektują.
 
 `timeout_sec` ogranicza maksymalny czas generacji.
+
+`think` to top-level parametr requestu Ollamy dla modeli wspierających thinking. Wartość `false` próbuje wyłączyć ślad rozumowania, co jest szczególnie ważne dla Qwen/DeepSeek w UI użytkowym.
+
+`strip_thinking` to lokalny bezpiecznik Oracle. Usuwa bloki `<think>...</think>` z odpowiedzi, jeżeli model mimo konfiguracji zwróci thinking w treści.
+
+W praktyce:
+
+- zwykłe profile Gemma zostawiają `think=auto`,
+- Qwen ma profil eksperymentalny `qwen3_no_think` z `think=false`,
+- modele reasoningowe trzeba porównywać w Evaluation Lab, bo mogą być wolniejsze i bardziej podatne na zwracanie thinkingu.
 
 ## Token
 

@@ -10,7 +10,14 @@ from .config import load_config
 from .diagnostics import DoctorService, recommended_models
 
 
+def _configure_console_encoding() -> None:
+    for stream in (sys.stdout, sys.stderr):
+        if hasattr(stream, "reconfigure"):
+            stream.reconfigure(encoding="utf-8", errors="replace")
+
+
 def doctor_main() -> None:
+    _configure_console_encoding()
     parser = argparse.ArgumentParser(description="Sprawdza środowisko Oracle InvoiceJet.")
     parser.add_argument("--test-embedding", action="store_true", help="Wykonaj test embeddingu przez Ollama.")
     args = parser.parse_args()
@@ -23,6 +30,7 @@ def doctor_main() -> None:
 
 
 def ingest_main() -> None:
+    _configure_console_encoding()
     from .indexing import IndexManager
 
     parser = argparse.ArgumentParser(description="Indeksuje dokumentację InvoiceJet do lokalnego Chroma.")
@@ -49,6 +57,7 @@ def ingest_main() -> None:
 
 
 def query_main() -> None:
+    _configure_console_encoding()
     from .agents import OracleOrchestrator
     from .rag import NO_ANSWER
 
@@ -83,6 +92,7 @@ def query_main() -> None:
 
 
 def evaluate_main() -> None:
+    _configure_console_encoding()
     from .evaluation import result_to_row, run_eval_set, summarize_results
 
     parser = argparse.ArgumentParser(description="Uruchamia golden set Oracle InvoiceJet.")
@@ -117,6 +127,7 @@ def evaluate_main() -> None:
 
 
 def serve_main() -> None:
+    _configure_console_encoding()
     parser = argparse.ArgumentParser(description="Uruchamia portal Streamlit Oracle InvoiceJet.")
     parser.add_argument("--port", type=int, default=8502)
     args = parser.parse_args()
@@ -142,6 +153,7 @@ def serve_main() -> None:
 
 
 def pull_recommended_main() -> None:
+    _configure_console_encoding()
     from .embeddings import OllamaClient
 
     parser = argparse.ArgumentParser(description="Pobiera wyłącznie rekomendowane modele Oracle.")

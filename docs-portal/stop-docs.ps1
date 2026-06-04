@@ -1,16 +1,27 @@
 #!/usr/bin/env pwsh
-# stop-docs.ps1 — zatrzymuje serwery MkDocs
+# stop-docs.ps1 - zatrzymuje serwery MkDocs.
 
-Write-Host "Zatrzymuję serwery MkDocs na portach 8001 i 8002..." -ForegroundColor Yellow
+param(
+  [int]$PortAI = 8001,
+  [int]$PortUser = 8002
+)
 
-foreach ($port in @(8001, 8002)) {
+Write-Host "Zatrzymuje serwery MkDocs na portach $PortAI i $PortUser..." -ForegroundColor Yellow
+
+foreach ($port in @($PortAI, $PortUser)) {
   $pids = netstat -ano | Select-String ":$port\s" | Select-String "LISTENING" |
     ForEach-Object { ($_ -split '\s+')[-1] } | Sort-Object -Unique
+
   foreach ($pid in $pids) {
     if ($pid -match '^\d+$') {
-      try { Stop-Process -Id $pid -Force -ErrorAction Stop; Write-Host "✅ Zatrzymano PID $pid (port $port)" -ForegroundColor Green }
-      catch { Write-Host "ℹ️  PID $pid już nieaktywny" -ForegroundColor Gray }
+      try {
+        Stop-Process -Id $pid -Force -ErrorAction Stop
+        Write-Host "Zatrzymano PID $pid (port $port)" -ForegroundColor Green
+      } catch {
+        Write-Host "PID $pid juz nieaktywny" -ForegroundColor Gray
+      }
     }
   }
 }
+
 Write-Host "Gotowe." -ForegroundColor Green

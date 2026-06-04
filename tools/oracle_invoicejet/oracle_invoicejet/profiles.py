@@ -22,6 +22,8 @@ class ModelProfile:
     repeat_penalty: float = 1.1
     seed: int | None = None
     timeout_sec: int = 900
+    think: bool | str | None = None
+    strip_thinking: bool = True
 
 
 @dataclass(frozen=True)
@@ -81,6 +83,8 @@ def _load_model_profiles(tool_root: Path) -> Dict[str, ModelProfile]:
             repeat_penalty=float(row.get("repeat_penalty", 1.1)),
             seed=int(row["seed"]) if row.get("seed") is not None else None,
             timeout_sec=int(row.get("timeout_sec", 900)),
+            think=_parse_think(row.get("think")),
+            strip_thinking=bool(row.get("strip_thinking", True)),
         )
         for row in rows
     }
@@ -136,8 +140,27 @@ def _default_model_profiles() -> List[dict[str, Any]]:
             "llm_top_k": 40,
             "repeat_penalty": 1.1,
             "timeout_sec": 900,
+            "think": None,
+            "strip_thinking": True,
         }
     ]
+
+
+def _parse_think(value: Any) -> bool | str | None:
+    if value is None:
+        return None
+    if isinstance(value, bool):
+        return value
+    text = str(value).strip().lower()
+    if not text or text == "auto":
+        return None
+    if text in {"true", "on", "yes", "1"}:
+        return True
+    if text in {"false", "off", "no", "0"}:
+        return False
+    if text in {"low", "medium", "high"}:
+        return text
+    raise ValueError(f"Unsupported think profile value: {value}")
 
 
 def _default_prompt_profiles() -> List[dict[str, Any]]:

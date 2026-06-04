@@ -212,6 +212,21 @@ def _select_profiled_hits(
     )
     selected: List[SearchHit] = []
     selected_ids: set[str] = set()
+    for suffix in _query_specific_suffixes(query_terms or []):
+        candidate = next(
+            (
+                hit
+                for hit in ranked
+                if hit.id not in selected_ids and hit.source_path.lower().endswith(suffix)
+            ),
+            None,
+        )
+        if candidate is None:
+            continue
+        selected.append(candidate)
+        selected_ids.add(candidate.id)
+        if len(selected) >= top_k:
+            return selected
     if profile.key == "database_sql":
         for suffix in _sql_table_suffixes(query_terms or []):
             candidate = next(
@@ -235,6 +250,22 @@ def _select_profiled_hits(
             selected_ids.add(hit.id)
             if len(selected) >= min(top_k, max(profile.per_type_k, 4)):
                 break
+    if profile.key == "algorithm_calculation":
+        for suffix in _algorithm_calculation_suffixes(query_terms or []):
+            candidate = next(
+                (
+                    hit
+                    for hit in ranked
+                    if hit.id not in selected_ids and hit.source_path.lower().endswith(suffix)
+                ),
+                None,
+            )
+            if candidate is None:
+                continue
+            selected.append(candidate)
+            selected_ids.add(candidate.id)
+            if len(selected) >= top_k:
+                return selected
     for source_type in profile.preferred_source_types:
         candidate = next((hit for hit in ranked if hit.id not in selected_ids and hit.metadata.get("source_type") == source_type), None)
         if candidate is None:
@@ -267,6 +298,42 @@ def _sql_table_suffixes(query_terms: Sequence[str]) -> List[str]:
     return suffixes
 
 
+def _query_specific_suffixes(query_terms: Sequence[str]) -> List[str]:
+    suffixes: List[str] = []
+    terms = set(query_terms)
+    if "product" in terms and _has_endpoint_intent(query_terms) and not _has_calculation_intent(query_terms):
+        suffixes.append("/04_api_i_integracje/01_api_frontend/product/get_product_getall.md")
+    if _has_pdf_intent(query_terms):
+        suffixes.extend(
+            [
+                "/04_api_i_integracje/01_api_frontend/document/post_document_generatepdf.md",
+                "/04_api_i_integracje/01_api_frontend/document/post_document_getpdfstream.md",
+            ]
+        )
+    if _has_role_intent(query_terms):
+        suffixes.extend(
+            [
+                "/06_role_i_uprawnienia/readme.md",
+                "/_mapowania/mapa_uprawnien_api.md",
+            ]
+        )
+    return suffixes
+
+
+def _algorithm_calculation_suffixes(query_terms: Sequence[str]) -> List[str]:
+    terms = set(query_terms)
+    suffixes = [
+        "/03_algorytmy/wyliczeniowe/obliczanie_ceny_pozycji.md",
+        "/03_algorytmy/wyliczeniowe/aktualizacja_produktow_dokumentu.md",
+        "/03_algorytmy/wyliczeniowe/obliczanie_wartosci_dokumentu.md",
+    ]
+    if terms & {"documentproduct", "product", "pozycja", "pozycji", "produkt", "produktu"}:
+        suffixes.append("/05_model_danych/01_db/dbo/dbo.documentproduct.md")
+    if terms & {"document", "dokument", "dokumentu", "suma", "sumy", "totalprice"}:
+        suffixes.append("/05_model_danych/01_db/dbo/dbo.document.md")
+    return suffixes
+
+
 def _query_terms(question: str) -> List[str]:
     terms = re.findall(r"[a-zA-Z0-9_ąćęłńóśźżĄĆĘŁŃÓŚŹŻ]+", question.lower())
     technical_short_terms = {"api", "dto", "pdf", "db", "ui", "sql"}
@@ -283,6 +350,8 @@ def _query_terms(question: str) -> List[str]:
         "bankowych": ["bankaccount", "bank_account"],
         "produktow": ["product"],
         "produktów": ["product"],
+        "produkty": ["product"],
+        "produktach": ["product"],
         "fakture": ["invoice", "document"],
         "fakturę": ["invoice", "document"],
         "dokument": ["document"],
@@ -305,10 +374,35 @@ def _query_terms(question: str) -> List[str]:
         "sql": ["select", "join", "where"],
         "select": ["sql", "join", "where"],
         "pdf": ["generatepdf", "getpdfstream"],
+        "generowany": ["generatepdf", "getpdfstream"],
+        "generowanie": ["generatepdf", "getpdfstream"],
+        "strumien": ["getpdfstream"],
+        "strumień": ["getpdfstream"],
+        "uprawnienia": ["role", "permissions", "authorize"],
+        "uprawnien": ["role", "permissions", "authorize"],
+        "uprawnień": ["role", "permissions", "authorize"],
+        "rola": ["role", "authorize"],
+        "role": ["role", "authorize"],
         "dashboard": ["dashboardstats"],
         "statystyki": ["dashboardstats"],
         "statystyk": ["dashboardstats"],
         "dto": ["dto"],
+        "kwota": ["totalprice", "unitprice"],
+        "kwoty": ["totalprice", "unitprice"],
+        "cena": ["price", "unitprice", "totalprice"],
+        "ceny": ["price", "unitprice", "totalprice"],
+        "suma": ["sum", "totalprice", "document"],
+        "sumy": ["sum", "totalprice", "document"],
+        "wartosc": ["value", "totalprice"],
+        "wartosci": ["value", "totalprice"],
+        "wyliczanie": ["calculate", "calculation", "totalprice", "unitprice", "quantity", "vatrate"],
+        "wyliczana": ["calculate", "calculation", "totalprice", "unitprice", "quantity", "vatrate"],
+        "obliczanie": ["calculate", "calculation", "totalprice", "unitprice", "quantity", "vatrate"],
+        "obliczana": ["calculate", "calculation", "totalprice", "unitprice", "quantity", "vatrate"],
+        "pozycja": ["documentproduct", "product", "quantity"],
+        "pozycji": ["documentproduct", "product", "quantity"],
+        "produkt": ["product", "documentproduct"],
+        "produktu": ["product", "documentproduct"],
     }
     for term in terms:
         expanded.extend(aliases.get(term, []))
@@ -360,6 +454,28 @@ def _lexical_document_score(relative_path: str, text: str, query_terms: Sequence
         score += 5
     if _has_endpoint_intent(query_terms) and re.search(r"/(get|post|put|patch|delete)_", path_haystack):
         score += 8
+    if "product" in query_terms and path_haystack.endswith("/product/get_product_getall.md"):
+        score += 16
+    if _has_pdf_intent(query_terms) and path_haystack.endswith("/document/post_document_generatepdf.md"):
+        score += 16
+    if _has_pdf_intent(query_terms) and path_haystack.endswith("/document/post_document_getpdfstream.md"):
+        score += 16
+    if _has_role_intent(query_terms) and "/06_role_i_uprawnienia/" in path_haystack:
+        score += 14
+    if _has_role_intent(query_terms) and path_haystack.endswith("/_mapowania/mapa_uprawnien_api.md"):
+        score += 10
+    if _has_calculation_intent(query_terms) and "/03_algorytmy/wyliczeniowe/" in path_haystack:
+        score += 12
+    if _has_calculation_intent(query_terms) and path_haystack.endswith("/obliczanie_ceny_pozycji.md"):
+        score += 18
+    if _has_calculation_intent(query_terms) and path_haystack.endswith("/aktualizacja_produktow_dokumentu.md"):
+        score += 14
+    if _has_calculation_intent(query_terms) and path_haystack.endswith("/obliczanie_wartosci_dokumentu.md"):
+        score += 14
+    if _has_calculation_intent(query_terms) and path_haystack.endswith("/dbo.documentproduct.md"):
+        score += 8
+    if _has_calculation_intent(query_terms) and path_haystack.endswith("/dbo.document.md"):
+        score += 6
     return score
 
 
@@ -369,6 +485,38 @@ def _has_table_intent(query_terms: Sequence[str]) -> bool:
 
 def _has_endpoint_intent(query_terms: Sequence[str]) -> bool:
     return any(term in {"endpoint", "endpointu", "endpointy", "api"} for term in query_terms)
+
+
+def _has_pdf_intent(query_terms: Sequence[str]) -> bool:
+    return any(term in {"pdf", "generatepdf", "getpdfstream", "generowanie", "generowany"} for term in query_terms)
+
+
+def _has_role_intent(query_terms: Sequence[str]) -> bool:
+    return any(term in {"role", "rola", "uprawnienia", "uprawnien", "permissions", "authorize"} for term in query_terms)
+
+
+def _has_calculation_intent(query_terms: Sequence[str]) -> bool:
+    calculation_terms = {
+        "kwota",
+        "kwoty",
+        "cena",
+        "ceny",
+        "suma",
+        "sumy",
+        "wartosc",
+        "wartosci",
+        "wyliczanie",
+        "wyliczana",
+        "obliczanie",
+        "obliczana",
+        "totalprice",
+        "unitprice",
+        "quantity",
+        "vatrate",
+        "calculation",
+        "calculate",
+    }
+    return any(term in calculation_terms for term in query_terms)
 
 
 def _lexical_snippet(text: str, query_terms: Sequence[str], max_chars: int = 1800) -> str:

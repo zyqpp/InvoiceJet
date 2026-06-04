@@ -265,6 +265,9 @@ class ContextHygieneAgent:
             seen.add(key)
             type_counts[stype] = type_counts.get(stype, 0) + 1
             cleaned.append(hit)
+        if hits and not cleaned:
+            msg = f"Hygiene: zachowano {len(hits)} chunków, bo filtracja usunęłaby cały kontekst."
+            return hits, AgentTraceStep("ContextHygiene", msg)
         msg = f"Hygiene: {len(cleaned)} chunków po filtracji (usunięto {removed})."
         return cleaned, AgentTraceStep("ContextHygiene", msg)
 

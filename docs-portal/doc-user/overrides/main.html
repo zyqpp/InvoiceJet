@@ -36,6 +36,9 @@
 {{ super() }}
 <script>
 (function() {
+  var DOC_AI_URL = "{{ config.extra.portal.doc_ai_url }}";
+  var DOC_USER_URL = "{{ config.extra.portal.doc_user_url }}";
+
   function setActiveBtn() {
     var path = window.location.pathname;
     document.querySelectorAll(".ij-cat-btn[data-cat]").forEach(function(btn) {
@@ -53,8 +56,8 @@
     var sw = document.createElement("div");
     sw.id = "ij-portal-sw";
     sw.className = "ij-portal-switch";
-    sw.innerHTML = '<a href="http://127.0.0.1:8001/" class="ij-portal-btn" title="Dokumentacja Techniczna">📚 Techniczna</a>'
-      + '<a href="http://127.0.0.1:8002/" class="ij-portal-btn current" title="Dokumentacja Użytkownika">👤 Użytkownik</a>';
+    sw.innerHTML = '<a href="' + DOC_AI_URL + '" class="ij-portal-btn" title="Dokumentacja Techniczna">📚 Techniczna</a>'
+      + '<a href="' + DOC_USER_URL + '" class="ij-portal-btn current" title="Dokumentacja Użytkownika">👤 Użytkownik</a>';
     var header = document.querySelector(".md-header__inner");
     if (header) header.appendChild(sw);
   }
