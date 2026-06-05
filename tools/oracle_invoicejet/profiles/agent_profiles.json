@@ -253,6 +253,6 @@
       "Ograniczona głębokość analizy przy bardzo złożonych pytaniach technicznych.",
       "Małe okno kontekstu (4096 tokenów) — nieodpowiedni do pytań przekrojowych."
     ],
-    "notes": "Może pełnić rolę light_llm_model: ustaw ORACLE_LIGHT_LLM_MODEL=SpeakLeash/bielik-1.5b-v3.0-instruct w .env"
+    "notes": "Może pełnić rolę light_llm_model: ustaw ORACLE_LIGHT_LLM_MODEL=SpeakLeash/bielik-1.5b-v3.0-instruct:Q8_0 w .env"
   }
 ]

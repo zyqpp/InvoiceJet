@@ -147,7 +147,7 @@
     "key": "bielik_light",
     "name": "Bielik 1.5B — light (PL)",
     "description": "Bielik-1.5B-v3.0-Instruct — ultra-lekki polski model LLM (~1GB VRAM). Idealny jako light_llm_model w pipeline v2 dla klasyfikacji i fact-check. Natywne rozumienie polskiego znacznie lepsze niż qwen2.5:1.5b.",
-    "llm_model": "SpeakLeash/bielik-1.5b-v3.0-instruct",
+    "llm_model": "SpeakLeash/bielik-1.5b-v3.0-instruct:Q8_0",
     "embedding_model": "bge-m3",
     "top_k": 6,
     "num_ctx": 4096,
