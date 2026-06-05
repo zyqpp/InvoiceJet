@@ -170,7 +170,9 @@ def load_config() -> AppConfig:
     ))]
     allowed_models = _as_list(_read_var(
         "ALLOWED_MODELS",
-        "gemma3:12b,gemma3:4b,gemma3:1b,deepseek-r1:8b,qwen3:7b,qwen3:4b,qwen3-vl:4b,qwen3:1.7b,qwen2.5:1.5b,llama3.2:1b,bge-m3,qwen3-embedding:0.6b,nomic-embed-text",
+        "gemma3:12b,gemma3:4b,gemma3:1b,deepseek-r1:8b,qwen3:7b,qwen3:4b,qwen3-vl:4b,qwen3:1.7b,qwen2.5:1.5b,llama3.2:1b,"
+        "SpeakLeash/bielik-11b-v3.0-instruct:Q4_K_M,SpeakLeash/bielik-4.5b-v3.0-instruct:Q8_0,SpeakLeash/bielik-1.5b-v3.0-instruct,"
+        "bge-m3,qwen3-embedding:0.6b,nomic-embed-text",
         dotenv_values,
     ))
     think = _parse_think(_read_var("THINK", _format_think(preset.think), dotenv_values))

@@ -184,5 +184,75 @@
     "min_hits": 1,
     "tooltip": "Szybki profil v2 dla RTX 4060. qwen3:4b z hygiene i MissingLink. Dobry do instrukcji użytkownika i prostych pytań o funkcje aplikacji.",
     "notes": "Wymaga zainstalowanego modelu qwen3:4b oraz qwen2.5:1.5b. Uruchom: ollama pull qwen3:4b && ollama pull qwen2.5:1.5b"
+  },
+  {
+    "key": "zofia",
+    "name": "Zofia",
+    "role": "Polski asystent użytkownika (Bielik 4.5B)",
+    "description": "Bielik-4.5B-v3.0-Instruct Q8_0 — natywnie polski model LLM. Lepiej rozumie polską terminologię faktur, VAT i dokumentów biznesowych niż modele anglojęzyczne. Idealny do pytań użytkownika końcowego.",
+    "default_scope": "user",
+    "model_profile": "bielik_medium",
+    "prompt_profile": "oracle_rag_default",
+    "rag_profile": "user_help",
+    "top_k": 10,
+    "num_predict": 1024,
+    "min_hits": 1,
+    "tooltip": "Natywnie polski model Bielik 4.5B. Zalecany do pytań po polsku o funkcje aplikacji, faktury, VAT i procesy biznesowe. Lepiej niż Mietek rozumie polskie skróty i terminologię.",
+    "capabilities": [
+      "Natywnie rozumie polskie terminy: NIP, faktura VAT, korekta, storno, JPK, termin płatności.",
+      "Odpowiada w naturalnym polskim języku bez 'anglicyzmów' modeli generycznych.",
+      "Objaśnia procesy biznesowe zgodnie z polskim prawem podatkowym jeśli wynika to z dokumentacji."
+    ],
+    "notes": "Wymaga: ollama pull SpeakLeash/bielik-4.5b-v3.0-instruct:Q8_0 && ollama pull SpeakLeash/bielik-1.5b-v3.0-instruct"
+  },
+  {
+    "key": "benedykt",
+    "name": "Benedykt",
+    "role": "Polski analityk techniczny (Bielik 11B)",
+    "description": "Bielik-11B-v3.0-Instruct Q4_K_M — najmocniejszy polski model (6.7GB VRAM, okno 32k). Najlepsza jakość dla pytań technicznych, przekrojowych i złożonych w języku polskim. Pipeline v2 z pełną klasyfikacją i hygiene.",
+    "default_scope": "full",
+    "model_profile": "bielik_heavy",
+    "prompt_profile": "cross_reference",
+    "rag_profile": "full_app_qa",
+    "top_k": 12,
+    "num_predict": 1664,
+    "num_ctx": 16384,
+    "min_hits": 1,
+    "tooltip": "Najmocniejszy polski model w projekcie. Używaj do trudnych pytań technicznych, analizy zależności ekran→API→baza i złożonych procesów biznesowych. Wymaga ~6.7GB VRAM — zamknij inne modele przed użyciem.",
+    "capabilities": [
+      "Okno kontekstu 32k tokenów — może przetworzyć bardzo długi kontekst dokumentacji.",
+      "Natywnie rozumie polską terminologię techniczną i prawną.",
+      "Najlepsza jakość dla pytań przekrojowych łączących ekrany, API i model danych.",
+      "Działa z pipeline v2: ClassifierAgent → HygieneAgent → MissingLinkAgent → CodeSynthAgent."
+    ],
+    "limitations": [
+      "Wymaga ok. 6.7GB VRAM — nie uruchamiaj jednocześnie z innymi dużymi modelami.",
+      "Wolniejszy niż modele 4-5B — dłuższy czas odpowiedzi (timeout: 1800s)."
+    ],
+    "notes": "Wymaga: ollama pull SpeakLeash/bielik-11b-v3.0-instruct:Q4_K_M && ollama pull SpeakLeash/bielik-1.5b-v3.0-instruct"
+  },
+  {
+    "key": "basia",
+    "name": "Basia",
+    "role": "Polski light agent (Bielik 1.5B)",
+    "description": "Bielik-1.5B-v3.0-Instruct — ultra-lekki natywnie polski model (~1GB VRAM). Szybki jak błyskawica do prostych pytań: co to jest dana opcja, jak przejść do ekranu, podstawowe instrukcje. Może też pełnić rolę light_llm_model w pipeline v2.",
+    "default_scope": "user",
+    "model_profile": "bielik_light",
+    "prompt_profile": "oracle_rag_default",
+    "rag_profile": "user_help",
+    "top_k": 6,
+    "num_predict": 512,
+    "min_hits": 1,
+    "tooltip": "Ultra-szybki polski Bielik 1.5B. Używaj do prostych pytań gdzie liczy się czas odpowiedzi. ~1GB VRAM.",
+    "capabilities": [
+      "Błyskawiczne odpowiedzi (< 10s) dzięki bardzo małemu rozmiarowi modelu.",
+      "Natywna obsługa polskiego języka.",
+      "Idealny do prostych pytań: jak dodać klienta, gdzie jest przycisk, co oznacza pole."
+    ],
+    "limitations": [
+      "Ograniczona głębokość analizy przy bardzo złożonych pytaniach technicznych.",
+      "Małe okno kontekstu (4096 tokenów) — nieodpowiedni do pytań przekrojowych."
+    ],
+    "notes": "Może pełnić rolę light_llm_model: ustaw ORACLE_LIGHT_LLM_MODEL=SpeakLeash/bielik-1.5b-v3.0-instruct w .env"
   }
 ]
